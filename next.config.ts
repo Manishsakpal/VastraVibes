@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  env: {
+    NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production' 
+      ? 'https://your-production-url.com' // Replace with your actual production URL
+      : 'http://localhost:9002', // Default dev URL
+  }
 };
 
 export default nextConfig;

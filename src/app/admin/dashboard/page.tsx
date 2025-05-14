@@ -1,0 +1,76 @@
+"use client";
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PlusCircle, ShoppingBag, Users } from 'lucide-react';
+import type { Metadata } from 'next';
+
+// export const metadata: Metadata = {
+//   title: 'Admin Dashboard',
+//   description: 'Manage Vastra Vibes store content.',
+// };
+
+const AdminDashboardPage = () => {
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <Card className="mb-8 shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold text-primary">Admin Dashboard</CardTitle>
+          <CardDescription>Welcome to the Vastra Vibes control panel. Manage your store's content here.</CardDescription>
+        </CardHeader>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card className="hover:shadow-xl transition-shadow duration-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <PlusCircle className="text-accent h-6 w-6" />
+              Add New Item
+            </CardTitle>
+            <CardDescription>Expand your collection by adding new clothing items to the store.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Link href="/admin/add-item">
+                Go to Add Item Page
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-xl transition-shadow duration-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <ShoppingBag className="text-primary h-6 w-6" />
+              Manage Products
+            </CardTitle>
+            <CardDescription>View, edit, or remove existing products from your inventory. (Feature coming soon)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full" disabled>
+              View Products
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card className="hover:shadow-xl transition-shadow duration-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Users className="text-secondary-foreground h-6 w-6" />
+              User Management
+            </CardTitle>
+            <CardDescription>Oversee customer accounts and roles. (Feature coming soon)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full" disabled>
+              Manage Users
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboardPage;
