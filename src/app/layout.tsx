@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: 'Vastra Vibes',
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://vastra-vibes.example.com'}/og-image.png`, // Replace with actual OG image URL
+        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://vastra-vibes.example.com'}/og-image.png`, // Will resolve to public/og-image.png
         width: 1200,
         height: 630,
         alt: 'Vastra Vibes Storefront',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Vastra Vibes - Authentic Indian & Modern Apparel',
     description: 'Shop the latest trends in ethnic and western fashion.',
-    // images: [`${process.env.NEXT_PUBLIC_APP_URL || 'https://vastra-vibes.example.com'}/twitter-image.png`], // Replace
+    images: [`${process.env.NEXT_PUBLIC_APP_URL || 'https://vastra-vibes.example.com'}/twitter-image.png`], // Will resolve to public/twitter-image.png
   },
   robots: {
     index: true,
