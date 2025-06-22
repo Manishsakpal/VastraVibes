@@ -25,19 +25,25 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     let loadedItems: ClothingItem[] = [];
     try {
       const storedItems = localStorage.getItem(ITEMS_STORAGE_KEY);
+      let parsedItems: ClothingItem[] = [];
       if (storedItems) {
-        const parsedItems = JSON.parse(storedItems);
-        loadedItems = sanitizeItems(parsedItems);
-      } else {
-        // If no stored items, use initial (which are assumed to be clean)
-        loadedItems = sanitizeItems(initialItems);
+        parsedItems = JSON.parse(storedItems);
       }
+
+      // If mock data is newer/larger, or if there's no stored data, use mock data.
+      // This ensures that updates to the mock data file are reflected on next load.
+      if (initialItems.length > parsedItems.length) {
+        loadedItems = sanitizeItems(initialItems);
+      } else {
+        loadedItems = sanitizeItems(parsedItems);
+      }
+
     } catch (error) {
       console.warn("Could not access or parse localStorage for items, using initial data:", error);
       loadedItems = sanitizeItems(initialItems);
     } finally {
       setItems(loadedItems);
-      // Persist the potentially sanitized data back to localStorage
+      // Persist the potentially updated data back to localStorage
       try {
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(loadedItems));
       } catch (e) {
