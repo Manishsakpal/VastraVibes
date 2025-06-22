@@ -29,7 +29,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
     )
   }
 
-  const hasDiscount = item.discount && item.discount > 0;
+  const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
   const discountedPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
 
   const handleAddToBag = () => {

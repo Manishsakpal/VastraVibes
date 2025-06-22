@@ -180,7 +180,7 @@ export default function CheckoutPage() {
             <CardContent>
               <div className="space-y-4">
                 {cartItems.map(item => {
-                  const hasDiscount = item.discount && item.discount > 0;
+                  const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
                   const finalPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
                   return (
                     <div key={item.id} className="flex items-center justify-between text-sm">

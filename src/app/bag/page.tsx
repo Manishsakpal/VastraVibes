@@ -92,7 +92,7 @@ export default function BagPage() {
             <CardContent className="p-0">
               <ul className="divide-y divide-border">
                 {cartItems.map(item => {
-                  const hasDiscount = item.discount && item.discount > 0;
+                  const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
                   const finalPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
                   
                   return (
