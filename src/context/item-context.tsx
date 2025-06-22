@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
@@ -40,34 +41,45 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     try {
+      // The initial state is set from mock data. This effect merges any user-added items from localStorage.
+      const initialProcessedItems = processRawItems(sanitizeItems(rawInitialItems));
+      const initialItemIds = new Set(initialProcessedItems.map(item => item.id));
+
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
+      let finalItems = [...initialProcessedItems];
+
       if (storedItemsRaw) {
         const storedItemsParsed = JSON.parse(storedItemsRaw);
         
-        if (Array.isArray(storedItemsParsed) && storedItemsParsed.length > 0) {
-          // Process items from storage
-          const sanitized = sanitizeItems(storedItemsParsed);
-          const processed = processRawItems(sanitized);
-          setItems(processed);
-        } else {
-          // If storage is empty or invalid, fallback to initial and update storage
-          const initialProcessedItems = processRawItems(sanitizeItems(rawInitialItems));
-          localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawInitialItems));
-          setItems(initialProcessedItems);
+        if (Array.isArray(storedItemsParsed)) {
+          const sanitizedStoredItems = sanitizeItems(storedItemsParsed);
+          const processedStoredItems = processRawItems(sanitizedStoredItems);
+          
+          const userAddedItems = processedStoredItems.filter(
+            storedItem => !initialItemIds.has(storedItem.id)
+          );
+
+          if (userAddedItems.length > 0) {
+            finalItems = [...initialProcessedItems, ...userAddedItems];
+          }
         }
-      } else {
-        // If nothing in storage, populate it with initial data.
-         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawInitialItems));
       }
-    } catch (error)
-     {
+      
+      // Update state and localStorage with the clean, merged list.
+      setItems(finalItems);
+      
+      // We also update localStorage to be in sync, removing any old mock data from it.
+      const rawFinalItems = finalItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
+      localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawFinalItems));
+
+    } catch (error) {
       console.warn("Could not sync items from localStorage, using initial data:", error);
     }
   }, []);
 
   const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => {
     setItems(prevItems => {
-      const newItemRaw: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'> = {
+      const newItemRaw: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'> & { id: string } = {
         ...itemData,
         id: String(Date.now() + Math.random()),
       };
@@ -75,9 +87,10 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const sanitizedNewItem = sanitizeItems([newItemRaw])[0];
       const [processedNewItem] = processRawItems([sanitizedNewItem]);
 
+      const updatedProcessedItems = [...prevItems, processedNewItem];
+      
       const rawPrevItems = prevItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
       const updatedRawItems = [...rawPrevItems, sanitizedNewItem];
-      const updatedProcessedItems = [...prevItems, processedNewItem];
       
       try {
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedRawItems));
