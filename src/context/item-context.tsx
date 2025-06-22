@@ -42,41 +42,35 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     setIsLoading(true);
     try {
-      // The initial state is set from mock data. This effect merges any user-added items from localStorage.
-      const initialProcessedItems = processRawItems(sanitizeItems(rawInitialItems));
-      const initialItemIds = new Set(initialProcessedItems.map(item => item.id));
-
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
-      let finalItems = [...initialProcessedItems];
-
+      
       if (storedItemsRaw) {
+        // If items are in storage, use them as the source of truth.
         const storedItemsParsed = JSON.parse(storedItemsRaw);
-        
         if (Array.isArray(storedItemsParsed)) {
-          const sanitizedStoredItems = sanitizeItems(storedItemsParsed);
-          const processedStoredItems = processRawItems(sanitizedStoredItems);
-          
-          const userAddedItems = processedStoredItems.filter(
-            storedItem => !initialItemIds.has(storedItem.id)
-          );
-
-          if (userAddedItems.length > 0) {
-            finalItems = [...initialProcessedItems, ...userAddedItems];
-          }
+          const processedItems = processRawItems(sanitizeItems(storedItemsParsed));
+          setItems(processedItems);
+        } else {
+          // Handle corrupted data in storage by falling back to initial data.
+          throw new Error("Stored items are not an array.");
         }
+      } else {
+        // If storage is empty, this is the first visit.
+        // Process the initial mock data and populate storage for subsequent visits.
+        const sanitizedInitialItems = sanitizeItems(rawInitialItems);
+        const processedInitialItems = processRawItems(sanitizedInitialItems);
+        
+        setItems(processedInitialItems);
+        
+        // Save the raw initial items to storage to act as a cache.
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitizedInitialItems));
       }
-      
-      // Update state and localStorage with the clean, merged list.
-      setItems(finalItems);
-      
-      // We also update localStorage to be in sync, removing any old mock data from it.
-      const rawFinalItems = finalItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
-      localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawFinalItems));
-
     } catch (error) {
-      console.warn("Could not sync items from localStorage, using initial data:", error);
-       // If hydration fails, fall back to initial items
-       setItems(processRawItems(sanitizeItems(rawInitialItems)));
+      console.warn("Could not read from localStorage, falling back to initial data:", error);
+      // Fallback in case of any error (e.g., parsing, corrupted data)
+      const sanitizedInitialItems = sanitizeItems(rawInitialItems);
+      const processedInitialItems = processRawItems(sanitizedInitialItems);
+      setItems(processedInitialItems);
     } finally {
         setIsLoading(false);
     }
@@ -94,8 +88,8 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const updatedProcessedItems = [...prevItems, processedNewItem];
       
-      const rawPrevItems = prevItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
-      const updatedRawItems = [...rawPrevItems, sanitizedNewItem];
+      // Get the raw items from the updated processed list to save to localStorage
+      const updatedRawItems = updatedProcessedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
       
       try {
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedRawItems));
