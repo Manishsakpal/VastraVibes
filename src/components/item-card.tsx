@@ -1,6 +1,7 @@
 
 "use client";
 
+import React from 'react';
 import Image from 'next/image';
 import type { ClothingItem } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -91,4 +92,4 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
   );
 };
 
-export default ItemCard;
+export default React.memo(ItemCard);

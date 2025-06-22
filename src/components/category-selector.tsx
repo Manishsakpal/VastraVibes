@@ -1,5 +1,7 @@
+
 "use client";
 
+import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Category } from "@/types";
 import { Shirt, PersonStanding, Baby, Palette, LayoutGrid, List } from 'lucide-react'; // Import icons
@@ -46,4 +48,4 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
   );
 };
 
-export default CategorySelector;
+export default React.memo(CategorySelector);

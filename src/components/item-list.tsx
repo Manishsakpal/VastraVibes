@@ -11,14 +11,16 @@ import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTheme } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
+import { useDebounce } from '@/hooks/use-debounce';
 
-const ITEMS_PER_PAGE = 8; // Reduced for faster initial load
+const ITEMS_PER_PAGE = 8;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
 
 export default function ItemList() {
   const { items } = useItemContext();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [sortOption, setSortOption] = useState('popular');
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
@@ -45,8 +47,8 @@ export default function ItemList() {
     }
     
     // 2. If there's a search term, apply relevance-based scoring and sorting
-    if (searchTerm) {
-        const searchWords = searchTerm.toLowerCase().split(' ').filter(Boolean);
+    if (debouncedSearchTerm) {
+        const searchWords = debouncedSearchTerm.toLowerCase().split(' ').filter(Boolean);
         
         const calculateScore = (item: ClothingItem, words: string[]): number => {
             let score = 0;
@@ -86,7 +88,7 @@ export default function ItemList() {
         tempItems.sort((a, b) => {
           const priceA = a.discount ? a.price * (1 - a.discount / 100) : a.price;
           const priceB = b.discount ? b.price * (1 - b.discount / 100) : b.price;
-          return priceB - a.price;
+          return priceB - priceA;
         });
         break;
       case 'newest':
@@ -103,11 +105,11 @@ export default function ItemList() {
     }
 
     return tempItems;
-  }, [items, selectedCategory, searchTerm, sortOption, purchaseCounts]);
+  }, [items, selectedCategory, debouncedSearchTerm, sortOption, purchaseCounts]);
   
   useEffect(() => {
     setDisplayCount(ITEMS_PER_PAGE);
-  }, [selectedCategory, searchTerm, sortOption]);
+  }, [selectedCategory, debouncedSearchTerm, sortOption]);
   
   const itemsToDisplay = useMemo(() => {
     return filteredAndSortedItems.slice(0, displayCount);
@@ -161,7 +163,7 @@ export default function ItemList() {
             />
           </div>
           <div className="w-full sm:w-48">
-             <Select value={sortOption} onValueChange={setSortOption} disabled={!!searchTerm}>
+             <Select value={sortOption} onValueChange={setSortOption} disabled={!!debouncedSearchTerm}>
               <SelectTrigger>
                 <ArrowUpDown className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Sort by..." />
