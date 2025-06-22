@@ -23,36 +23,29 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
+      let itemsToLoad: ClothingItem[] = initialItems;
       
       if (storedItemsRaw) {
         const storedItemsParsed = JSON.parse(storedItemsRaw);
         
         if (Array.isArray(storedItemsParsed)) {
-          // If mock data has more items than local storage, it's been updated.
-          // Force a refresh from mock data to get the latest items.
           if (initialItems.length > storedItemsParsed.length) {
-              const sanitized = sanitizeItems(initialItems);
-              setItems(sanitized);
-              localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
+              itemsToLoad = initialItems;
           } else {
-            setItems(sanitizeItems(storedItemsParsed));
+              itemsToLoad = storedItemsParsed;
           }
-        } else {
-            // Data in storage is invalid, load from mock
-             const sanitized = sanitizeItems(initialItems);
-             setItems(sanitized);
-             localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
         }
-      } else {
-        // If nothing is in local storage, populate it with the mock data.
-        const sanitized = sanitizeItems(initialItems);
-        setItems(sanitized);
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
       }
+      
+      const sanitized = sanitizeItems(itemsToLoad);
+      setItems(sanitized);
+      localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
+
     } catch (error) {
       console.warn("Could not sync items from localStorage, using initial data:", error);
-      // Fallback to initial data if any error occurs
-      setItems(initialItems);
+      const sanitized = sanitizeItems(initialItems);
+      setItems(sanitized);
+      localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
     } finally {
       setIsSyncing(false);
     }
