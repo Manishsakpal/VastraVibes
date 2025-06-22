@@ -29,6 +29,7 @@ const AddItemForm = () => {
       title: '',
       description: '',
       price: 0,
+      discount: 0,
       size: '',
       category: undefined, // Or provide a default category if desired
       imageUrl: '',
@@ -77,32 +78,57 @@ const AddItemForm = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price (₹)</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="e.g., 2999.00"
-                  {...field}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Pass empty string or a parsed float. Zod will coerce and validate.
-                    // This prevents `NaN` from being passed to the form state.
-                    field.onChange(value === "" ? "" : parseFloat(value));
-                  }}
-                  // Ensure the input value is never NaN and doesn't show the initial 0.
-                  value={isNaN(field.value) || field.value === 0 ? "" : field.value}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price (₹)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g., 2999.00"
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value === "" ? "" : parseFloat(value));
+                    }}
+                    value={isNaN(field.value) || field.value === 0 ? "" : field.value}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="discount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Discount (%)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    placeholder="e.g., 15"
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value === "" ? "" : parseInt(value, 10));
+                    }}
+                    value={isNaN(field.value) || field.value === 0 ? "" : field.value}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
 
         <FormField
           control={form.control}

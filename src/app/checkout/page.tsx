@@ -53,7 +53,6 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutFormValues) => {
     console.log('Order submitted:', data);
     
-    // Record the purchase before clearing the bag
     recordPurchase(cartItems);
 
     toast({
@@ -131,20 +130,24 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {cartItems.map(item => (
-                  <div key={item.id} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center">
-                      <div className="relative h-12 w-12 rounded-md overflow-hidden mr-3">
-                        <Image src={item.imageUrl} alt={item.title} layout="fill" objectFit="cover" />
+                {cartItems.map(item => {
+                  const hasDiscount = item.discount && item.discount > 0;
+                  const finalPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
+                  return (
+                    <div key={item.id} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center">
+                        <div className="relative h-12 w-12 rounded-md overflow-hidden mr-3">
+                          <Image src={item.imageUrl} alt={item.title} layout="fill" objectFit="cover" />
+                        </div>
+                        <div>
+                          <p className="font-medium truncate max-w-[150px]">{item.title}</p>
+                          <p className="text-muted-foreground">Qty: {item.quantity}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium truncate max-w-[150px]">{item.title}</p>
-                        <p className="text-muted-foreground">Qty: {item.quantity}</p>
-                      </div>
+                      <p>₹{(finalPrice * item.quantity).toFixed(2)}</p>
                     </div>
-                    <p>₹{(item.price * item.quantity).toFixed(2)}</p>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
 
               <Separator className="my-4" />

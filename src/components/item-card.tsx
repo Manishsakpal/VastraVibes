@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { ShoppingBag } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useBagContext } from '@/context/bag-context';
+import { Badge } from '@/components/ui/badge';
 
 interface ItemCardProps {
   item: ClothingItem;
@@ -15,6 +16,9 @@ interface ItemCardProps {
 const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   const { toast } = useToast();
   const { addToBag } = useBagContext();
+  
+  const hasDiscount = item.discount && item.discount > 0;
+  const discountedPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
 
   const handleAddToBag = () => {
     addToBag(item);
@@ -26,9 +30,9 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg">
-      <CardHeader className="p-0">
-        <div className="aspect-[3/4] relative w-full overflow-hidden bg-muted">
+    <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg group">
+      <CardHeader className="p-0 relative">
+        <div className="aspect-[3/4] w-full overflow-hidden bg-muted">
           <Image
             src={item.imageUrl}
             alt={item.title}
@@ -39,6 +43,11 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
             data-ai-hint={item.imageHint || "clothing item"}
           />
         </div>
+         {hasDiscount && (
+          <Badge variant="destructive" className="absolute top-3 right-3">
+            {item.discount}% OFF
+          </Badge>
+        )}
       </CardHeader>
       <CardContent className="p-4 flex-grow space-y-2">
         <h2 className="text-lg font-semibold leading-tight truncate" title={item.title}>
@@ -49,9 +58,16 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
         </p>
         <div className="flex items-center justify-between text-sm pt-1">
           <p className="text-xs bg-secondary/80 text-secondary-foreground px-2 py-1 rounded-full">{item.category}</p>
-          <p className="font-medium text-primary">
-            ₹{item.price.toFixed(2)}
-          </p>
+          <div className="flex items-baseline gap-2">
+             {hasDiscount && (
+              <p className="text-muted-foreground line-through text-xs">
+                ₹{item.price.toFixed(2)}
+              </p>
+            )}
+            <p className="font-medium text-primary">
+              ₹{discountedPrice.toFixed(2)}
+            </p>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">Sizes: {item.size}</p>
       </CardContent>

@@ -95,7 +95,12 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, [cartItems]);
 
   const totalPrice = useMemo(() => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce((total, item) => {
+      const finalPrice = (item.discount && item.discount > 0)
+        ? item.price * (1 - item.discount / 100)
+        : item.price;
+      return total + finalPrice * item.quantity;
+    }, 0);
   }, [cartItems]);
 
   return (

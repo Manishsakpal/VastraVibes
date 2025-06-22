@@ -5,6 +5,7 @@ export interface ClothingItem {
   title: string;
   description: string;
   price: number;
+  discount?: number; // e.g., 20 for 20% off
   size: string; // e.g., "S, M, L" or "Free Size"
   category: Category;
   imageUrl: string;

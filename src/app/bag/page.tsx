@@ -7,7 +7,6 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
-import type { CartItem } from '@/types';
 
 export default function BagPage() {
   const { cartItems, removeFromBag, updateQuantity, totalPrice, cartCount, isLoading } = useBagContext();
@@ -45,32 +44,44 @@ export default function BagPage() {
           <Card>
             <CardContent className="p-0">
               <ul className="divide-y divide-border">
-                {cartItems.map(item => (
-                  <li key={item.id} className="flex items-center p-4">
-                    <div className="relative h-24 w-24 rounded-md overflow-hidden mr-4">
-                       <Image src={item.imageUrl} alt={item.title} layout="fill" objectFit="cover" />
-                    </div>
-                    <div className="flex-grow">
-                      <h2 className="font-semibold">{item.title}</h2>
-                      <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)}</p>
-                      <div className="flex items-center mt-2">
-                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <span className="w-10 text-center">{item.quantity}</span>
-                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                          <Plus className="h-4 w-4" />
+                {cartItems.map(item => {
+                  const hasDiscount = item.discount && item.discount > 0;
+                  const finalPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
+                  
+                  return (
+                    <li key={item.id} className="flex items-center p-4">
+                      <div className="relative h-24 w-24 rounded-md overflow-hidden mr-4">
+                        <Image src={item.imageUrl} alt={item.title} layout="fill" objectFit="cover" />
+                      </div>
+                      <div className="flex-grow">
+                        <h2 className="font-semibold">{item.title}</h2>
+                        <p className="text-sm">
+                          {hasDiscount && (
+                            <span className="text-muted-foreground line-through mr-2">₹{item.price.toFixed(2)}</span>
+                          )}
+                          <span className={hasDiscount ? 'text-destructive font-medium' : 'text-muted-foreground'}>
+                            ₹{finalPrice.toFixed(2)}
+                          </span>
+                        </p>
+                        <div className="flex items-center mt-2">
+                          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="w-10 text-center">{item.quantity}</span>
+                          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">₹{(finalPrice * item.quantity).toFixed(2)}</p>
+                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive mt-2" onClick={() => removeFromBag(item.id)}>
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
-                    <div className="text-right">
-                       <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
-                       <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive mt-2" onClick={() => removeFromBag(item.id)}>
-                         <Trash2 className="h-4 w-4" />
-                       </Button>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  )
+                })}
               </ul>
             </CardContent>
           </Card>
