@@ -54,8 +54,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
           )}
         </CardHeader>
         <CardContent className="p-4 flex-grow space-y-2">
-          <h2 className="text-lg font-semibold leading-tight truncate" title={item.title}>
-            {item.title}
+          <h2 className="text-lg font-semibold leading-tight" title={`${item.title} (Sizes: ${item.size})`}>
+            {item.title} <span className="text-sm font-normal text-muted-foreground">({item.size})</span>
           </h2>
           <p className="text-sm text-muted-foreground line-clamp-2" title={item.description}>
             {item.description}
@@ -73,7 +73,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
               </p>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">Sizes: {item.size}</p>
         </CardContent>
         <CardFooter className="p-4 border-t mt-auto">
           <Button
