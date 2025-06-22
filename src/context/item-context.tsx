@@ -32,14 +32,17 @@ interface ItemContextType {
   items: ClothingItem[];
   addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
+  isLoading: boolean;
 }
 
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<ClothingItem[]>(() => processRawItems(sanitizeItems(rawInitialItems)));
+  const [items, setItems] = useState<ClothingItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     try {
       // The initial state is set from mock data. This effect merges any user-added items from localStorage.
       const initialProcessedItems = processRawItems(sanitizeItems(rawInitialItems));
@@ -74,6 +77,10 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     } catch (error) {
       console.warn("Could not sync items from localStorage, using initial data:", error);
+       // If hydration fails, fall back to initial items
+       setItems(processRawItems(sanitizeItems(rawInitialItems)));
+    } finally {
+        setIsLoading(false);
     }
   }, []);
 
@@ -117,7 +124,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <ItemContext.Provider value={{ items, addItem, recordPurchase }}>
+    <ItemContext.Provider value={{ items, addItem, recordPurchase, isLoading }}>
       {children}
     </ItemContext.Provider>
   );

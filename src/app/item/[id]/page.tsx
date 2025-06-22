@@ -3,7 +3,7 @@
 import { useItemContext } from '@/context/item-context';
 import { useParams, notFound } from 'next/navigation';
 import ItemDetailClient from '@/components/item-detail-client';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Item Detail Skeleton
@@ -26,29 +26,26 @@ const ItemDetailSkeleton = () => (
 );
 
 export default function ItemDetailPage() {
-  const { items } = useItemContext();
+  const { items, isLoading } = useItemContext();
   const params = useParams();
   const id = params.id as string;
-  const [item, setItem] = useState<ClothingItem | undefined>(undefined);
+  
+  const item = items.find(p => p.id === id);
 
-
-  // Set the document title dynamically since we can't use generateMetadata in a Client Component
+  // Set the document title dynamically once the item is available
   useEffect(() => {
-    const currentItem = items.find(p => p.id === id);
-    if (currentItem) {
-      setItem(currentItem);
-      document.title = `${currentItem.title} | Vastra Vibes`;
+    if (item) {
+      document.title = `${item.title} | Vastra Vibes`;
     }
-  }, [id, items]);
+  }, [item]);
+
+  if (isLoading) {
+    return <ItemDetailSkeleton />;
+  }
 
   if (!item) {
-    // Show a skeleton while the context might still be hydrating from localstorage
-    // or if the item genuinely doesn't exist before notFound is triggered.
-    const itemExistsInCurrentList = items.some(p => p.id === id);
-    if (!itemExistsInCurrentList && items.length > 0) {
-      notFound();
-    }
-    return <ItemDetailSkeleton />;
+    // If loading is finished and we still don't have an item, it's a 404
+    notFound();
   }
 
   return <ItemDetailClient item={item} />;
