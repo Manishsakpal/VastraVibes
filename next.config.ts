@@ -35,6 +35,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.itl.cat',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   env: {
