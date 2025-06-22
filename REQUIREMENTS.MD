@@ -3,7 +3,7 @@
 
 ## 1. Project Overview
 
-Vastra Vibes is a web application designed as an e-commerce platform for Indian and modern apparel. It allows users to browse a collection of clothing items, and provides an admin interface for managing store content. The application features a dynamic frontend built with Next.js and React, styled with Tailwind CSS and ShadCN UI components, and leverages Genkit for potential AI-driven features.
+Vastra Vibes is a web application designed as an e-commerce platform for Indian and modern apparel. It allows users to browse a collection of clothing items, and provides an admin interface for managing store content. The application features a dynamic frontend built with Next.js and React, styled with Tailwind CSS and ShadCN UI components.
 
 ## 2. Core Technologies
 
@@ -12,7 +12,6 @@ Vastra Vibes is a web application designed as an e-commerce platform for Indian 
 *   **Styling:** Tailwind CSS
 *   **UI Components:** ShadCN UI
 *   **State Management:** React Context API (for item catalog and admin auth)
-*   **AI Integration:** Genkit (for AI flows, e.g., with Google Gemini models)
 *   **Language:** TypeScript
 *   **Package Manager:** npm
 *   **Version Control:** Git (assumed, though not explicitly managed by Firebase Studio)
@@ -32,9 +31,6 @@ Vastra Vibes is a web application designed as an e-commerce platform for Indian 
     *   Linux (most common distributions like Ubuntu, Fedora, etc.)
 *   **Web Browser:**
     *   Latest version of Chrome, Firefox, Edge, or Safari.
-*   **(Optional but Recommended for Genkit AI features)**
-    *   **Google Cloud SDK (`gcloud` CLI):** For authenticating with Google Cloud services if not using an API key directly.
-    *   **Google AI API Key:** If using Genkit with Google AI models, an API key might be required, typically set in a `.env.local` file (e.g., `GOOGLE_API_KEY=YOUR_KEY_HERE`).
 
 ### 3.2. Hardware
 *   Minimum 4GB RAM (8GB+ recommended for smoother development experience, especially with multiple dev servers and browser tabs).
@@ -48,21 +44,14 @@ Vastra Vibes is a web application designed as an e-commerce platform for Indian 
     ```bash
     npm install
     ```
-4.  **Set up Environment Variables (Optional but Recommended for AI):**
-    *   Create a `.env.local` file in the project root.
-    *   Add necessary environment variables, e.g., `GOOGLE_API_KEY=YOUR_API_KEY`.
+4.  **Set up Environment Variables (Optional):**
+    *   The project uses environment variables for certain configurations (e.g., `NEXT_PUBLIC_APP_URL`). While a default is provided for local development in `next.config.ts`, you can override it by creating a `.env.local` file in the project root.
 5.  **Run the Frontend Development Server:**
-    *   In one terminal:
+    *   In your terminal:
         ```bash
         npm run dev
         ```
     *   This usually starts the Next.js app on `http://localhost:9002`.
-6.  **Run the Genkit AI Development Server:**
-    *   In a *new, separate* terminal:
-        ```bash
-        npm run genkit:dev
-        ```
-    *   This usually starts the Genkit server on `http://localhost:4000` and provides a Developer UI.
 
 ## 5. Key Features (Functional Requirements)
 
@@ -126,7 +115,6 @@ Vastra Vibes is a web application designed as an e-commerce platform for Indian 
 *   Actual backend database integration (e.g., Firestore) instead of localStorage for items and users.
 *   Full shopping cart and checkout functionality.
 *   Real user authentication system (e.g., Firebase Authentication).
-*   AI-powered features via Genkit (e.g., product recommendations, image analysis, automated descriptions).
 *   Advanced product management for admins (edit, delete items).
 *   User account management for admins.
 *   Order management.
