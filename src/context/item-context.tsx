@@ -1,11 +1,9 @@
-
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
 import { initialItems } from '@/lib/mock-data.ts';
 import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { sanitizeItems } from '@/lib/utils';
 
 interface ItemContextType {
   items: ClothingItem[];
@@ -33,21 +31,23 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // If mock data is newer/larger, or if there's no stored data, use mock data.
       // This ensures that updates to the mock data file are reflected on next load.
       if (initialItems.length > parsedItems.length) {
-        loadedItems = sanitizeItems(initialItems);
+        loadedItems = initialItems;
       } else {
-        loadedItems = sanitizeItems(parsedItems);
+        loadedItems = parsedItems;
       }
 
     } catch (error) {
       console.warn("Could not access or parse localStorage for items, using initial data:", error);
-      loadedItems = sanitizeItems(initialItems);
+      loadedItems = initialItems;
     } finally {
-      setItems(loadedItems);
+      // A simple validation to ensure loadedItems is an array.
+      const finalItems = Array.isArray(loadedItems) ? loadedItems : initialItems;
+      setItems(finalItems);
       // Persist the potentially updated data back to localStorage
       try {
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(loadedItems));
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(finalItems));
       } catch (e) {
-        console.warn("Could not save sanitized items to localStorage", e);
+        console.warn("Could not save items to localStorage", e);
       }
       setIsLoading(false);
     }
@@ -59,8 +59,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         ...itemData,
         id: String(Date.now() + Math.random()),
       };
-      const sanitizedNewItem = sanitizeItems([newItem])[0];
-      const updatedItems = [...prevItems, sanitizedNewItem];
+      const updatedItems = [...prevItems, newItem];
       try {
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedItems));
       } catch (error) {
