@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -55,7 +56,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
               src={selectedImage}
               alt={item.title}
               fill
-              className="object-cover transition-all duration-300"
+              className="object-contain transition-all duration-300"
               sizes="(max-width: 768px) 100vw, 50vw"
               priority
             />
@@ -77,7 +78,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
                   src={imgUrl}
                   alt={`${item.title} thumbnail ${index + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="20vw"
                 />
               </button>
