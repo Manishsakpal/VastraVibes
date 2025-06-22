@@ -7,7 +7,7 @@ const newImageUrls = [
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_NjlRSYFuVH0q5-Ue7S20KdJNBndBVOZhWw&s'
 ];
 
-export const initialItems: ClothingItem[] = [
+export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[] = [
   {
     id: '1',
     title: 'Men\'s Classic Kurta',

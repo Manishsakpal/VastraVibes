@@ -64,10 +64,9 @@ function ItemList() {
   const loaderRef = useRef<HTMLDivElement | null>(null);
   
   const { theme, setTheme } = useTheme();
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>(() => themeToCategory(theme));
+  const selectedCategory = useMemo(() => themeToCategory(theme), [theme]);
 
   const handleCategorySelect = useCallback((category: Category | 'All') => {
-    setSelectedCategory(category);
     setTheme(categoryToTheme(category));
   }, [setTheme]);
 
@@ -168,7 +167,7 @@ function ItemList() {
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, {
       root: null,
-      rootMargin: "400px",
+      rootMargin: "0px", // Use a precise trigger
       threshold: 0,
     });
 
