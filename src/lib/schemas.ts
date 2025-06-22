@@ -10,8 +10,8 @@ export const addItemSchema = z.object({
   category: z.enum(CATEGORIES, {
     errorMap: () => ({ message: "Please select a valid category." }),
   }),
-  imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
-  imageHint: z.string().max(50, { message: "Image hint should be max 50 characters."}).optional(),
+  imageUrls: z.string().min(1, { message: "At least one image URL is required." }),
+  imageHints: z.string().max(500, { message: "Image hints should be max 500 characters."}).optional(),
 });
 
 export const checkoutSchema = z.object({

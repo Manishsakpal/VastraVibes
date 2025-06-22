@@ -31,20 +31,26 @@ const AddItemForm = () => {
       price: 0,
       discount: 0,
       size: '',
-      category: undefined, // Or provide a default category if desired
-      imageUrl: '',
-      imageHint: '',
+      category: undefined,
+      imageUrls: '',
+      imageHints: '',
     },
   });
 
   const onSubmit = (data: AddItemFormValues) => {
-    addItem(data);
+    const processedData = {
+        ...data,
+        imageUrls: data.imageUrls.split('\n').map(url => url.trim()).filter(url => url),
+        imageHints: data.imageHints?.split('\n').map(hint => hint.trim()).filter(hint => hint) || [],
+      };
+
+    addItem(processedData);
     toast({
       title: 'Item Added!',
       description: `${data.title} has been successfully added to the store.`,
     });
     form.reset();
-    router.push('/admin/dashboard'); // Optionally redirect or stay on page
+    router.push('/admin/dashboard');
   };
 
   return (
@@ -172,14 +178,14 @@ const AddItemForm = () => {
 
         <FormField
           control={form.control}
-          name="imageUrl"
+          name="imageUrls"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Image URLs</FormLabel>
               <FormControl>
-                <Input type="url" placeholder="https://example.com/image.png" {...field} />
+                <Textarea placeholder="https://example.com/image1.png&#10;https://example.com/image2.png" {...field} rows={4} />
               </FormControl>
-              <FormDescription>Enter a direct URL to the item image. Use placehold.co for placeholders.</FormDescription>
+              <FormDescription>Enter one image URL per line. The first URL will be the primary image.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -187,14 +193,14 @@ const AddItemForm = () => {
         
         <FormField
           control={form.control}
-          name="imageHint"
+          name="imageHints"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image Hint (Optional)</FormLabel>
+              <FormLabel>Image Hints (Optional)</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., 'blue saree' or 'mens shoes'" {...field} />
+                <Textarea placeholder="blue saree&#10;red dress" {...field} rows={4} />
               </FormControl>
-              <FormDescription>Two keywords for placeholder image services if the main URL is a placeholder (e.g., placehold.co). Example: "red dress"</FormDescription>
+              <FormDescription>Enter one hint per line, corresponding to each image URL. Max two keywords per hint.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

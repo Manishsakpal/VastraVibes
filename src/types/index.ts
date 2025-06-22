@@ -8,8 +8,8 @@ export interface ClothingItem {
   discount?: number; // e.g., 20 for 20% off
   size: string; // e.g., "S, M, L" or "Free Size"
   category: Category;
-  imageUrl: string;
-  imageHint?: string; // For placeholder image generation hint
+  imageUrls: string[];
+  imageHints?: string[]; // For placeholder image generation hint
 }
 
 export type CartItem = ClothingItem & {
