@@ -13,7 +13,7 @@ import { useTheme } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 12;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
 
@@ -72,8 +72,8 @@ export default function ItemList() {
             const title = item.title.toLowerCase();
             const description = item.description.toLowerCase();
             const specs = (item.specifications || []).join(' ').toLowerCase();
-            const sizes = item.size.toLowerCase();
-            const colors = item.colors.toLowerCase();
+            const sizes = (item.size || '').toLowerCase();
+            const colors = (item.colors || '').toLowerCase();
 
             words.forEach(word => {
                 if (title.includes(word)) score += 5;
@@ -105,7 +105,7 @@ export default function ItemList() {
         tempItems.sort((a, b) => {
           const priceA = a.discount ? a.price * (1 - a.discount / 100) : a.price;
           const priceB = b.discount ? b.price * (1 - b.discount / 100) : b.price;
-          return priceB - priceA;
+          return priceB - a.price;
         });
         break;
       case 'newest':
