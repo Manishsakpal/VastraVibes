@@ -38,8 +38,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
   return (
     <Link href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg" aria-label={`View details for ${item.title}`}>
       <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg group hover:-translate-y-1">
-        <CardHeader className="p-0 relative">
-          <div className="aspect-[3/4] w-full overflow-hidden bg-muted">
+        <CardHeader className="p-0">
+          <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative">
             <Image
               src={safeImageUrl}
               alt={item.title}
