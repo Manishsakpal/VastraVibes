@@ -104,9 +104,15 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
           )}
         </div>
         
-        <div className="space-y-2">
-            <h3 className="font-semibold">Available Sizes</h3>
-            <p className="text-muted-foreground">{item.size}</p>
+        <div className="space-y-4 border-t pt-4">
+            <div className="space-y-1">
+                <h3 className="font-semibold text-base">Available Sizes</h3>
+                <p className="text-muted-foreground text-sm">{item.size}</p>
+            </div>
+            <div className="space-y-1">
+                <h3 className="font-semibold text-base">Available Colors</h3>
+                <p className="text-muted-foreground text-sm">{item.colors}</p>
+            </div>
         </div>
 
         <div className="pt-4">

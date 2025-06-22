@@ -57,12 +57,16 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
           )}
         </CardHeader>
         <CardContent className="p-4 flex-grow space-y-2">
-          <h2 className="text-lg font-semibold leading-tight" title={`${item.title} (Sizes: ${item.size}) (Colors: ${item.colors})`}>
+          <h2 className="text-lg font-semibold leading-tight">
             {item.title}
           </h2>
           <p className="text-sm text-muted-foreground">
             {item.description}
           </p>
+           <div className="text-xs text-muted-foreground space-y-1 pt-1">
+             <p><span className="font-medium text-foreground/80">Sizes:</span> {item.size}</p>
+             <p><span className="font-medium text-foreground/80">Colors:</span> {item.colors}</p>
+           </div>
           <div className="flex items-center justify-between text-sm pt-1">
             <p className="text-xs bg-secondary/80 text-secondary-foreground px-2 py-1 rounded-full">{item.category}</p>
             <div className="flex items-baseline gap-2">
