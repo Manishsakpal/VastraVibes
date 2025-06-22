@@ -8,7 +8,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { isValidUrl } from '@/lib/utils';
 
 const BagSkeleton = () => (
   <div className="container mx-auto py-8">
@@ -96,8 +95,7 @@ export default function BagPage() {
                   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
                   const finalPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
                   
-                  const firstImageUrl = item.imageUrls?.[0];
-                  const safeImageUrl = firstImageUrl && isValidUrl(firstImageUrl) ? firstImageUrl : 'https://placehold.co/100x100.png';
+                  const safeImageUrl = item.imageUrls?.[0] || 'https://placehold.co/100x100.png';
 
                   return (
                     <li key={item.id} className="flex items-center p-4">

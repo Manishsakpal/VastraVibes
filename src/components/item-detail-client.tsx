@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ClothingItem } from '@/types';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -8,20 +8,21 @@ import { Badge } from '@/components/ui/badge';
 import { useBagContext } from '@/context/bag-context';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingBag, CheckCircle, AlertTriangle } from 'lucide-react';
-import { cn, isValidUrl } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Card } from './ui/card';
 
 export default function ItemDetailClient({ item }: { item: ClothingItem }) {
-  const getSafeMainImageUrl = () => {
-    const firstUrl = item.imageUrls?.[0];
-    return firstUrl && isValidUrl(firstUrl) ? firstUrl : '';
-  }
-
-  const [selectedImage, setSelectedImage] = useState(getSafeMainImageUrl());
+  // We trust item.imageUrls is sanitized at the context level.
+  const [selectedImage, setSelectedImage] = useState(item.imageUrls?.[0] || '');
   const { addToBag } = useBagContext();
   const { toast } = useToast();
   
-  const safeImageUrls = Array.isArray(item.imageUrls) ? item.imageUrls.filter(isValidUrl) : [];
+  // Update the selected image if the item prop changes (e.g., navigating between item pages)
+  useEffect(() => {
+    setSelectedImage(item.imageUrls?.[0] || '');
+  }, [item]);
+
+  const safeImageUrls = item.imageUrls || [];
 
   if (safeImageUrls.length === 0) {
     return (
@@ -31,11 +32,6 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
         <p className="text-muted-foreground">We're sorry, but the images for this product could not be loaded.</p>
       </Card>
     )
-  }
-
-  // If the initially selected image was invalid, default to the first valid one
-  if (!selectedImage) {
-    setSelectedImage(safeImageUrls[0]);
   }
 
   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
@@ -54,14 +50,16 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
       {/* Image Gallery */}
       <div className="space-y-4">
         <div className="relative aspect-[3/4] w-full bg-muted rounded-lg overflow-hidden shadow-lg">
-          <Image
-            src={selectedImage}
-            alt={item.title}
-            fill
-            className="object-cover transition-all duration-300"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            priority
-          />
+          {selectedImage && (
+            <Image
+              src={selectedImage}
+              alt={item.title}
+              fill
+              className="object-cover transition-all duration-300"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
+          )}
         </div>
         {safeImageUrls.length > 1 && (
           <div className="grid grid-cols-5 gap-2">
