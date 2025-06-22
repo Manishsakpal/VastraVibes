@@ -52,15 +52,43 @@ function ItemList() {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
     }
     
-    // 2. Filter by search term
+    // 2. If search term exists, filter and sort by relevance
     if (debouncedSearchTerm) {
         const searchWords = debouncedSearchTerm.toLowerCase().split(' ').filter(Boolean);
-        tempItems = tempItems.filter(item => 
-          searchWords.every(word => item.searchableText.includes(word))
-        );
+        
+        const scoredItems = tempItems.map(item => {
+            const matchScore = searchWords.reduce((score, word) => {
+                return item.searchableText.includes(word) ? score + 1 : score;
+            }, 0);
+            return { ...item, matchScore };
+        }).filter(item => item.matchScore > 0);
+
+        // Sort by match score first, then by the selected sort option
+        scoredItems.sort((a, b) => {
+            if (a.matchScore !== b.matchScore) {
+                return b.matchScore - a.matchScore; // Higher score first
+            }
+            
+            // Secondary sort based on user selection
+            switch (sortOption) {
+                case 'price-asc':
+                    return a.finalPrice - b.finalPrice;
+                case 'price-desc':
+                    return b.finalPrice - a.finalPrice;
+                case 'newest':
+                    return parseInt(b.id) - parseInt(a.id);
+                case 'popular':
+                default:
+                    const countA = purchaseCounts[a.id] || 0;
+                    const countB = purchaseCounts[b.id] || 0;
+                    return countB - countA;
+            }
+        });
+        
+        return scoredItems;
     }
 
-    // 3. Sort the results
+    // 3. Sort the results if no search term
     switch (sortOption) {
       case 'price-asc':
         tempItems.sort((a, b) => a.finalPrice - b.finalPrice);
