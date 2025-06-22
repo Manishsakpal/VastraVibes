@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -28,8 +29,8 @@ const AddItemForm = () => {
     defaultValues: {
       title: '',
       description: '',
-      price: 0,
-      discount: 0,
+      price: undefined,
+      discount: undefined,
       size: '',
       category: undefined,
       imageUrls: '',
@@ -41,6 +42,8 @@ const AddItemForm = () => {
   const onSubmit = (data: AddItemFormValues) => {
     const processedData = {
         ...data,
+        price: data.price,
+        discount: data.discount || 0,
         imageUrls: data.imageUrls.split('\n').map(url => url.trim()).filter(url => url),
         imageHints: data.imageHints?.split('\n').map(hint => hint.trim()).filter(hint => hint) || [],
         specifications: data.specifications?.split('\n').map(spec => spec.trim()).filter(spec => spec) || [],
@@ -99,11 +102,7 @@ const AddItemForm = () => {
                     step="0.01"
                     placeholder="e.g., 2999.00"
                     {...field}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value === "" ? "" : parseFloat(value));
-                    }}
-                    value={isNaN(field.value) || field.value === 0 ? "" : field.value}
+                    onChange={e => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                   />
                 </FormControl>
                 <FormMessage />
@@ -123,12 +122,8 @@ const AddItemForm = () => {
                     min="0"
                     max="100"
                     placeholder="e.g., 15"
-                    {...field}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value === "" ? "" : parseInt(value, 10));
-                    }}
-                    value={isNaN(field.value) || field.value === 0 ? "" : field.value}
+                     {...field}
+                    onChange={e => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                   />
                 </FormControl>
                 <FormMessage />
