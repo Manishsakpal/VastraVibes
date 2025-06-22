@@ -1,3 +1,4 @@
+
 import type { ClothingItem } from '@/types';
 
 export const initialItems: ClothingItem[] = [
@@ -1116,5 +1117,12 @@ export const initialItems: ClothingItem[] = [
     category: 'Women',
     imageUrls: ['https://placehold.co/600x800.png', 'https://placehold.co/600x800.png'],
     imageHints: ['womens top', 'top detail'],
+    specifications: [
+        'Fabric: Cotton Blend',
+        'Fit: Regular',
+        'Sleeve: Cold-Shoulder'
+      ],
   },
 ];
+
+    
