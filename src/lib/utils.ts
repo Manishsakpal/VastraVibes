@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const ALLOWED_HOSTNAMES = ['placehold.co', 'images.unsplash.com', 'plus.unsplash.com'];
+const ALLOWED_HOSTNAMES = ['placehold.co', 'images.unsplash.com', 'plus.unsplash.com', 'encrypted-tbn0.gstatic.com'];
 const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x800.png';
 
 // This function now enforces that all image URLs are from allowed hostnames.
