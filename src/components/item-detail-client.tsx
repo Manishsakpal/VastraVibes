@@ -36,7 +36,6 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
   }
 
   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
-  const discountedPrice = hasDiscount ? item.price * (1 - item.discount / 100) : item.price;
 
   const handleAddToBag = () => {
     addToBag(item);
@@ -96,7 +95,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
         </div>
 
         <div className="flex items-baseline gap-4">
-          <span className="text-4xl font-bold">₹{discountedPrice.toFixed(2)}</span>
+          <span className="text-4xl font-bold">₹{item.finalPrice.toFixed(2)}</span>
           {hasDiscount && (
             <span className="text-2xl text-muted-foreground line-through">₹{item.price.toFixed(2)}</span>
           )}

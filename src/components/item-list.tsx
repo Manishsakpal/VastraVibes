@@ -41,57 +41,29 @@ export default function ItemList() {
   const filteredAndSortedItems = useMemo(() => {
     let tempItems = [...items];
 
-    // 1. Filter by category
+    // 1. Filter by category (very fast)
     if (selectedCategory !== 'All') {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
     }
     
-    // 2. If there's a search term, apply relevance-based scoring and sorting
+    // 2. Filter by search term (now much faster)
     if (debouncedSearchTerm) {
         const searchWords = debouncedSearchTerm.toLowerCase().split(' ').filter(Boolean);
-        
-        const calculateScore = (item: ClothingItem, words: string[]): number => {
-            let score = 0;
-            const title = item.title.toLowerCase();
-            const description = item.description.toLowerCase();
-            const specs = (item.specifications || []).join(' ').toLowerCase();
-            const sizes = (item.size || '').toLowerCase();
-            const colors = (item.colors || '').toLowerCase();
-
-            words.forEach(word => {
-                if (title.includes(word)) score += 5;
-                if (colors.includes(word)) score += 3;
-                if (sizes.includes(word)) score += 3;
-                if (specs.includes(word)) score += 2;
-                if (description.includes(word)) score += 1;
-            });
-            return score;
-        };
-
-        return tempItems
-            .map(item => ({ item, score: calculateScore(item, searchWords) }))
-            .filter(i => i.score > 0)
-            .sort((a, b) => b.score - a.score)
-            .map(i => i.item);
+        tempItems = tempItems.filter(item => 
+          searchWords.every(word => item.searchableText.includes(word))
+        );
     }
 
-    // 3. Otherwise, apply standard sorting options
+    // 3. Sort the results (now faster with pre-computed price)
     switch (sortOption) {
       case 'price-asc':
-        tempItems.sort((a, b) => {
-          const priceA = a.discount ? a.price * (1 - a.discount / 100) : a.price;
-          const priceB = b.discount ? b.price * (1 - b.discount / 100) : b.price;
-          return priceA - priceB;
-        });
+        tempItems.sort((a, b) => a.finalPrice - b.finalPrice);
         break;
       case 'price-desc':
-        tempItems.sort((a, b) => {
-          const priceA = a.discount ? a.price * (1 - a.discount / 100) : a.price;
-          const priceB = b.discount ? b.price * (1 - b.discount / 100) : b.price;
-          return priceB - priceA;
-        });
+        tempItems.sort((a, b) => b.finalPrice - a.finalPrice);
         break;
       case 'newest':
+        // Assuming IDs are numeric and sequential
         tempItems.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
       case 'popular':
@@ -163,7 +135,7 @@ export default function ItemList() {
             />
           </div>
           <div className="w-full sm:w-48">
-             <Select value={sortOption} onValueChange={setSortOption} disabled={!!debouncedSearchTerm}>
+             <Select value={sortOption} onValueChange={setSortOption}>
               <SelectTrigger>
                 <ArrowUpDown className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Sort by..." />

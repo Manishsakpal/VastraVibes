@@ -22,7 +22,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
   const { addToBag } = useBagContext();
   
   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
-  const discountedPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
 
   const handleAddToBag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -73,7 +72,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
                 </p>
               )}
               <p className="font-medium text-primary">
-                ₹{discountedPrice.toFixed(2)}
+                ₹{item.finalPrice.toFixed(2)}
               </p>
             </div>
           </div>

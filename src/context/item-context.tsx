@@ -1,68 +1,90 @@
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
-import { initialItems } from '@/lib/mock-data';
+import { initialItems as rawInitialItems } from '@/lib/mock-data';
 import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { sanitizeItems } from '@/lib/utils';
 
+// Helper function to add performance-optimized fields
+const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]): ClothingItem[] => {
+  return items.map(item => {
+    const finalPrice = (item.discount && item.discount > 0)
+      ? item.price * (1 - item.discount / 100)
+      : item.price;
+
+    const searchableText = [
+      item.title,
+      item.description,
+      item.category,
+      item.size,
+      item.colors,
+      ...(item.specifications || [])
+    ].join(' ').toLowerCase();
+
+    // The type assertion is safe because we are adding the missing properties.
+    return { ...item, finalPrice, searchableText } as ClothingItem;
+  });
+};
+
 interface ItemContextType {
   items: ClothingItem[];
-  addItem: (item: Omit<ClothingItem, 'id'>) => void;
+  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
 }
 
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Initialize with static data for instant load.
-  const [items, setItems] = useState<ClothingItem[]>(initialItems);
+  const [items, setItems] = useState<ClothingItem[]>(() => processRawItems(sanitizeItems(rawInitialItems)));
 
-  // Asynchronously hydrate with data from localStorage after initial render.
   useEffect(() => {
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
       if (storedItemsRaw) {
         const storedItemsParsed = JSON.parse(storedItemsRaw);
         
-        // If localStorage has more or equal items, it's considered the source of truth.
-        if (Array.isArray(storedItemsParsed) && storedItemsParsed.length >= initialItems.length) {
+        if (Array.isArray(storedItemsParsed) && storedItemsParsed.length > 0) {
+          // Process items from storage
           const sanitized = sanitizeItems(storedItemsParsed);
-          setItems(sanitized);
+          const processed = processRawItems(sanitized);
+          setItems(processed);
         } else {
-          // If mock data is newer/larger, update localStorage.
-          localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
-          setItems(initialItems); // Also update state to reflect the reset
+          // If storage is empty or invalid, fallback to initial and update storage
+          const initialProcessedItems = processRawItems(sanitizeItems(rawInitialItems));
+          localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawInitialItems));
+          setItems(initialProcessedItems);
         }
       } else {
         // If nothing in storage, populate it with initial data.
-         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
+         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawInitialItems));
       }
-    } catch (error) {
+    } catch (error)
+     {
       console.warn("Could not sync items from localStorage, using initial data:", error);
-      // Ensure state is at least the initial items.
-      setItems(initialItems);
     }
   }, []);
 
-  const addItem = useCallback((itemData: Omit<ClothingItem, 'id'>) => {
+  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => {
     setItems(prevItems => {
-      const newItem: ClothingItem = {
+      const newItemRaw: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'> = {
         ...itemData,
         id: String(Date.now() + Math.random()),
-        colors: itemData.colors || '',
       };
+      
+      const sanitizedNewItem = sanitizeItems([newItemRaw])[0];
+      const [processedNewItem] = processRawItems([sanitizedNewItem]);
 
-      // Sanitize the new item's URLs before adding it to the state.
-      const sanitizedNewItem = sanitizeItems([newItem])[0];
-
-      const updatedItems = [...prevItems, sanitizedNewItem];
+      const rawPrevItems = prevItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
+      const updatedRawItems = [...rawPrevItems, sanitizedNewItem];
+      const updatedProcessedItems = [...prevItems, processedNewItem];
+      
       try {
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedItems));
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedRawItems));
       } catch (error) {
         console.warn("Could not save new item to localStorage:", error);
       }
-      return updatedItems;
+      return updatedProcessedItems;
     });
   }, []);
 

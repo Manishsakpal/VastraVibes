@@ -12,6 +12,10 @@ export interface ClothingItem {
   imageUrls: string[];
   imageHints?: string[]; // For placeholder image generation hint
   specifications?: string[];
+  
+  // Added for performance optimization
+  finalPrice: number;
+  searchableText: string;
 }
 
 export type CartItem = ClothingItem & {
