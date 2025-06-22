@@ -102,7 +102,7 @@ const AddItemForm = () => {
                     step="0.01"
                     placeholder="e.g., 2999.00"
                     {...field}
-                    onChange={e => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+                    value={field.value ?? ''}
                   />
                 </FormControl>
                 <FormMessage />
@@ -123,7 +123,7 @@ const AddItemForm = () => {
                     max="100"
                     placeholder="e.g., 15"
                      {...field}
-                    onChange={e => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+                     value={field.value ?? ''}
                   />
                 </FormControl>
                 <FormMessage />
