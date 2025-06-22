@@ -31,14 +31,14 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg group">
+    <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg group hover:-translate-y-1">
       <CardHeader className="p-0 relative">
         <div className="aspect-[3/4] w-full overflow-hidden bg-muted">
           <Image
             src={item.imageUrl}
             alt={item.title}
             fill={true}
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             data-ai-hint={item.imageHint || "clothing item"}
             priority={priority}

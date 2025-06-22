@@ -17,8 +17,57 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
+
+const CheckoutSkeleton = () => (
+  <div className="container mx-auto py-8">
+    <Skeleton className="h-10 w-40 mb-6" />
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+      <div className="lg:col-span-3">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-7 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+            <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+            <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+              <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+              <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+            </div>
+            <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+            <Skeleton className="h-12 w-full mt-6" />
+          </CardContent>
+        </Card>
+      </div>
+      <div className="lg:col-span-2">
+        <Card>
+          <CardHeader><Skeleton className="h-7 w-3/4" /></CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center"><Skeleton className="h-12 w-12 rounded-md mr-3" /><div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-12" /></div></div>
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              ))}
+            </div>
+            <Separator className="my-4" />
+            <div className="space-y-2"><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-full" /></div>
+            <Separator className="my-4" />
+            <Skeleton className="h-6 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </div>
+);
+
 
 export default function CheckoutPage() {
   const { cartItems, totalPrice, clearBag, isLoading, cartCount } = useBagContext();
@@ -64,11 +113,11 @@ export default function CheckoutPage() {
   };
 
   if (isLoading || cartCount === 0) {
-    return <div className="text-center py-20">Loading checkout...</div>;
+    return <CheckoutSkeleton />;
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 animate-fade-in-up">
        <Button variant="outline" asChild className="mb-6">
         <Link href="/bag">
           <ArrowLeft className="mr-2 h-4 w-4" />

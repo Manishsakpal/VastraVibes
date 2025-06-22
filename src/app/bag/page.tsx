@@ -7,6 +7,57 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const BagSkeleton = () => (
+  <div className="container mx-auto py-8">
+    <Skeleton className="h-9 w-1/2 mb-6" />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2">
+        <Card>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center p-4">
+                  <Skeleton className="h-24 w-24 rounded-md mr-4" />
+                  <div className="flex-grow space-y-2">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-8 w-24" />
+                  </div>
+                  <div className="text-right space-y-2">
+                    <Skeleton className="h-5 w-20" />
+                     <Skeleton className="h-8 w-8 ml-auto" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <Skeleton className="h-7 w-3/4" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+             <div className="space-y-2">
+                <Skeleton className="h-5 w-full" />
+                <Skeleton className="h-5 w-full" />
+                <Skeleton className="h-5 w-full" />
+             </div>
+            <Separator />
+            <Skeleton className="h-7 w-full" />
+          </CardContent>
+          <CardFooter>
+            <Skeleton className="h-12 w-full" />
+          </CardFooter>
+        </Card>
+      </div>
+    </div>
+  </div>
+);
+
 
 export default function BagPage() {
   const { cartItems, removeFromBag, updateQuantity, totalPrice, cartCount, isLoading } = useBagContext();
@@ -16,16 +67,12 @@ export default function BagPage() {
   const grandTotal = totalPrice + taxes + shipping;
 
   if (isLoading) {
-    return (
-      <div className="text-center">
-        <p>Loading your bag...</p>
-      </div>
-    );
+    return <BagSkeleton />;
   }
 
   if (cartCount === 0) {
     return (
-      <div className="text-center py-20 flex flex-col items-center">
+      <div className="text-center py-20 flex flex-col items-center animate-fade-in-up">
         <ShoppingBag className="h-24 w-24 text-muted-foreground mb-4" />
         <h1 className="text-3xl font-bold text-primary mb-2">Your Bag is Empty</h1>
         <p className="text-muted-foreground mb-6">Looks like you haven’t added anything to your bag yet.</p>
@@ -37,7 +84,7 @@ export default function BagPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 animate-fade-in-up">
       <h1 className="text-3xl font-bold mb-6 text-primary">Your Shopping Bag ({cartCount})</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
