@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -5,16 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useItemContext } from '@/context/item-context';
-import { CATEGORIES } from '@/lib/constants';
-import type { Category } from '@/types';
+import { CATEGORIES, SIZES, COLORS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { addItemSchema } from '@/lib/schemas';
+import { Checkbox } from '../ui/checkbox';
 
 type AddItemFormValues = z.infer<typeof addItemSchema>;
 
@@ -28,22 +28,36 @@ const AddItemForm = () => {
     defaultValues: {
       title: '',
       description: '',
-      price: 0,
-      size: '',
-      category: undefined, // Or provide a default category if desired
-      imageUrl: '',
-      imageHint: '',
+      price: undefined,
+      discount: undefined,
+      size: [],
+      colors: [],
+      category: undefined,
+      imageUrls: '',
+      imageHints: '',
+      specifications: '',
     },
   });
 
   const onSubmit = (data: AddItemFormValues) => {
-    addItem(data);
+    const processedData = {
+        ...data,
+        price: data.price,
+        discount: data.discount || 0,
+        size: data.size.join(', '),
+        colors: data.colors.join(', '),
+        imageUrls: data.imageUrls.split('\n').map(url => url.trim()).filter(url => url),
+        imageHints: data.imageHints?.split('\n').map(hint => hint.trim()).filter(hint => hint) || [],
+        specifications: data.specifications?.split('\n').map(spec => spec.trim()).filter(spec => spec) || [],
+      };
+
+    addItem(processedData);
     toast({
       title: 'Item Added!',
       description: `${data.title} has been successfully added to the store.`,
     });
     form.reset();
-    router.push('/admin/dashboard'); // Optionally redirect or stay on page
+    router.push('/admin/dashboard');
   };
 
   return (
@@ -77,15 +91,79 @@ const AddItemForm = () => {
           )}
         />
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price (₹)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g., 2999.00"
+                    {...field}
+                    value={field.value ?? ''}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="discount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Discount (%)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    placeholder="e.g., 15"
+                     {...field}
+                     value={field.value ?? ''}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
         <FormField
           control={form.control}
-          name="price"
-          render={({ field }) => (
+          name="size"
+          render={() => (
             <FormItem>
-              <FormLabel>Price ($)</FormLabel>
-              <FormControl>
-                <Input type="number" step="0.01" placeholder="e.g., 49.99" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} />
-              </FormControl>
+              <FormLabel>Available Sizes</FormLabel>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {SIZES.map((item) => (
+                  <FormField
+                    key={item}
+                    control={form.control}
+                    name="size"
+                    render={({ field }) => (
+                      <FormItem key={item} className="flex flex-row items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(item)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, item])
+                                : field.onChange(field.value?.filter((value) => value !== item));
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal text-sm">{item}</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -93,14 +171,34 @@ const AddItemForm = () => {
 
         <FormField
           control={form.control}
-          name="size"
-          render={({ field }) => (
+          name="colors"
+          render={() => (
             <FormItem>
-              <FormLabel>Size(s)</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., S, M, L or Free Size" {...field} />
-              </FormControl>
-              <FormDescription>Enter available sizes, comma-separated.</FormDescription>
+              <FormLabel>Available Colors</FormLabel>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {COLORS.map((item) => (
+                  <FormField
+                    key={item}
+                    control={form.control}
+                    name="colors"
+                    render={({ field }) => (
+                      <FormItem key={item} className="flex flex-row items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(item)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, item])
+                                : field.onChange(field.value?.filter((value) => value !== item));
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal text-sm">{item}</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -133,14 +231,14 @@ const AddItemForm = () => {
 
         <FormField
           control={form.control}
-          name="imageUrl"
+          name="imageUrls"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Image URLs</FormLabel>
               <FormControl>
-                <Input type="url" placeholder="https://example.com/image.png" {...field} />
+                <Textarea placeholder="https://example.com/image1.png&#10;https://example.com/image2.png" {...field} rows={4} />
               </FormControl>
-              <FormDescription>Enter a direct URL to the item image. Use placehold.co for placeholders.</FormDescription>
+              <FormDescription>Enter one image URL per line. The first URL will be the primary image.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -148,14 +246,29 @@ const AddItemForm = () => {
         
         <FormField
           control={form.control}
-          name="imageHint"
+          name="imageHints"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image Hint (Optional)</FormLabel>
+              <FormLabel>Image Hints (Optional)</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., 'blue saree' or 'mens shoes'" {...field} />
+                <Textarea placeholder="blue saree&#10;red dress" {...field} rows={4} />
               </FormControl>
-              <FormDescription>Two keywords for placeholder image services if the main URL is a placeholder (e.g., placehold.co). Example: "red dress"</FormDescription>
+              <FormDescription>Enter one hint per line, corresponding to each image URL. Max two keywords per hint.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="specifications"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Specifications (Optional)</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Feature 1: Detail&#10;Feature 2: Detail" {...field} rows={4} />
+              </FormControl>
+              <FormDescription>Enter one specification per line. These will be displayed as a list on the product page.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

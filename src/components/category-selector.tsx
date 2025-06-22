@@ -1,5 +1,7 @@
+
 "use client";
 
+import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Category } from "@/types";
 import { Shirt, PersonStanding, Baby, Palette, LayoutGrid, List } from 'lucide-react'; // Import icons
@@ -33,7 +35,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
             <TabsTrigger
               key={category}
               value={category}
-              className="flex items-center gap-2 px-3 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all"
+              className="flex items-center gap-2 px-3 py-1.5 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=active]:shadow-md rounded-md transition-all"
               aria-label={`Filter by ${category} category`}
             >
               <Icon className="h-4 w-4" />
@@ -46,4 +48,4 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
   );
 };
 
-export default CategorySelector;
+export default React.memo(CategorySelector);

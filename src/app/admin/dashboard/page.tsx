@@ -4,16 +4,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, ShoppingBag, Users } from 'lucide-react';
-import type { Metadata } from 'next';
-
-// export const metadata: Metadata = {
-//   title: 'Admin Dashboard',
-//   description: 'Manage Vastra Vibes store content.',
-// };
 
 const AdminDashboardPage = () => {
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 animate-fade-in-up">
       <Card className="mb-8 shadow-lg">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-primary">Admin Dashboard</CardTitle>
@@ -22,7 +16,7 @@ const AdminDashboardPage = () => {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="hover:shadow-xl transition-shadow duration-300">
+        <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <PlusCircle className="text-accent h-6 w-6" />
@@ -39,7 +33,7 @@ const AdminDashboardPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-xl transition-shadow duration-300">
+        <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <ShoppingBag className="text-primary h-6 w-6" />
@@ -54,7 +48,7 @@ const AdminDashboardPage = () => {
           </CardContent>
         </Card>
         
-        <Card className="hover:shadow-xl transition-shadow duration-300">
+        <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <Users className="text-secondary-foreground h-6 w-6" />

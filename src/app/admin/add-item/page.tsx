@@ -5,16 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import type { Metadata } from 'next';
-
-// export const metadata: Metadata = {
-//   title: 'Add New Item',
-//   description: 'Add a new clothing item to the Vastra Vibes store.',
-// };
 
 const AddItemPage = () => {
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 animate-fade-in-up">
        <Button variant="outline" asChild className="mb-6">
         <Link href="/admin/dashboard">
           <ArrowLeft className="mr-2 h-4 w-4" />
