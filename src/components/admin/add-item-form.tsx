@@ -84,7 +84,20 @@ const AddItemForm = () => {
             <FormItem>
               <FormLabel>Price ($)</FormLabel>
               <FormControl>
-                <Input type="number" step="0.01" placeholder="e.g., 49.99" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} />
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="e.g., 49.99"
+                  {...field}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Pass empty string or a parsed float. Zod will coerce and validate.
+                    // This prevents `NaN` from being passed to the form state.
+                    field.onChange(value === "" ? "" : parseFloat(value));
+                  }}
+                  // Ensure the input value is never NaN and doesn't show the initial 0.
+                  value={isNaN(field.value) || field.value === 0 ? "" : field.value}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
