@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 const ALLOWED_HOSTNAMES = ['images.unsplash.com', 'plus.unsplash.com', 'placehold.co'];
 
 // Check if a URL is valid and from an allowed host
-const isValidUrl = (url: string): boolean => {
+export const isValidUrl = (url: string): boolean => {
   try {
     // Ensure the URL is a string and not empty
     if (typeof url !== 'string' || !url) {

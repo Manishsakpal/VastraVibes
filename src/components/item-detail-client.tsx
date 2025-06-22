@@ -8,18 +8,22 @@ import { Badge } from '@/components/ui/badge';
 import { useBagContext } from '@/context/bag-context';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingBag, CheckCircle, AlertTriangle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, isValidUrl } from '@/lib/utils';
 import { Card } from './ui/card';
 
 export default function ItemDetailClient({ item }: { item: ClothingItem }) {
-  // Safely initialize with the first image, or an empty string if none exist.
-  const [selectedImage, setSelectedImage] = useState(item.imageUrls?.[0] || '');
+  const getSafeMainImageUrl = () => {
+    const firstUrl = item.imageUrls?.[0];
+    return firstUrl && isValidUrl(firstUrl) ? firstUrl : '';
+  }
+
+  const [selectedImage, setSelectedImage] = useState(getSafeMainImageUrl());
   const { addToBag } = useBagContext();
   const { toast } = useToast();
   
-  // This is a fallback for the client, in case an item without images gets through.
-  // The primary guard should be in the page component that fetches the data.
-  if (!item.imageUrls || item.imageUrls.length === 0) {
+  const safeImageUrls = Array.isArray(item.imageUrls) ? item.imageUrls.filter(isValidUrl) : [];
+
+  if (safeImageUrls.length === 0) {
     return (
       <Card className="flex flex-col items-center justify-center text-center p-8 gap-4 animate-fade-in-up">
         <AlertTriangle className="h-16 w-16 text-destructive" />
@@ -27,6 +31,11 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
         <p className="text-muted-foreground">We're sorry, but the images for this product could not be loaded.</p>
       </Card>
     )
+  }
+
+  // If the initially selected image was invalid, default to the first valid one
+  if (!selectedImage) {
+    setSelectedImage(safeImageUrls[0]);
   }
 
   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
@@ -54,9 +63,9 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
             priority
           />
         </div>
-        {item.imageUrls.length > 1 && (
+        {safeImageUrls.length > 1 && (
           <div className="grid grid-cols-5 gap-2">
-            {item.imageUrls.map((imgUrl, index) => (
+            {safeImageUrls.map((imgUrl, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedImage(imgUrl)}

@@ -18,6 +18,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
+import { isValidUrl } from '@/lib/utils';
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
@@ -182,11 +183,14 @@ export default function CheckoutPage() {
                 {cartItems.map(item => {
                   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
                   const finalPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
+                  const firstImageUrl = item.imageUrls?.[0];
+                  const safeImageUrl = firstImageUrl && isValidUrl(firstImageUrl) ? firstImageUrl : 'https://placehold.co/100x100.png';
+
                   return (
                     <div key={item.id} className="flex items-center justify-between text-sm">
                       <div className="flex items-center">
                         <div className="relative h-12 w-12 rounded-md overflow-hidden mr-3">
-                          <Image src={item.imageUrls?.[0] || 'https://placehold.co/100x100.png'} alt={item.title} layout="fill" objectFit="cover" />
+                          <Image src={safeImageUrl} alt={item.title} layout="fill" objectFit="cover" />
                         </div>
                         <div>
                           <p className="font-medium truncate max-w-[150px]">{item.title}</p>

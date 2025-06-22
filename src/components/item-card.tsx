@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBagContext } from '@/context/bag-context';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { isValidUrl } from '@/lib/utils';
 
 interface ItemCardProps {
   item: ClothingItem;
@@ -33,13 +34,16 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
     });
   };
 
+  const firstImageUrl = item.imageUrls?.[0];
+  const safeImageUrl = firstImageUrl && isValidUrl(firstImageUrl) ? firstImageUrl : 'https://placehold.co/600x800.png';
+
   return (
     <Link href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg" aria-label={`View details for ${item.title}`}>
       <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg group hover:-translate-y-1">
         <CardHeader className="p-0 relative">
           <div className="aspect-[3/4] w-full overflow-hidden bg-muted">
             <Image
-              src={item.imageUrls?.[0] || 'https://placehold.co/600x800.png'}
+              src={safeImageUrl}
               alt={item.title}
               fill={true}
               className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"

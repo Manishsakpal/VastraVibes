@@ -3,7 +3,7 @@
 import { useItemContext } from '@/context/item-context';
 import { useParams, notFound } from 'next/navigation';
 import ItemDetailClient from '@/components/item-detail-client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Item Detail Skeleton
@@ -29,7 +29,7 @@ export default function ItemDetailPage() {
   const { items } = useItemContext();
   const params = useParams();
   const id = params.id as string;
-  const [item, setItem] = useState(items.find(p => p.id === id));
+  const [item, setItem] = useState<ClothingItem | undefined>(undefined);
 
 
   // Set the document title dynamically since we can't use generateMetadata in a Client Component
