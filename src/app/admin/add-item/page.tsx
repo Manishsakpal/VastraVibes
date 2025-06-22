@@ -5,12 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import type { Metadata } from 'next';
-
-// export const metadata: Metadata = {
-//   title: 'Add New Item',
-//   description: 'Add a new clothing item to the Vastra Vibes store.',
-// };
 
 const AddItemPage = () => {
   return (

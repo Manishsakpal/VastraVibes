@@ -9,11 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LogIn, AlertCircle } from 'lucide-react';
-import type { Metadata } from 'next';
-
-// Cannot define metadata in client component directly, will handle in layout or parent server component.
-// For this standalone page, we are focusing on client logic.
-// If SEO is critical for this page, convert to server component or use a higher-level metadata setup.
 
 const AdminLoginPage = () => {
   const [id, setId] = useState('');
@@ -103,9 +98,3 @@ const AdminLoginPage = () => {
 };
 
 export default AdminLoginPage;
-
-// Note: For actual metadata, `generateMetadata` would be used in a server component.
-// export const metadata: Metadata = {
-// title: 'Admin Login',
-// description: 'Admin login page for Vastra Vibes.',
-// };

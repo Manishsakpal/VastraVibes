@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import type { ClothingItem } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { ShoppingBag } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useBagContext } from '@/context/bag-context';
@@ -28,7 +28,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   return (
     <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg">
       <CardHeader className="p-0">
-        <div className="aspect-[3/4] relative w-full overflow-hidden">
+        <div className="aspect-[3/4] relative w-full overflow-hidden bg-muted">
           <Image
             src={item.imageUrl}
             alt={item.title}
@@ -41,12 +41,12 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
         </div>
       </CardHeader>
       <CardContent className="p-4 flex-grow space-y-2">
-        <CardTitle className="text-lg font-semibold leading-tight truncate" title={item.title}>
+        <h2 className="text-lg font-semibold leading-tight truncate" title={item.title}>
           {item.title}
-        </CardTitle>
-        <CardDescription className="text-sm text-muted-foreground line-clamp-2" title={item.description}>
+        </h2>
+        <p className="text-sm text-muted-foreground line-clamp-2" title={item.description}>
           {item.description}
-        </CardDescription>
+        </p>
         <div className="flex items-center justify-between text-sm pt-1">
           <p className="text-xs bg-secondary/80 text-secondary-foreground px-2 py-1 rounded-full">{item.category}</p>
           <p className="font-medium text-primary">
