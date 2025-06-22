@@ -186,7 +186,7 @@ export default function CheckoutPage() {
                     <div key={item.id} className="flex items-center justify-between text-sm">
                       <div className="flex items-center">
                         <div className="relative h-12 w-12 rounded-md overflow-hidden mr-3">
-                          <Image src={item.imageUrls[0]} alt={item.title} layout="fill" objectFit="cover" />
+                          <Image src={item.imageUrls?.[0] || 'https://placehold.co/100x100.png'} alt={item.title} layout="fill" objectFit="cover" />
                         </div>
                         <div>
                           <p className="font-medium truncate max-w-[150px]">{item.title}</p>
