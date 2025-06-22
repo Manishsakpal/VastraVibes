@@ -1,7 +1,6 @@
-
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import type { ClothingItem, Category } from '@/types';
 import ItemCard from '@/components/item-card';
 import CategorySelector from '@/components/category-selector';
@@ -13,6 +12,8 @@ import { useTheme } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
+import { themeToCategory, categoryToTheme } from '@/context/theme-context';
+
 
 const ITEMS_PER_PAGE = 8;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
@@ -56,36 +57,18 @@ const ItemListSkeleton = () => (
 
 function ItemList() {
   const { items, isLoading } = useItemContext();
+  const { theme, setTheme } = useTheme();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [sortOption, setSortOption] = useState('popular');
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
-  
-  const { theme, setTheme } = useTheme();
-  const selectedCategory = useMemo(() => {
-      const categoryMap: Record<string, Category | 'All'> = {
-          'theme-default': 'All',
-          'theme-men': 'Men',
-          'theme-women': 'Women',
-          'theme-kids': 'Kids',
-          'theme-ethnic': 'Ethnic',
-          'theme-western': 'Western',
-      };
-      return categoryMap[theme] || 'All';
-  }, [theme]);
+
+  const selectedCategory = useMemo(() => themeToCategory(theme), [theme]);
 
   const handleCategorySelect = useCallback((category: Category | 'All') => {
-      const themeMap: Record<string, string> = {
-          'All': 'theme-default',
-          'Men': 'theme-men',
-          'Women': 'theme-women',
-          'Kids': 'theme-kids',
-          'Ethnic': 'theme-ethnic',
-          'Western': 'theme-western',
-      };
-      setTheme(themeMap[category]);
+    setTheme(categoryToTheme(category));
   }, [setTheme]);
 
   useEffect(() => {
@@ -170,35 +153,21 @@ function ItemList() {
     return filteredAndSortedItems.slice(0, displayCount);
   }, [filteredAndSortedItems, displayCount]);
 
-  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
-    const target = entries[0];
-    if (target.isIntersecting) {
-        setDisplayCount(prevCount => {
-            if (prevCount < filteredAndSortedItems.length) {
-                return prevCount + ITEMS_TO_LOAD_ON_SCROLL;
-            }
-            return prevCount;
-        });
-    }
-  }, [filteredAndSortedItems.length]);
+  // --- ROBUST INFINITE SCROLL LOGIC ---
+  const observer = useRef<IntersectionObserver>();
+  const lastItemRef = useCallback((node: HTMLDivElement) => {
+    if (isLoading) return;
+    if (observer.current) observer.current.disconnect();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, {
-      root: null,
-      threshold: 0,
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && displayCount < filteredAndSortedItems.length) {
+        setDisplayCount(prevCount => prevCount + ITEMS_TO_LOAD_ON_SCROLL);
+      }
     });
 
-    const currentLoaderRef = loaderRef.current;
-    if (currentLoaderRef) {
-      observer.observe(currentLoaderRef);
-    }
-
-    return () => {
-      if (currentLoaderRef) {
-        observer.unobserve(currentLoaderRef);
-      }
-    };
-  }, [handleObserver]);
+    if (node) observer.current.observe(node);
+  }, [isLoading, displayCount, filteredAndSortedItems.length]);
+  // --- END ROBUST LOGIC ---
   
   if (isLoading) {
     return (
@@ -252,14 +221,22 @@ function ItemList() {
           <section aria-labelledby="clothing-items-section">
             <h2 id="clothing-items-section" className="sr-only">Clothing Items</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
-              {itemsToDisplay.map((item, index) => (
-                <ItemCard key={item.id} item={item} priority={index < 4} />
-              ))}
+              {itemsToDisplay.map((item, index) => {
+                if (itemsToDisplay.length === index + 1) {
+                  return (
+                    <div ref={lastItemRef} key={item.id}>
+                      <ItemCard item={item} priority={index < 4} />
+                    </div>
+                  );
+                } else {
+                  return <ItemCard key={item.id} item={item} priority={index < 4} />;
+                }
+              })}
             </div>
           </section>
-
-          <div className="flex justify-center items-center py-10" ref={loaderRef}>
-            {itemsToDisplay.length < filteredAndSortedItems.length && (
+          
+          <div className="flex justify-center items-center py-10">
+            {displayCount < filteredAndSortedItems.length && (
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             )}
           </div>
