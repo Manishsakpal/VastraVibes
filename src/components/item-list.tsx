@@ -9,7 +9,7 @@ import { CATEGORIES, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTheme, categoryToTheme, themeToCategory } from '@/context/theme-context';
+import { useTheme } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -64,10 +64,28 @@ function ItemList() {
   const loaderRef = useRef<HTMLDivElement | null>(null);
   
   const { theme, setTheme } = useTheme();
-  const selectedCategory = useMemo(() => themeToCategory(theme), [theme]);
+  const selectedCategory = useMemo(() => {
+      const categoryMap: Record<string, Category | 'All'> = {
+          'theme-default': 'All',
+          'theme-men': 'Men',
+          'theme-women': 'Women',
+          'theme-kids': 'Kids',
+          'theme-ethnic': 'Ethnic',
+          'theme-western': 'Western',
+      };
+      return categoryMap[theme] || 'All';
+  }, [theme]);
 
   const handleCategorySelect = useCallback((category: Category | 'All') => {
-    setTheme(categoryToTheme(category));
+      const themeMap: Record<string, string> = {
+          'All': 'theme-default',
+          'Men': 'theme-men',
+          'Women': 'theme-women',
+          'Kids': 'theme-kids',
+          'Ethnic': 'theme-ethnic',
+          'Western': 'theme-western',
+      };
+      setTheme(themeMap[category]);
   }, [setTheme]);
 
   useEffect(() => {
@@ -159,15 +177,20 @@ function ItemList() {
 
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
     const target = entries[0];
-    if (target.isIntersecting && itemsToDisplay.length < filteredAndSortedItems.length) {
-      setDisplayCount((prevCount) => prevCount + ITEMS_TO_LOAD_ON_SCROLL);
+    if (target.isIntersecting) {
+        setDisplayCount(prevCount => {
+            if (prevCount < filteredAndSortedItems.length) {
+                return prevCount + ITEMS_TO_LOAD_ON_SCROLL;
+            }
+            return prevCount;
+        });
     }
-  }, [itemsToDisplay.length, filteredAndSortedItems.length]);
+  }, [filteredAndSortedItems.length]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, {
       root: null,
-      rootMargin: "0px", // Use a precise trigger
+      rootMargin: "200px",
       threshold: 0,
     });
 

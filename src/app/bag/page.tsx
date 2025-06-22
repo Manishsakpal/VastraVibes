@@ -101,7 +101,7 @@ export default function BagPage() {
                   return (
                     <li key={item.id} className="flex items-center p-4">
                       <div className="relative h-24 w-24 rounded-md overflow-hidden mr-4">
-                        <Image src={safeImageUrl} alt={item.title} fill style={{objectFit: "contain"}} />
+                        <Image src={safeImageUrl} alt={item.title} fill={true} className="object-contain" />
                       </div>
                       <div className="flex-grow">
                         <h2 className="font-semibold">{item.title}</h2>
