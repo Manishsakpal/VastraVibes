@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { ClothingItem, Category } from '@/types';
 import ItemCard from '@/components/item-card';
 import CategorySelector from '@/components/category-selector';
-import { CATEGORIES } from '@/lib/constants';
+import { CATEGORIES, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
@@ -15,9 +15,30 @@ interface ItemListProps {
 export default function ItemList({ items }: ItemListProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortedItems, setSortedItems] = useState<ClothingItem[]>(items);
+
+  useEffect(() => {
+    // This effect runs on the client after hydration to sort items based on purchase counts.
+    try {
+      const storedCounts = localStorage.getItem(PURCHASE_COUNTS_STORAGE_KEY);
+      if (storedCounts) {
+        const counts: Record<string, number> = JSON.parse(storedCounts);
+        const newSortedItems = [...items].sort((a, b) => {
+          const countA = counts[a.id] || 0;
+          const countB = counts[b.id] || 0;
+          return countB - countA; // Sort descending by purchase count
+        });
+        setSortedItems(newSortedItems);
+      }
+    } catch (error) {
+      console.warn("Could not read purchase counts for sorting:", error);
+      // Fallback to original item order if there's an error
+      setSortedItems(items);
+    }
+  }, [items]);
 
   const filteredItems = useMemo(() => {
-    let tempItems = items;
+    let tempItems = sortedItems;
     if (selectedCategory !== 'All') {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
     }
@@ -28,7 +49,7 @@ export default function ItemList({ items }: ItemListProps) {
       );
     }
     return tempItems;
-  }, [items, selectedCategory, searchTerm]);
+  }, [sortedItems, selectedCategory, searchTerm]);
 
   return (
     <>

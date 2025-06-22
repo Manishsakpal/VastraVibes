@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useBagContext } from '@/context/bag-context';
+import { useItemContext } from '@/context/item-context';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { checkoutSchema } from '@/lib/schemas';
@@ -15,11 +16,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const { cartItems, totalPrice, clearBag, isLoading, cartCount } = useBagContext();
+  const { recordPurchase } = useItemContext();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -42,7 +45,6 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
-    // Redirect if bag is empty and not loading
     if (!isLoading && cartCount === 0) {
       router.replace('/');
     }
@@ -50,10 +52,10 @@ export default function CheckoutPage() {
 
   const onSubmit = (data: CheckoutFormValues) => {
     console.log('Order submitted:', data);
-    // This is where you would trigger the PhonePe payment gateway.
-    // The gateway would handle the payment and then call a webhook or redirect back to a success page.
     
-    // For now, we'll simulate a successful order.
+    // Record the purchase before clearing the bag
+    recordPurchase(cartItems);
+
     toast({
       title: 'Order Placed!',
       description: 'Thank you for your purchase. A confirmation has been sent to your email.',

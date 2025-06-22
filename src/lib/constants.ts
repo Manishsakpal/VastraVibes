@@ -8,3 +8,4 @@ export const ADMIN_PASSWORD = "password123";
 export const AUTH_TOKEN_KEY = "vastraVibesAdminAuth";
 export const ITEMS_STORAGE_KEY = "vastraVibesItems";
 export const BAG_STORAGE_KEY = "vastraVibesBag";
+export const PURCHASE_COUNTS_STORAGE_KEY = "vastraVibesPurchaseCounts";

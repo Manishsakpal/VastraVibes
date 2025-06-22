@@ -1,13 +1,14 @@
 "use client";
 
-import type { ClothingItem } from '@/types';
+import type { ClothingItem, CartItem } from '@/types';
 import { initialItems } from '@/lib/mock-data';
-import { ITEMS_STORAGE_KEY } from '@/lib/constants';
+import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
 interface ItemContextType {
   items: ClothingItem[];
   addItem: (item: Omit<ClothingItem, 'id'>) => void;
+  recordPurchase: (purchasedItems: CartItem[]) => void;
   isLoading: boolean;
 }
 
@@ -24,13 +25,11 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (storedItems) {
         setItems(JSON.parse(storedItems));
       } else {
-        // If nothing in storage, initialize with mock data and store it
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
         setItems(initialItems);
       }
     } catch (error) {
       console.warn("Could not access localStorage for items:", error);
-      // Fallback to initial mock data if localStorage fails
       setItems(initialItems);
     } finally {
       setIsLoading(false);
@@ -41,7 +40,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setItems(prevItems => {
       const newItem: ClothingItem = {
         ...itemData,
-        id: String(Date.now() + Math.random()), // Simple unique ID
+        id: String(Date.now() + Math.random()),
       };
       const updatedItems = [...prevItems, newItem];
       try {
@@ -53,8 +52,23 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   }, []);
 
+  const recordPurchase = useCallback((purchasedItems: CartItem[]) => {
+    try {
+      const storedCounts = localStorage.getItem(PURCHASE_COUNTS_STORAGE_KEY);
+      const counts: Record<string, number> = storedCounts ? JSON.parse(storedCounts) : {};
+      
+      purchasedItems.forEach(item => {
+        counts[item.id] = (counts[item.id] || 0) + item.quantity;
+      });
+
+      localStorage.setItem(PURCHASE_COUNTS_STORAGE_KEY, JSON.stringify(counts));
+    } catch (error) {
+      console.warn("Could not record purchases to localStorage:", error);
+    }
+  }, []);
+
   return (
-    <ItemContext.Provider value={{ items, addItem, isLoading }}>
+    <ItemContext.Provider value={{ items, addItem, recordPurchase, isLoading }}>
       {children}
     </ItemContext.Provider>
   );
