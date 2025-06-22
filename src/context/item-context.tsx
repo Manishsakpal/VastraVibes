@@ -17,10 +17,6 @@ const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableTex
     const searchableText = [
       item.title,
       item.description,
-      item.category,
-      item.size,
-      item.colors,
-      ...(item.specifications || [])
     ].join(' ').toLowerCase();
 
     // The type assertion is safe because we are adding the missing properties.
