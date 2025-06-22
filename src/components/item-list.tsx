@@ -12,12 +12,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useTheme, categoryToTheme, themeToCategory } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
 import { useDebounce } from '@/hooks/use-debounce';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ITEMS_PER_PAGE = 8;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
+const ItemCardSkeleton = () => (
+    <div className="flex flex-col overflow-hidden h-full rounded-lg border bg-card">
+        <Skeleton className="aspect-[3/4] w-full" />
+        <div className="p-4 flex-grow space-y-3">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-1/2" />
+        </div>
+        <div className="p-4 border-t">
+            <Skeleton className="h-10 w-full" />
+        </div>
+    </div>
+);
+
+const ItemListSkeleton = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
+    {[...Array(ITEMS_PER_PAGE)].map((_, i) => <ItemCardSkeleton key={i} />)}
+  </div>
+);
+
+
 function ItemList() {
-  const { items } = useItemContext();
+  const { items, isLoading } = useItemContext();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [sortOption, setSortOption] = useState('popular');
@@ -161,7 +183,7 @@ function ItemList() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search by title or description..."
+              placeholder="Search products, colors, sizes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -184,7 +206,9 @@ function ItemList() {
         </div>
       </div>
 
-      {itemsToDisplay.length > 0 ? (
+      {isLoading ? (
+        <ItemListSkeleton />
+      ) : itemsToDisplay.length > 0 ? (
         <>
           <section aria-labelledby="clothing-items-section">
             <h2 id="clothing-items-section" className="sr-only">Clothing Items</h2>
