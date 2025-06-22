@@ -18,13 +18,12 @@ const ITEMS_PER_PAGE = 16;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
 export default function ItemList({ items }: ItemListProps) {
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('popular');
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const { setThemeByCategory } = useTheme();
+  const { category: selectedCategory, setThemeByCategory } = useTheme();
 
   useEffect(() => {
     try {
@@ -36,11 +35,6 @@ export default function ItemList({ items }: ItemListProps) {
       console.warn("Could not read purchase counts for sorting:", error);
     }
   }, []);
-
-  const handleSelectCategory = (category: Category | 'All') => {
-    setSelectedCategory(category);
-    setThemeByCategory(category);
-  };
 
   const filteredAndSortedItems = useMemo(() => {
     let tempItems = [...items];
@@ -122,12 +116,6 @@ export default function ItemList({ items }: ItemListProps) {
     };
   }, [handleObserver]);
 
-  // When the component mounts, set the theme based on the initial or last-selected category.
-  // This handles returning to the page and keeping the theme consistent.
-  useEffect(() => {
-    setThemeByCategory(selectedCategory);
-  }, [selectedCategory, setThemeByCategory]);
-
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-4 items-center mb-8">
@@ -135,7 +123,7 @@ export default function ItemList({ items }: ItemListProps) {
           <CategorySelector
             categories={['All', ...CATEGORIES]}
             selectedCategory={selectedCategory}
-            onSelectCategory={handleSelectCategory}
+            onSelectCategory={setThemeByCategory}
           />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-shrink-0">

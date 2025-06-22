@@ -20,8 +20,21 @@ export const categoryToTheme = (category: Category | 'All'): Theme => {
   return map[category];
 };
 
+export const themeToCategory = (theme: Theme): Category | 'All' => {
+  const map: Record<Theme, Category | 'All'> = {
+    'theme-default': 'All',
+    'theme-men': 'Men',
+    'theme-women': 'Women',
+    'theme-kids': 'Kids',
+    'theme-ethnic': 'Ethnic',
+    'theme-western': 'Western',
+  };
+  return map[theme] || 'All';
+}
+
 interface ThemeContextType {
   theme: Theme;
+  category: Category | 'All';
   setThemeByCategory: (category: Category | 'All') => void;
 }
 
@@ -60,9 +73,11 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const newTheme = categoryToTheme(category);
     setTheme(newTheme);
   }, []);
+  
+  const category = themeToCategory(theme);
 
   return (
-    <ThemeContext.Provider value={{ theme, setThemeByCategory }}>
+    <ThemeContext.Provider value={{ theme, category, setThemeByCategory }}>
       {children}
     </ThemeContext.Provider>
   );

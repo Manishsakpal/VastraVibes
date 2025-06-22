@@ -2,12 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Inter', sans-serif, Arial, Helvetica; /* Added Inter for a more modern feel, fallback to Arial */
-}
-
 @layer base {
-  /* Default Theme (also theme-default and theme-ethnic) */
   :root,
   .theme-default,
   .theme-ethnic {
@@ -186,15 +181,14 @@ body {
     --accent: 25 65% 55%;
     --ring: 25 65% 55%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-    @apply antialiased; /* Smooths out the font */
+    @apply antialiased;
+    font-family: 'Inter', sans-serif, Arial, Helvetica;
     /* Add transition for smooth color changes */
     transition: background-color 0.5s ease, color 0.5s ease;
   }
