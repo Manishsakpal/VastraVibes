@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import ItemList from '@/components/item-list';
-import { initialItems } from '@/lib/mock-data.ts';
+import { initialItems } from '@/lib/mock-data';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -16,7 +16,7 @@ const HomePage: NextPage = () => {
         <div className="h-12 bg-muted rounded-md w-full mb-6"></div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {[...Array(16)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <div key={i} className="bg-card p-4 rounded-lg shadow-md space-y-3">
             <div className="h-48 bg-muted rounded-md"></div>
             <div className="h-6 bg-muted rounded-md w-3/4"></div>
