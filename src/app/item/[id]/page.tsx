@@ -1,4 +1,4 @@
-import { initialItems } from '@/lib/mock-data';
+import { initialItems } from '@/lib/mock-data.ts';
 import { notFound } from 'next/navigation';
 import ItemDetailClient from '@/components/item-detail-client';
 import type { Metadata } from 'next';
@@ -67,7 +67,7 @@ export default function ItemDetailPage({ params }: Props) {
   // For this demo, we find it in the static data.
   const item = initialItems.find(p => p.id === params.id);
 
-  if (!item) {
+  if (!item || !item.imageUrls || item.imageUrls.length === 0) {
     notFound();
   }
 

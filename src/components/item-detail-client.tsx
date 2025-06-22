@@ -7,13 +7,27 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useBagContext } from '@/context/bag-context';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingBag, CheckCircle } from 'lucide-react';
+import { ShoppingBag, CheckCircle, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Card } from './ui/card';
 
 export default function ItemDetailClient({ item }: { item: ClothingItem }) {
-  const [selectedImage, setSelectedImage] = useState(item.imageUrls[0]);
+  // Safely initialize with the first image, or an empty string if none exist.
+  const [selectedImage, setSelectedImage] = useState(item.imageUrls?.[0] || '');
   const { addToBag } = useBagContext();
   const { toast } = useToast();
+  
+  // This is a fallback for the client, in case an item without images gets through.
+  // The primary guard should be in the page component that fetches the data.
+  if (!item.imageUrls || item.imageUrls.length === 0) {
+    return (
+      <Card className="flex flex-col items-center justify-center text-center p-8 gap-4 animate-fade-in-up">
+        <AlertTriangle className="h-16 w-16 text-destructive" />
+        <h1 className="text-2xl font-bold">Images Not Available</h1>
+        <p className="text-muted-foreground">We're sorry, but the images for this product could not be loaded.</p>
+      </Card>
+    )
+  }
 
   const hasDiscount = item.discount && item.discount > 0;
   const discountedPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
