@@ -38,12 +38,12 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
         <CardHeader className="p-0 relative">
           <div className="aspect-[3/4] w-full overflow-hidden bg-muted">
             <Image
-              src={item.imageUrls[0]}
+              src={item.imageUrls?.[0] || 'https://placehold.co/600x800.png'}
               alt={item.title}
               fill={true}
               className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              data-ai-hint={item.imageHints ? item.imageHints[0] : "clothing item"}
+              data-ai-hint={item.imageHints?.[0] || "clothing item"}
               priority={priority}
             />
           </div>
