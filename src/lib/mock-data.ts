@@ -9,7 +9,7 @@ export const initialItems: ClothingItem[] = [
     discount: 15,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/1/600/800',
     imageHint: 'mens kurta',
   },
   {
@@ -20,7 +20,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/2/600/800',
     imageHint: 'womens anarkali',
   },
   {
@@ -31,7 +31,7 @@ export const initialItems: ClothingItem[] = [
     discount: 10,
     size: '2-4Y, 4-6Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/3/600/800',
     imageHint: 'kids sherwani',
   },
   {
@@ -42,7 +42,7 @@ export const initialItems: ClothingItem[] = [
     discount: 20,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/4/600/800',
     imageHint: 'ethnic saree',
   },
   {
@@ -53,7 +53,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/5/600/800',
     imageHint: 'denim jacket',
   },
   {
@@ -64,7 +64,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL, XXL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/6/600/800',
     imageHint: 'mens shirt',
   },
   {
@@ -75,7 +75,7 @@ export const initialItems: ClothingItem[] = [
     discount: 5,
     size: 'XS, S, M, L',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/7/600/800',
     imageHint: 'womens dress',
   },
   {
@@ -86,7 +86,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '1-2Y, 2-3Y, 3-4Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/8/600/800',
     imageHint: 'kids tshirt',
   },
   // Added items start here
@@ -98,7 +98,7 @@ export const initialItems: ClothingItem[] = [
     discount: 10,
     size: 'L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/9/600/800',
     imageHint: 'mens sherwani',
   },
   {
@@ -109,7 +109,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/10/600/800',
     imageHint: 'womens lehenga',
   },
   {
@@ -120,7 +120,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/11/600/800',
     imageHint: 'kids gown',
   },
   {
@@ -131,7 +131,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/12/600/800',
     imageHint: 'ethnic shawl',
   },
   {
@@ -142,7 +142,7 @@ export const initialItems: ClothingItem[] = [
     discount: 25,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/13/600/800',
     imageHint: 'western jumpsuit',
   },
   {
@@ -153,7 +153,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '32, 34, 36',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/14/600/800',
     imageHint: 'mens trousers',
   },
   {
@@ -164,7 +164,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/15/600/800',
     imageHint: 'womens kurti',
   },
   {
@@ -175,7 +175,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/16/600/800',
     imageHint: 'kids pajama',
   },
   {
@@ -186,7 +186,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/17/600/800',
     imageHint: 'ethnic clutch',
   },
   {
@@ -197,7 +197,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/18/600/800',
     imageHint: 'western top',
   },
   {
@@ -208,7 +208,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/19/600/800',
     imageHint: 'mens scarf',
   },
   {
@@ -219,7 +219,7 @@ export const initialItems: ClothingItem[] = [
     discount: 10,
     size: 'Free Size',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/20/600/800',
     imageHint: 'womens saree',
   },
   {
@@ -230,7 +230,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '2-4Y, 4-6Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/21/600/800',
     imageHint: 'kids dungarees',
   },
   {
@@ -241,7 +241,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/22/600/800',
     imageHint: 'ethnic earrings',
   },
   {
@@ -252,7 +252,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/23/600/800',
     imageHint: 'western skirt',
   },
   {
@@ -263,7 +263,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/24/600/800',
     imageHint: 'mens suit',
   },
   {
@@ -274,7 +274,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/25/600/800',
     imageHint: 'womens pants',
   },
   {
@@ -285,7 +285,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/26/600/800',
     imageHint: 'kids frock',
   },
   {
@@ -296,7 +296,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '8, 9, 10',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/27/600/800',
     imageHint: 'ethnic shoes',
   },
   {
@@ -307,7 +307,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '32-38',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/28/600/800',
     imageHint: 'western belt',
   },
   {
@@ -318,7 +318,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/29/600/800',
     imageHint: 'mens waistcoat',
   },
   {
@@ -329,7 +329,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/30/600/800',
     imageHint: 'womens top',
   },
   {
@@ -340,7 +340,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/31/600/800',
     imageHint: 'kids sweatshirt',
   },
   {
@@ -351,7 +351,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/32/600/800',
     imageHint: 'ethnic bag',
   },
   {
@@ -362,7 +362,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/33/600/800',
     imageHint: 'western coat',
   },
   {
@@ -373,7 +373,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/34/600/800',
     imageHint: 'mens jacket',
   },
   {
@@ -384,7 +384,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/35/600/800',
     imageHint: 'womens suit',
   },
   {
@@ -395,7 +395,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/36/600/800',
     imageHint: 'kids dhoti',
   },
   {
@@ -406,7 +406,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/37/600/800',
     imageHint: 'ethnic jewelry',
   },
   {
@@ -417,7 +417,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '28, 30, 32',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/38/600/800',
     imageHint: 'western jeans',
   },
   {
@@ -428,7 +428,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/39/600/800',
     imageHint: 'mens kurta',
   },
   {
@@ -439,7 +439,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/40/600/800',
     imageHint: 'womens dupatta',
   },
   {
@@ -450,7 +450,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/41/600/800',
     imageHint: 'kids lehenga',
   },
   {
@@ -461,7 +461,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/42/600/800',
     imageHint: 'ethnic nath',
   },
   {
@@ -472,7 +472,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/43/600/800',
     imageHint: 'western cardigan',
   },
   {
@@ -483,7 +483,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '8, 9, 10',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/44/600/800',
     imageHint: 'mens shoes',
   },
   {
@@ -494,7 +494,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/45/600/800',
     imageHint: 'womens salwar',
   },
   {
@@ -505,7 +505,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/46/600/800',
     imageHint: 'kids kurta',
   },
   {
@@ -516,7 +516,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '2.4, 2.6, 2.8',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/47/600/800',
     imageHint: 'ethnic bangles',
   },
   {
@@ -527,7 +527,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/48/600/800',
     imageHint: 'western scarf',
   },
   {
@@ -538,7 +538,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/49/600/800',
     imageHint: 'mens jacket',
   },
   {
@@ -549,7 +549,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/50/600/800',
     imageHint: 'womens blouse',
   },
   {
@@ -560,7 +560,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/51/600/800',
     imageHint: 'kids shorts',
   },
   {
@@ -571,7 +571,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Adjustable',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/52/600/800',
     imageHint: 'ethnic kamarbandh',
   },
   {
@@ -582,7 +582,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'One Size',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/53/600/800',
     imageHint: 'western cap',
   },
   {
@@ -593,7 +593,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/54/600/800',
     imageHint: 'mens lungi',
   },
   {
@@ -604,7 +604,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/55/600/800',
     imageHint: 'womens kaftan',
   },
   {
@@ -615,7 +615,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/56/600/800',
     imageHint: 'kids raincoat',
   },
   {
@@ -626,7 +626,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Standard',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/57/600/800',
     imageHint: 'ethnic turban',
   },
   {
@@ -637,7 +637,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'One Size',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/58/600/800',
     imageHint: 'western sunglasses',
   },
   {
@@ -648,7 +648,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/59/600/800',
     imageHint: 'mens jodhpuri',
   },
   {
@@ -659,7 +659,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/60/600/800',
     imageHint: 'womens skirt',
   },
   {
@@ -670,7 +670,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/61/600/800',
     imageHint: 'kids sweater',
   },
   {
@@ -681,7 +681,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Standard',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/62/600/800',
     imageHint: 'ethnic anklets',
   },
   {
@@ -692,7 +692,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'XS, S, M',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/63/600/800',
     imageHint: 'western dress',
   },
   {
@@ -703,7 +703,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/64/600/800',
     imageHint: 'mens dhoti',
   },
   {
@@ -714,7 +714,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/65/600/800',
     imageHint: 'womens tunic',
   },
   {
@@ -725,7 +725,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/66/600/800',
     imageHint: 'kids jacket',
   },
   {
@@ -736,7 +736,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/67/600/800',
     imageHint: 'ethnic brooch',
   },
   {
@@ -747,7 +747,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/68/600/800',
     imageHint: 'western leggings',
   },
   {
@@ -758,7 +758,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/69/600/800',
     imageHint: 'mens kurta',
   },
   {
@@ -769,7 +769,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/70/600/800',
     imageHint: 'womens jumpsuit',
   },
   {
@@ -780,7 +780,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/71/600/800',
     imageHint: 'kids shirt',
   },
   {
@@ -791,7 +791,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/72/600/800',
     imageHint: 'ethnic dupatta',
   },
   {
@@ -802,7 +802,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/73/600/800',
     imageHint: 'western skirt',
   },
   {
@@ -813,7 +813,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Standard',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/74/600/800',
     imageHint: 'mens turban',
   },
   {
@@ -824,7 +824,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/75/600/800',
     imageHint: 'womens skirt',
   },
   {
@@ -835,7 +835,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '0-6M, 6-12M',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/76/600/800',
     imageHint: 'kids onesie',
   },
   {
@@ -846,7 +846,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/77/600/800',
     imageHint: 'ethnic necklace',
   },
   {
@@ -857,7 +857,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/78/600/800',
     imageHint: 'western dress',
   },
   {
@@ -868,7 +868,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/79/600/800',
     imageHint: 'mens kurta',
   },
   {
@@ -879,7 +879,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/80/600/800',
     imageHint: 'womens top',
   },
   {
@@ -890,7 +890,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '6-12M, 12-18M',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/81/600/800',
     imageHint: 'kids romper',
   },
   {
@@ -901,7 +901,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/82/600/800',
     imageHint: 'ethnic hair',
   },
   {
@@ -912,7 +912,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '28, 30, 32',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/83/600/800',
     imageHint: 'western jeans',
   },
   {
@@ -923,7 +923,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/84/600/800',
     imageHint: 'mens kurta',
   },
   {
@@ -934,7 +934,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/85/600/800',
     imageHint: 'womens saree',
   },
   {
@@ -945,7 +945,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/86/600/800',
     imageHint: 'kids skirt',
   },
   {
@@ -956,7 +956,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/87/600/800',
     imageHint: 'ethnic bindi',
   },
   {
@@ -967,7 +967,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/88/600/800',
     imageHint: 'western top',
   },
   {
@@ -978,7 +978,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL, XXL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/89/600/800',
     imageHint: 'mens shirt',
   },
   {
@@ -989,7 +989,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/90/600/800',
     imageHint: 'womens kurta',
   },
   {
@@ -1000,7 +1000,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/91/600/800',
     imageHint: 'kids dress',
   },
   {
@@ -1011,7 +1011,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/92/600/800',
     imageHint: 'ethnic veil',
   },
   {
@@ -1022,7 +1022,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/93/600/800',
     imageHint: 'western top',
   },
   {
@@ -1033,7 +1033,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/94/600/800',
     imageHint: 'mens jacket',
   },
   {
@@ -1044,7 +1044,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/95/600/800',
     imageHint: 'womens saree',
   },
   {
@@ -1055,7 +1055,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/96/600/800',
     imageHint: 'kids capris',
   },
   {
@@ -1066,7 +1066,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Adjustable',
     category: 'Ethnic',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/97/600/800',
     imageHint: 'ethnic rings',
   },
   {
@@ -1077,7 +1077,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Western',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/98/600/800',
     imageHint: 'western dress',
   },
   {
@@ -1088,7 +1088,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL',
     category: 'Men',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/99/600/800',
     imageHint: 'mens tshirt',
   },
   {
@@ -1099,7 +1099,7 @@ export const initialItems: ClothingItem[] = [
     discount: 50,
     size: 'S, M, L',
     category: 'Women',
-    imageUrl: 'https://placehold.co/600x800.png',
+    imageUrl: 'https://picsum.photos/seed/100/600/800',
     imageHint: 'womens top',
   },
 ];
