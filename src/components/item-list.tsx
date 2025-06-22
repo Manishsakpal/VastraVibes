@@ -8,6 +8,7 @@ import { CATEGORIES, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTheme } from '@/context/theme-context';
 
 interface ItemListProps {
   items: ClothingItem[];
@@ -23,6 +24,7 @@ export default function ItemList({ items }: ItemListProps) {
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  const { setThemeByCategory } = useTheme();
 
   useEffect(() => {
     try {
@@ -34,6 +36,11 @@ export default function ItemList({ items }: ItemListProps) {
       console.warn("Could not read purchase counts for sorting:", error);
     }
   }, []);
+
+  const handleSelectCategory = (category: Category | 'All') => {
+    setSelectedCategory(category);
+    setThemeByCategory(category);
+  };
 
   const filteredAndSortedItems = useMemo(() => {
     let tempItems = [...items];
@@ -115,6 +122,12 @@ export default function ItemList({ items }: ItemListProps) {
     };
   }, [handleObserver]);
 
+  // When the component mounts, set the theme based on the initial or last-selected category.
+  // This handles returning to the page and keeping the theme consistent.
+  useEffect(() => {
+    setThemeByCategory(selectedCategory);
+  }, [selectedCategory, setThemeByCategory]);
+
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-4 items-center mb-8">
@@ -122,7 +135,7 @@ export default function ItemList({ items }: ItemListProps) {
           <CategorySelector
             categories={['All', ...CATEGORIES]}
             selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
+            onSelectCategory={handleSelectCategory}
           />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-shrink-0">

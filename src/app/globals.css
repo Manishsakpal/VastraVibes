@@ -7,48 +7,30 @@ body {
 }
 
 @layer base {
-  :root {
+  /* Default Theme (also theme-default and theme-ethnic) */
+  :root,
+  .theme-default,
+  .theme-ethnic {
     --background: 40 100% 97%; /* Light Cream */
     --foreground: 30 30% 25%; /* Dark Brown */
-
     --muted: 40 50% 92%; /* Very light muted cream */
     --muted-foreground: 40 30% 50%; /* Medium gray-brown */
-
     --popover: 35 80% 95%; /* Slightly darker cream for popovers */
     --popover-foreground: 30 30% 25%; /* Dark Brown */
-
     --card: 35 80% 95%; /* Slightly darker cream for cards */
     --card-foreground: 30 30% 25%; /* Dark Brown */
-
     --border: 30 30% 85%; /* Light Brownish Gray */
     --input: 30 30% 90%; /* Slightly darker than border for input background */
-
     --primary: 25 70% 55%; /* Earthy Terracotta/Rust */
     --primary-foreground: 30 100% 98%; /* Light Cream/White for text on primary */
-
     --secondary: 50 60% 90%; /* Muted Gold/Pale Yellow */
     --secondary-foreground: 45 40% 30%; /* Darker Gold/Brown for text on secondary */
-
     --accent: 36 100% 60%; /* Saffron (#FF9933) */
     --accent-foreground: 0 0% 100%; /* White for text on accent */
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
     --ring: 36 100% 60%; /* Saffron for focus rings */
-
     --radius: 0.5rem;
-
-    /* Sidebar variables - aligned with the new theme */
-    --sidebar-background: 35 80% 93%; /* Slightly more saturated cream for sidebar */
-    --sidebar-foreground: 30 30% 20%; /* Darker brown for sidebar text */
-    --sidebar-primary: 25 70% 50%; /* Slightly darker terracotta for sidebar primary elements */
-    --sidebar-primary-foreground: 30 100% 98%;
-    --sidebar-accent: 50 60% 88%; /* Muted gold for sidebar accents */
-    --sidebar-accent-foreground: 45 40% 25%;
-    --sidebar-border: 30 30% 80%;
-    --sidebar-ring: 36 100% 55%; /* Saffron for sidebar ring */
-
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -56,51 +38,153 @@ body {
     --chart-5: 27 87% 67%;
   }
 
-  .dark {
-    /* Dark theme adaptation - can be further customized if dark mode is a primary feature */
-    --background: 30 30% 15%; /* Dark Brown */
-    --foreground: 40 100% 95%; /* Light Cream */
+  /* Men Theme */
+  .theme-men {
+    --background: 220 15% 96%;
+    --foreground: 222 47% 11%;
+    --muted: 220 20% 92%;
+    --muted-foreground: 222 15% 45%;
+    --popover: 220 20% 98%;
+    --popover-foreground: 222 47% 11%;
+    --card: 220 20% 98%;
+    --card-foreground: 222 47% 11%;
+    --border: 215 20% 85%;
+    --input: 215 25% 90%;
+    --primary: 215 60% 50%; /* Deep Blue */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 20% 85%; /* Light Gray */
+    --secondary-foreground: 215 28% 17%;
+    --accent: 195 85% 45%; /* Bright Cyan */
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 195 85% 45%;
+  }
 
+  /* Women Theme */
+  .theme-women {
+    --background: 340 100% 98%;
+    --foreground: 340 30% 25%;
+    --muted: 340 80% 94%;
+    --muted-foreground: 340 20% 45%;
+    --popover: 340 100% 99%;
+    --popover-foreground: 340 30% 25%;
+    --card: 340 100% 99%;
+    --card-foreground: 340 30% 25%;
+    --border: 340 60% 88%;
+    --input: 340 70% 92%;
+    --primary: 340 80% 65%; /* Soft Magenta */
+    --primary-foreground: 355 100% 98%;
+    --secondary: 45 90% 90%; /* Pale Gold */
+    --secondary-foreground: 45 50% 30%;
+    --accent: 305 50% 60%; /* Muted Lavender */
+    --accent-foreground: 300 30% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 340 80% 65%;
+  }
+
+  /* Kids Theme */
+  .theme-kids {
+    --background: 50 100% 97%;
+    --foreground: 30 50% 20%;
+    --muted: 50 90% 92%;
+    --muted-foreground: 45 40% 50%;
+    --popover: 50 100% 98%;
+    --popover-foreground: 30 50% 20%;
+    --card: 50 100% 98%;
+    --card-foreground: 30 50% 20%;
+    --border: 45 80% 85%;
+    --input: 45 85% 90%;
+    --primary: 45 100% 55%; /* Sunny Yellow */
+    --primary-foreground: 50 50% 20%;
+    --secondary: 180 70% 88%; /* Light Cyan */
+    --secondary-foreground: 180 40% 25%;
+    --accent: 15 100% 60%; /* Bright Orange */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 15 100% 60%;
+  }
+
+  /* Western Theme */
+  .theme-western {
+    --background: 35 30% 96%;
+    --foreground: 215 30% 20%;
+    --muted: 35 40% 92%;
+    --muted-foreground: 30 20% 45%;
+    --popover: 35 50% 98%;
+    --popover-foreground: 215 30% 20%;
+    --card: 35 50% 98%;
+    --card-foreground: 215 30% 20%;
+    --border: 30 30% 85%;
+    --input: 30 35% 90%;
+    --primary: 210 40% 40%; /* Denim Blue */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 30 40% 85%; /* Khaki/Tan */
+    --secondary-foreground: 30 30% 20%;
+    --accent: 25 60% 50%; /* Leather Brown */
+    --accent-foreground: 25 30% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 25 60% 50%;
+  }
+
+  .dark {
+    /* Dark Theme Base - this will be the default dark */
+    --background: 30 30% 15%;
+    --foreground: 40 100% 95%;
     --muted: 30 30% 25%;
     --muted-foreground: 40 50% 80%;
-
     --popover: 30 30% 20%;
     --popover-foreground: 40 100% 95%;
-
     --card: 30 30% 20%;
     --card-foreground: 40 100% 95%;
-
     --border: 30 30% 30%;
     --input: 30 30% 35%;
-
-    --primary: 25 70% 60%; /* Slightly lighter Terracotta for dark mode */
+    --primary: 25 70% 60%;
     --primary-foreground: 30 100% 98%;
-
-    --secondary: 50 60% 30%; /* Darker Muted Gold */
+    --secondary: 50 60% 30%;
     --secondary-foreground: 50 60% 90%;
-
-    --accent: 36 100% 65%; /* Slightly brighter Saffron */
-    --accent-foreground: 0 0% 0%; /* Black text on Saffron for dark mode if needed */
-
+    --accent: 36 100% 65%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-
     --ring: 36 100% 65%;
+  }
 
-    --sidebar-background: 30 30% 10%;
-    --sidebar-foreground: 40 100% 90%;
-    --sidebar-primary: 25 70% 55%;
-    --sidebar-primary-foreground: 30 100% 98%;
-    --sidebar-accent: 50 60% 25%;
-    --sidebar-accent-foreground: 50 60% 85%;
-    --sidebar-border: 30 30% 25%;
-    --sidebar-ring: 36 100% 60%;
-    
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+  /* Dark Theme Variants */
+  .dark.theme-men {
+    --background: 220 20% 12%;
+    --foreground: 210 40% 95%;
+    --primary: 215 65% 60%;
+    --secondary: 220 15% 25%;
+    --accent: 195 90% 55%;
+    --ring: 195 90% 55%;
+  }
+  .dark.theme-women {
+    --background: 340 20% 14%;
+    --foreground: 340 50% 95%;
+    --primary: 340 85% 70%;
+    --secondary: 45 40% 25%;
+    --accent: 305 55% 65%;
+    --ring: 340 85% 70%;
+  }
+  .dark.theme-kids {
+    --background: 40 30% 12%;
+    --foreground: 45 80% 95%;
+    --primary: 45 100% 60%;
+    --secondary: 180 30% 20%;
+    --accent: 15 100% 65%;
+    --ring: 15 100% 65%;
+  }
+  .dark.theme-western {
+    --background: 30 15% 12%;
+    --foreground: 35 40% 95%;
+    --primary: 210 45% 55%;
+    --secondary: 30 20% 25%;
+    --accent: 25 65% 55%;
+    --ring: 25 65% 55%;
   }
 }
 
@@ -111,6 +195,8 @@ body {
   body {
     @apply bg-background text-foreground;
     @apply antialiased; /* Smooths out the font */
+    /* Add transition for smooth color changes */
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 }
 
@@ -126,6 +212,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: hsl(var(--primary) / 0.7);
   border-radius: 10px;
+  transition: background-color 0.5s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--primary));
