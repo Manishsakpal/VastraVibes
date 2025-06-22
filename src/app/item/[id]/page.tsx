@@ -1,13 +1,10 @@
-import { initialItems } from '@/lib/mock-data.ts';
-import { notFound } from 'next/navigation';
-import ItemDetailClient from '@/components/item-detail-client';
-import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
+"use client";
 
-type Props = {
-  params: { id: string };
-};
+import { useItemContext } from '@/context/item-context';
+import { useParams, notFound } from 'next/navigation';
+import ItemDetailClient from '@/components/item-detail-client';
+import { useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Item Detail Skeleton
 const ItemDetailSkeleton = () => (
@@ -28,59 +25,29 @@ const ItemDetailSkeleton = () => (
     </div>
 );
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const item = initialItems.find(i => i.id === params.id);
-  
-  if (!item || !item.imageUrls || item.imageUrls.length === 0) {
-    return {
-      title: "Item Not Found",
-      description: "The product you are looking for does not exist."
-    };
+export default function ItemDetailPage() {
+  const { items, isLoading } = useItemContext();
+  const params = useParams();
+  const id = params.id as string;
+
+  // Set the document title dynamically since we can't use generateMetadata in a Client Component
+  useEffect(() => {
+    const currentItem = items.find(p => p.id === id);
+    if (currentItem) {
+      document.title = `${currentItem.title} | Vastra Vibes`;
+    }
+  }, [id, items]);
+
+  if (isLoading) {
+    return <ItemDetailSkeleton />;
   }
 
-  return {
-    title: item.title,
-    description: item.description,
-    openGraph: {
-      title: item.title,
-      description: item.description,
-      images: [
-        {
-          url: item.imageUrls[0],
-          width: 600,
-          height: 800,
-          alt: item.title,
-        },
-      ],
-    },
-     twitter: {
-      card: 'summary_large_image',
-      title: item.title,
-      description: item.description,
-      images: [item.imageUrls[0]],
-    },
-  };
-}
+  const item = items.find(p => p.id === id);
 
-export default function ItemDetailPage({ params }: Props) {
-  // In a real app, you would fetch data here based on the ID.
-  // For this demo, we find it in the static data.
-  const item = initialItems.find(p => p.id === params.id);
-
-  if (!item || !item.imageUrls || item.imageUrls.length === 0) {
+  if (!item) {
+    // This will render the not-found.tsx file if it exists, or a default Next.js 404 page
     notFound();
   }
 
-  return (
-    <Suspense fallback={<ItemDetailSkeleton />}>
-        <ItemDetailClient item={item} />
-    </Suspense>
-  );
-}
-
-// Statically generate routes for all items for better performance
-export async function generateStaticParams() {
-  return initialItems.map((item) => ({
-    id: item.id,
-  }));
+  return <ItemDetailClient item={item} />;
 }
