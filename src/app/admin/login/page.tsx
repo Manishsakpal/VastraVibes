@@ -2,7 +2,7 @@
 
 import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAdminAuth } from '@/hooks/use-admin-auth';
+import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,6 +27,8 @@ const AdminLoginPage = () => {
     e.preventDefault();
     setError('');
     if (login(id, password)) {
+      // The context now handles isAdmin state, and the useEffect above will trigger the redirect.
+      // Or we can be explicit here for faster navigation.
       router.push('/admin/dashboard');
     } else {
       setError('Invalid credentials. Please try again.');

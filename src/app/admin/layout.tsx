@@ -2,11 +2,8 @@
 
 import { useEffect, type ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAdminAuth } from '@/hooks/use-admin-auth';
+import { useAdminAuth } from '@/context/admin-auth-context';
 import { Loader2 } from 'lucide-react';
-
-// No direct metadata export from client component for layout.
-// This can be handled in a parent server component or a `template.tsx` if specific admin layout SEO is needed.
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const { isAdmin, isLoading } = useAdminAuth();
@@ -27,25 +24,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </div>
     );
   }
-
+  
+  // This logic is key:
+  // 1. If trying to access a protected route without being an admin, show "Access Denied" while redirecting.
+  // 2. If isAdmin is true, this condition is false, and children will render.
+  // 3. If on '/admin/login', this condition is false, and children (the login page) will render.
   if (!isAdmin && pathname !== '/admin/login') {
-    // This case should be covered by useEffect redirect, but as a fallback:
     return (
        <div className="flex items-center justify-center h-screen">
         <p className="text-lg text-destructive">Access Denied. Redirecting to login...</p>
       </div>
     );
   }
-  
-  // Allow access to /admin/login even if not admin, otherwise render children for authenticated admin
-  if (pathname === '/admin/login' || isAdmin) {
-    return <>{children}</>;
-  }
 
-  // Fallback if still loading or in a weird state before redirect
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <Loader2 className="h-12 w-12 animate-spin text-primary" />
-    </div>
-  );
+  // Render children if authenticated or on the login page
+  return <>{children}</>;
 }

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ShoppingBasket, UserCog, LogOut, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAdminAuth } from '@/hooks/use-admin-auth';
+import { useAdminAuth } from '@/context/admin-auth-context';
 import { usePathname } from 'next/navigation';
 import { useBagContext } from '@/context/bag-context';
 import { Badge } from '@/components/ui/badge';
