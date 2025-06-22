@@ -12,7 +12,7 @@ import type { CartItem } from '@/types';
 export default function BagPage() {
   const { cartItems, removeFromBag, updateQuantity, totalPrice, cartCount, isLoading } = useBagContext();
   const TAX_RATE = 0.08; // 8% tax
-  const shipping = cartCount > 0 ? 5.00 : 0;
+  const shipping = cartCount > 0 ? 100.00 : 0;
   const taxes = totalPrice * TAX_RATE;
   const grandTotal = totalPrice + taxes + shipping;
 
@@ -52,7 +52,7 @@ export default function BagPage() {
                     </div>
                     <div className="flex-grow">
                       <h2 className="font-semibold">{item.title}</h2>
-                      <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)}</p>
                       <div className="flex items-center mt-2">
                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                           <Minus className="h-4 w-4" />
@@ -64,7 +64,7 @@ export default function BagPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                       <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                       <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive mt-2" onClick={() => removeFromBag(item.id)}>
                          <Trash2 className="h-4 w-4" />
                        </Button>
@@ -83,20 +83,20 @@ export default function BagPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <p>Subtotal</p>
-                <p>${totalPrice.toFixed(2)}</p>
+                <p>₹{totalPrice.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <p>Shipping</p>
-                <p>${shipping.toFixed(2)}</p>
+                <p>₹{shipping.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <p>Taxes ({(TAX_RATE * 100).toFixed(0)}%)</p>
-                <p>${taxes.toFixed(2)}</p>
+                <p>₹{taxes.toFixed(2)}</p>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <p>Total</p>
-                <p>${grandTotal.toFixed(2)}</p>
+                <p>₹{grandTotal.toFixed(2)}</p>
               </div>
             </CardContent>
             <CardFooter>

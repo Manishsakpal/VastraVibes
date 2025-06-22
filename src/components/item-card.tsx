@@ -50,7 +50,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
         <div className="flex items-center justify-between text-sm pt-1">
           <p className="text-xs bg-secondary/80 text-secondary-foreground px-2 py-1 rounded-full">{item.category}</p>
           <p className="font-medium text-primary">
-            ${item.price.toFixed(2)}
+            ₹{item.price.toFixed(2)}
           </p>
         </div>
         <p className="text-xs text-muted-foreground">Sizes: {item.size}</p>

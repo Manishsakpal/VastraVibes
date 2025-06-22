@@ -27,7 +27,7 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const TAX_RATE = 0.08;
-  const shipping = 5.00;
+  const shipping = 100.00;
   const taxes = totalPrice * TAX_RATE;
   const grandTotal = totalPrice + taxes + shipping;
 
@@ -142,7 +142,7 @@ export default function CheckoutPage() {
                         <p className="text-muted-foreground">Qty: {item.quantity}</p>
                       </div>
                     </div>
-                    <p>${(item.price * item.quantity).toFixed(2)}</p>
+                    <p>₹{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -150,16 +150,16 @@ export default function CheckoutPage() {
               <Separator className="my-4" />
 
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><p>Subtotal</p><p>${totalPrice.toFixed(2)}</p></div>
-                <div className="flex justify-between"><p>Shipping</p><p>${shipping.toFixed(2)}</p></div>
-                <div className="flex justify-between"><p>Taxes</p><p>${taxes.toFixed(2)}</p></div>
+                <div className="flex justify-between"><p>Subtotal</p><p>₹{totalPrice.toFixed(2)}</p></div>
+                <div className="flex justify-between"><p>Shipping</p><p>₹{shipping.toFixed(2)}</p></div>
+                <div className="flex justify-between"><p>Taxes</p><p>₹{taxes.toFixed(2)}</p></div>
               </div>
 
               <Separator className="my-4" />
 
               <div className="flex justify-between font-bold text-lg">
                 <p>Grand Total</p>
-                <p>${grandTotal.toFixed(2)}</p>
+                <p>₹{grandTotal.toFixed(2)}</p>
               </div>
             </CardContent>
           </Card>
