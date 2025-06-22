@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
@@ -33,6 +32,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } else {
           // If mock data is newer/larger, update localStorage.
           localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
+          setItems(initialItems); // Also update state to reflect the reset
         }
       } else {
         // If nothing in storage, populate it with initial data.
@@ -52,7 +52,11 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         id: String(Date.now() + Math.random()),
         colors: itemData.colors || '',
       };
-      const updatedItems = [...prevItems, newItem];
+
+      // Sanitize the new item's URLs before adding it to the state.
+      const sanitizedNewItem = sanitizeItems([newItem])[0];
+
+      const updatedItems = [...prevItems, sanitizedNewItem];
       try {
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedItems));
       } catch (error) {
