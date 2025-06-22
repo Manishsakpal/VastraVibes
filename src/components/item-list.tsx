@@ -15,8 +15,8 @@ interface ItemListProps {
   items: ClothingItem[];
 }
 
-const ITEMS_PER_PAGE = 12;
-const ITEMS_TO_LOAD_ON_SCROLL = 12;
+const ITEMS_PER_PAGE = 8;
+const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
 export default function ItemList({ items }: ItemListProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -161,7 +161,7 @@ export default function ItemList({ items }: ItemListProps) {
             <h2 id="clothing-items-section" className="sr-only">Clothing Items</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
               {itemsToDisplay.map((item, index) => (
-                <ItemCard key={item.id} item={item} priority={index < 8} />
+                <ItemCard key={item.id} item={item} priority={index < 4} />
               ))}
             </div>
           </section>

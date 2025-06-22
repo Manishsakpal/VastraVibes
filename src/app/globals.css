@@ -178,7 +178,6 @@
   body {
     @apply bg-background text-foreground;
     @apply antialiased;
-    font-family: 'Inter', sans-serif, Arial, Helvetica;
     /* Add transition for smooth color changes */
     transition: background-color 0.5s ease, color 0.5s ease;
   }

@@ -26,7 +26,7 @@ const ItemDetailSkeleton = () => (
 );
 
 export default function ItemDetailPage() {
-  const { items, isLoading } = useItemContext();
+  const { items, isSyncing } = useItemContext();
   const params = useParams();
   const id = params.id as string;
 
@@ -38,7 +38,7 @@ export default function ItemDetailPage() {
     }
   }, [id, items]);
 
-  if (isLoading) {
+  if (isSyncing) {
     return <ItemDetailSkeleton />;
   }
 

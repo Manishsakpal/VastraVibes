@@ -9,47 +9,36 @@ interface ItemContextType {
   items: ClothingItem[];
   addItem: (item: Omit<ClothingItem, 'id'>) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
-  isLoading: boolean;
+  isSyncing: boolean;
 }
 
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<ClothingItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [items, setItems] = useState<ClothingItem[]>(initialItems);
+  const [isSyncing, setIsSyncing] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    let loadedItems: ClothingItem[] = [];
     try {
-      const storedItems = localStorage.getItem(ITEMS_STORAGE_KEY);
-      let parsedItems: ClothingItem[] = [];
-      if (storedItems) {
-        parsedItems = JSON.parse(storedItems);
-      }
-
-      // If mock data is newer/larger, or if there's no stored data, use mock data.
-      // This ensures that updates to the mock data file are reflected on next load.
-      if (initialItems.length > parsedItems.length) {
-        loadedItems = initialItems;
+      const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
+      if (storedItemsRaw) {
+        const storedItemsParsed = JSON.parse(storedItemsRaw);
+        
+        if (Array.isArray(storedItemsParsed)) {
+          // If local storage is more up-to-date (has more items), use it.
+          // This handles the case where the user has added items.
+          if (storedItemsParsed.length > initialItems.length) {
+            setItems(storedItemsParsed);
+          }
+        }
       } else {
-        loadedItems = parsedItems;
+        // If nothing is in local storage, populate it with the mock data.
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
       }
-
     } catch (error) {
-      console.warn("Could not access or parse localStorage for items, using initial data:", error);
-      loadedItems = initialItems;
+      console.warn("Could not sync items from localStorage, using initial data:", error);
     } finally {
-      // A simple validation to ensure loadedItems is an array.
-      const finalItems = Array.isArray(loadedItems) ? loadedItems : initialItems;
-      setItems(finalItems);
-      // Persist the potentially updated data back to localStorage
-      try {
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(finalItems));
-      } catch (e) {
-        console.warn("Could not save items to localStorage", e);
-      }
-      setIsLoading(false);
+      setIsSyncing(false);
     }
   }, []);
 
@@ -85,7 +74,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <ItemContext.Provider value={{ items, addItem, recordPurchase, isLoading }}>
+    <ItemContext.Provider value={{ items, addItem, recordPurchase, isSyncing }}>
       {children}
     </ItemContext.Provider>
   );
