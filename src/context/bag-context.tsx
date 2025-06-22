@@ -3,6 +3,7 @@
 import type { ClothingItem, CartItem } from '@/types';
 import { BAG_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode, useMemo } from 'react';
+import { sanitizeItems } from '@/lib/utils';
 
 interface BagContextType {
   cartItems: CartItem[];
@@ -26,7 +27,8 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     try {
       const storedBag = localStorage.getItem(BAG_STORAGE_KEY);
       if (storedBag) {
-        setCartItems(JSON.parse(storedBag));
+        const parsedItems = JSON.parse(storedBag);
+        setCartItems(sanitizeItems(parsedItems));
       }
     } catch (error) {
       console.warn("Could not access localStorage for bag:", error);
