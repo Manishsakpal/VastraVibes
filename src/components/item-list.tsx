@@ -11,32 +11,13 @@ import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTheme } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
-import { Skeleton } from '@/components/ui/skeleton';
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 8; // Reduced for faster initial load
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
 
-const ItemListSkeleton = () => {
-    return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
-            {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
-                <div key={i} className="space-y-3">
-                    <Skeleton className="aspect-[3/4] w-full rounded-lg" />
-                    <div className="space-y-2">
-                        <Skeleton className="h-5 w-5/6" />
-                        <Skeleton className="h-4 w-3/4" />
-                        <Skeleton className="h-4 w-1/4" />
-                    </div>
-                </div>
-            ))}
-        </div>
-    )
-}
-
-
 export default function ItemList() {
-  const { items, isSyncing } = useItemContext();
+  const { items } = useItemContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('popular');
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
@@ -157,10 +138,6 @@ export default function ItemList() {
       }
     };
   }, [handleObserver]);
-  
-  if (isSyncing) {
-    return <ItemListSkeleton />
-  }
 
   return (
     <>

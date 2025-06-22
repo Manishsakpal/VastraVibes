@@ -11,43 +11,37 @@ interface ItemContextType {
   items: ClothingItem[];
   addItem: (item: Omit<ClothingItem, 'id'>) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
-  isSyncing: boolean;
 }
 
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<ClothingItem[]>([]);
-  const [isSyncing, setIsSyncing] = useState(true);
+  // Initialize with static data for instant load.
+  const [items, setItems] = useState<ClothingItem[]>(initialItems);
 
+  // Asynchronously hydrate with data from localStorage after initial render.
   useEffect(() => {
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
-      let itemsToLoad: ClothingItem[] = initialItems;
-      
       if (storedItemsRaw) {
         const storedItemsParsed = JSON.parse(storedItemsRaw);
         
-        if (Array.isArray(storedItemsParsed)) {
-          if (initialItems.length > storedItemsParsed.length) {
-              itemsToLoad = initialItems;
-          } else {
-              itemsToLoad = storedItemsParsed;
-          }
+        // If localStorage has more or equal items, it's considered the source of truth.
+        if (Array.isArray(storedItemsParsed) && storedItemsParsed.length >= initialItems.length) {
+          const sanitized = sanitizeItems(storedItemsParsed);
+          setItems(sanitized);
+        } else {
+          // If mock data is newer/larger, update localStorage.
+          localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
         }
+      } else {
+        // If nothing in storage, populate it with initial data.
+         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
       }
-      
-      const sanitized = sanitizeItems(itemsToLoad);
-      setItems(sanitized);
-      localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
-
     } catch (error) {
       console.warn("Could not sync items from localStorage, using initial data:", error);
-      const sanitized = sanitizeItems(initialItems);
-      setItems(sanitized);
-      localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
-    } finally {
-      setIsSyncing(false);
+      // Ensure state is at least the initial items.
+      setItems(initialItems);
     }
   }, []);
 
@@ -84,7 +78,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <ItemContext.Provider value={{ items, addItem, recordPurchase, isSyncing }}>
+    <ItemContext.Provider value={{ items, addItem, recordPurchase }}>
       {children}
     </ItemContext.Provider>
   );

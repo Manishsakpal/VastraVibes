@@ -26,27 +26,29 @@ const ItemDetailSkeleton = () => (
 );
 
 export default function ItemDetailPage() {
-  const { items, isSyncing } = useItemContext();
+  const { items } = useItemContext();
   const params = useParams();
   const id = params.id as string;
+  const [item, setItem] = useState(items.find(p => p.id === id));
+
 
   // Set the document title dynamically since we can't use generateMetadata in a Client Component
   useEffect(() => {
     const currentItem = items.find(p => p.id === id);
     if (currentItem) {
+      setItem(currentItem);
       document.title = `${currentItem.title} | Vastra Vibes`;
     }
   }, [id, items]);
 
-  if (isSyncing) {
-    return <ItemDetailSkeleton />;
-  }
-
-  const item = items.find(p => p.id === id);
-
   if (!item) {
-    // This will render the not-found.tsx file if it exists, or a default Next.js 404 page
-    notFound();
+    // Show a skeleton while the context might still be hydrating from localstorage
+    // or if the item genuinely doesn't exist before notFound is triggered.
+    const itemExistsInCurrentList = items.some(p => p.id === id);
+    if (!itemExistsInCurrentList && items.length > 0) {
+      notFound();
+    }
+    return <ItemDetailSkeleton />;
   }
 
   return <ItemDetailClient item={item} />;
