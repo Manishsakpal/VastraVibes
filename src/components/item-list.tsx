@@ -1,23 +1,22 @@
 
 "use client";
 
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import type { ClothingItem } from '@/types';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import type { ClothingItem, Category } from '@/types';
 import ItemCard from '@/components/item-card';
 import CategorySelector from '@/components/category-selector';
 import { CATEGORIES, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTheme } from '@/context/theme-context';
+import { useTheme, categoryToTheme, themeToCategory } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
 import { useDebounce } from '@/hooks/use-debounce';
 
 const ITEMS_PER_PAGE = 8;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
-
-export default function ItemList() {
+function ItemList() {
   const { items } = useItemContext();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -25,7 +24,14 @@ export default function ItemList() {
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const { category: selectedCategory, setThemeByCategory } = useTheme();
+  
+  const { theme, setTheme } = useTheme();
+  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>(() => themeToCategory(theme));
+
+  const handleCategorySelect = useCallback((category: Category | 'All') => {
+    setSelectedCategory(category);
+    setTheme(categoryToTheme(category));
+  }, [setTheme]);
 
   useEffect(() => {
     try {
@@ -41,12 +47,12 @@ export default function ItemList() {
   const filteredAndSortedItems = useMemo(() => {
     let tempItems = [...items];
 
-    // 1. Filter by category (very fast)
+    // 1. Filter by category
     if (selectedCategory !== 'All') {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
     }
     
-    // 2. Filter by search term (now much faster)
+    // 2. Filter by search term
     if (debouncedSearchTerm) {
         const searchWords = debouncedSearchTerm.toLowerCase().split(' ').filter(Boolean);
         tempItems = tempItems.filter(item => 
@@ -54,7 +60,7 @@ export default function ItemList() {
         );
     }
 
-    // 3. Sort the results (now faster with pre-computed price)
+    // 3. Sort the results
     switch (sortOption) {
       case 'price-asc':
         tempItems.sort((a, b) => a.finalPrice - b.finalPrice);
@@ -63,7 +69,6 @@ export default function ItemList() {
         tempItems.sort((a, b) => b.finalPrice - a.finalPrice);
         break;
       case 'newest':
-        // Assuming IDs are numeric and sequential
         tempItems.sort((a, b) => parseInt(b.id) - parseInt(a.id));
         break;
       case 'popular':
@@ -120,7 +125,7 @@ export default function ItemList() {
           <CategorySelector
             categories={['All', ...CATEGORIES]}
             selectedCategory={selectedCategory}
-            onSelectCategory={setThemeByCategory}
+            onSelectCategory={handleCategorySelect}
           />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-shrink-0">
@@ -178,3 +183,5 @@ export default function ItemList() {
     </>
   );
 }
+
+export default React.memo(ItemList);

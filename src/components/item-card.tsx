@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import Image from 'next/image';
 import type { ClothingItem } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
   
   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
 
-  const handleAddToBag = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddToBag = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     addToBag(item);
     toast({
@@ -31,7 +31,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
       description: `${item.title} has been added to your shopping bag.`,
       variant: "default",
     });
-  };
+  }, [addToBag, item, toast]);
   
   const safeImageUrl = item.imageUrls?.[0] || 'https://placehold.co/600x800.png';
 
@@ -58,7 +58,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
         </CardHeader>
         <CardContent className="p-4 flex-grow space-y-2">
           <h2 className="text-lg font-semibold leading-tight" title={`${item.title} (Sizes: ${item.size}) (Colors: ${item.colors})`}>
-            {item.title} <span className="text-sm font-normal text-muted-foreground">({item.size})</span>
+            {item.title}
           </h2>
           <p className="text-sm text-muted-foreground" title={item.description}>
             {item.description}

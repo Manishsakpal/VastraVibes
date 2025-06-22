@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { Category } from '@/types';
 
 export type Theme = 'theme-default' | 'theme-men' | 'theme-women' | 'theme-kids' | 'theme-ethnic' | 'theme-western';
@@ -34,8 +34,7 @@ export const themeToCategory = (theme: Theme): Category | 'All' => {
 
 interface ThemeContextType {
   theme: Theme;
-  category: Category | 'All';
-  setThemeByCategory: (category: Category | 'All') => void;
+  setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -69,15 +68,9 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   }, [theme]);
   
-  const setThemeByCategory = useCallback((category: Category | 'All') => {
-    const newTheme = categoryToTheme(category);
-    setTheme(newTheme);
-  }, []);
-  
-  const category = themeToCategory(theme);
 
   return (
-    <ThemeContext.Provider value={{ theme, category, setThemeByCategory }}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
