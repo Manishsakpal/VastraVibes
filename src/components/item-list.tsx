@@ -31,6 +31,22 @@ const ItemCardSkeleton = () => (
     </div>
 );
 
+const ItemListControlsSkeleton = () => (
+  <div className="flex flex-col lg:flex-row gap-4 items-center mb-8">
+    <div className="w-full flex-grow">
+      <Skeleton className="h-10 w-full" />
+    </div>
+    <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-shrink-0">
+      <div className="relative w-full sm:w-auto sm:flex-grow max-w-sm">
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <div className="w-full sm:w-48">
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </div>
+  </div>
+);
+
 const ItemListSkeleton = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
     {[...Array(ITEMS_PER_PAGE)].map((_, i) => <ItemCardSkeleton key={i} />)}
@@ -167,6 +183,15 @@ function ItemList() {
       }
     };
   }, [handleObserver]);
+  
+  if (isLoading) {
+    return (
+      <>
+        <ItemListControlsSkeleton />
+        <ItemListSkeleton />
+      </>
+    );
+  }
 
   return (
     <>
@@ -206,9 +231,7 @@ function ItemList() {
         </div>
       </div>
 
-      {isLoading ? (
-        <ItemListSkeleton />
-      ) : itemsToDisplay.length > 0 ? (
+      {itemsToDisplay.length > 0 ? (
         <>
           <section aria-labelledby="clothing-items-section">
             <h2 id="clothing-items-section" className="sr-only">Clothing Items</h2>
