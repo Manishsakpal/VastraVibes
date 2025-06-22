@@ -1,7 +1,7 @@
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
-import { initialItems } from '@/lib/mock-data';
+import { initialItems } from '@/lib/mock-data.ts';
 import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
