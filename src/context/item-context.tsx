@@ -1,9 +1,11 @@
+
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
-import { initialItems } from '@/lib/mock-data.ts';
+import { initialItems } from '@/lib/mock-data';
 import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { sanitizeItems } from '@/lib/utils';
 
 interface ItemContextType {
   items: ClothingItem[];
@@ -15,28 +17,42 @@ interface ItemContextType {
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<ClothingItem[]>(initialItems);
+  const [items, setItems] = useState<ClothingItem[]>([]);
   const [isSyncing, setIsSyncing] = useState(true);
 
   useEffect(() => {
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
+      
       if (storedItemsRaw) {
         const storedItemsParsed = JSON.parse(storedItemsRaw);
         
         if (Array.isArray(storedItemsParsed)) {
-          // If local storage is more up-to-date (has more items), use it.
-          // This handles the case where the user has added items.
-          if (storedItemsParsed.length > initialItems.length) {
-            setItems(storedItemsParsed);
+          // If mock data has more items than local storage, it's been updated.
+          // Force a refresh from mock data to get the latest items.
+          if (initialItems.length > storedItemsParsed.length) {
+              const sanitized = sanitizeItems(initialItems);
+              setItems(sanitized);
+              localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
+          } else {
+            setItems(sanitizeItems(storedItemsParsed));
           }
+        } else {
+            // Data in storage is invalid, load from mock
+             const sanitized = sanitizeItems(initialItems);
+             setItems(sanitized);
+             localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
         }
       } else {
         // If nothing is in local storage, populate it with the mock data.
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(initialItems));
+        const sanitized = sanitizeItems(initialItems);
+        setItems(sanitized);
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitized));
       }
     } catch (error) {
       console.warn("Could not sync items from localStorage, using initial data:", error);
+      // Fallback to initial data if any error occurs
+      setItems(initialItems);
     } finally {
       setIsSyncing(false);
     }
@@ -47,6 +63,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const newItem: ClothingItem = {
         ...itemData,
         id: String(Date.now() + Math.random()),
+        colors: itemData.colors || '',
       };
       const updatedItems = [...prevItems, newItem];
       try {

@@ -7,6 +7,7 @@ export interface ClothingItem {
   price: number;
   discount?: number; // e.g., 20 for 20% off
   size: string; // e.g., "S, M, L" or "Free Size"
+  colors: string; // e.g., "Red, Blue, Black"
   category: Category;
   imageUrls: string[];
   imageHints?: string[]; // For placeholder image generation hint

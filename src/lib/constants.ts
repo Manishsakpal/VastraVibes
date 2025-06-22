@@ -2,6 +2,9 @@ import type { Category } from '@/types';
 
 export const CATEGORIES: Category[] = ["Men", "Women", "Kids", "Ethnic", "Western"];
 
+export const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
+export const COLORS = ["Red", "Blue", "Green", "Black", "White", "Yellow", "Pink", "Purple", "Orange", "Brown", "Gray", "Beige", "Navy"];
+
 export const ADMIN_ID = "admin";
 export const ADMIN_PASSWORD = "password123";
 

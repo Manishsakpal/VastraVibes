@@ -6,7 +6,12 @@ export const addItemSchema = z.object({
   description: z.string().min(10, { message: "Description must be at least 10 characters long." }).max(500),
   price: z.coerce.number({invalid_type_error: "Price is required."}).positive({ message: "Price must be a positive number." }),
   discount: z.coerce.number().min(0, { message: "Discount must be at least 0."}).max(100, { message: "Discount cannot exceed 100."}).optional(),
-  size: z.string().min(1, { message: "Size information is required." }),
+  size: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: "You have to select at least one size.",
+  }),
+  colors: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: "You have to select at least one color.",
+  }),
   category: z.enum(CATEGORIES, {
     errorMap: () => ({ message: "Please select a valid category." }),
   }),

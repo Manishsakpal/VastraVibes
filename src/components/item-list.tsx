@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import type { ClothingItem, Category } from '@/types';
+import type { ClothingItem } from '@/types';
 import ItemCard from '@/components/item-card';
 import CategorySelector from '@/components/category-selector';
 import { CATEGORIES, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
@@ -12,7 +13,7 @@ import { useTheme } from '@/context/theme-context';
 import { useItemContext } from '@/context/item-context';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 8;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
 
 
@@ -57,20 +58,41 @@ export default function ItemList() {
   const filteredAndSortedItems = useMemo(() => {
     let tempItems = [...items];
 
-    // Filtering
+    // 1. Filter by category
     if (selectedCategory !== 'All') {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
     }
+    
+    // 2. If there's a search term, apply relevance-based scoring and sorting
     if (searchTerm) {
-      const lowercasedSearchTerm = searchTerm.toLowerCase();
-      tempItems = tempItems.filter(item =>
-        item.title.toLowerCase().includes(lowercasedSearchTerm) ||
-        item.description.toLowerCase().includes(lowercasedSearchTerm) ||
-        item.size.toLowerCase().includes(lowercasedSearchTerm)
-      );
+        const searchWords = searchTerm.toLowerCase().split(' ').filter(Boolean);
+        
+        const calculateScore = (item: ClothingItem, words: string[]): number => {
+            let score = 0;
+            const title = item.title.toLowerCase();
+            const description = item.description.toLowerCase();
+            const specs = (item.specifications || []).join(' ').toLowerCase();
+            const sizes = item.size.toLowerCase();
+            const colors = item.colors.toLowerCase();
+
+            words.forEach(word => {
+                if (title.includes(word)) score += 5;
+                if (colors.includes(word)) score += 3;
+                if (sizes.includes(word)) score += 3;
+                if (specs.includes(word)) score += 2;
+                if (description.includes(word)) score += 1;
+            });
+            return score;
+        };
+
+        return tempItems
+            .map(item => ({ item, score: calculateScore(item, searchWords) }))
+            .filter(i => i.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .map(i => i.item);
     }
 
-    // Sorting
+    // 3. Otherwise, apply standard sorting options
     switch (sortOption) {
       case 'price-asc':
         tempItems.sort((a, b) => {
@@ -155,14 +177,14 @@ export default function ItemList() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search items..."
+              placeholder="Search by color, size, title..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
           <div className="w-full sm:w-48">
-             <Select value={sortOption} onValueChange={setSortOption}>
+             <Select value={sortOption} onValueChange={setSortOption} disabled={!!searchTerm}>
               <SelectTrigger>
                 <ArrowUpDown className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Sort by..." />

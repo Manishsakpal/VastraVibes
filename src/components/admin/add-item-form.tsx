@@ -6,16 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useItemContext } from '@/context/item-context';
-import { CATEGORIES } from '@/lib/constants';
-import type { Category } from '@/types';
+import { CATEGORIES, SIZES, COLORS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { addItemSchema } from '@/lib/schemas';
+import { Checkbox } from '../ui/checkbox';
 
 type AddItemFormValues = z.infer<typeof addItemSchema>;
 
@@ -31,7 +30,8 @@ const AddItemForm = () => {
       description: '',
       price: undefined,
       discount: undefined,
-      size: '',
+      size: [],
+      colors: [],
       category: undefined,
       imageUrls: '',
       imageHints: '',
@@ -44,6 +44,8 @@ const AddItemForm = () => {
         ...data,
         price: data.price,
         discount: data.discount || 0,
+        size: data.size.join(', '),
+        colors: data.colors.join(', '),
         imageUrls: data.imageUrls.split('\n').map(url => url.trim()).filter(url => url),
         imageHints: data.imageHints?.split('\n').map(hint => hint.trim()).filter(hint => hint) || [],
         specifications: data.specifications?.split('\n').map(spec => spec.trim()).filter(spec => spec) || [],
@@ -131,18 +133,72 @@ const AddItemForm = () => {
             )}
           />
         </div>
-
-
+        
         <FormField
           control={form.control}
           name="size"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
-              <FormLabel>Size(s)</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., S, M, L or Free Size" {...field} />
-              </FormControl>
-              <FormDescription>Enter available sizes, comma-separated.</FormDescription>
+              <FormLabel>Available Sizes</FormLabel>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {SIZES.map((item) => (
+                  <FormField
+                    key={item}
+                    control={form.control}
+                    name="size"
+                    render={({ field }) => (
+                      <FormItem key={item} className="flex flex-row items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(item)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, item])
+                                : field.onChange(field.value?.filter((value) => value !== item));
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal text-sm">{item}</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="colors"
+          render={() => (
+            <FormItem>
+              <FormLabel>Available Colors</FormLabel>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {COLORS.map((item) => (
+                  <FormField
+                    key={item}
+                    control={form.control}
+                    name="colors"
+                    render={({ field }) => (
+                      <FormItem key={item} className="flex flex-row items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(item)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, item])
+                                : field.onChange(field.value?.filter((value) => value !== item));
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal text-sm">{item}</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
