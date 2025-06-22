@@ -31,8 +31,11 @@ const ItemDetailSkeleton = () => (
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const item = initialItems.find(i => i.id === params.id);
   
-  if (!item) {
-    return { title: 'Item Not Found' };
+  if (!item || !item.imageUrls || item.imageUrls.length === 0) {
+    return {
+      title: "Item Not Found",
+      description: "The product you are looking for does not exist."
+    };
   }
 
   return {
