@@ -1,13 +1,16 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingBasket, UserCog, LogOut, LogIn, ShieldCheck } from 'lucide-react';
+import { ShoppingBasket, UserCog, LogOut, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/use-admin-auth';
 import { usePathname } from 'next/navigation';
+import { useBagContext } from '@/context/bag-context';
+import { Badge } from '@/components/ui/badge';
 
 const Header = () => {
   const { isAdmin, logout } = useAdminAuth();
+  const { cartCount, isLoading } = useBagContext();
   const pathname = usePathname();
 
   return (
@@ -20,16 +23,17 @@ const Header = () => {
           </div>
         </Link>
         <nav>
-          <ul className="flex items-center space-x-3 md:space-x-6">
+          <ul className="flex items-center space-x-2 md:space-x-4">
             <li>
               <Button variant={pathname === "/" ? "default" : "ghost"} asChild>
                 <Link href="/">Home</Link>
               </Button>
             </li>
+            
             {isAdmin ? (
               <>
                 <li>
-                  <Button variant={pathname.startsWith("/admin/dashboard") || pathname.startsWith("/admin/add-item") ? "default" : "ghost"} asChild>
+                  <Button variant={pathname.startsWith("/admin") ? "default" : "ghost"} asChild>
                     <Link href="/admin/dashboard">
                       <ShieldCheck className="mr-2 h-4 w-4" /> Admin
                     </Link>
@@ -45,11 +49,25 @@ const Header = () => {
               <li>
                 <Button variant={pathname === "/admin/login" ? "default" : "ghost"} asChild>
                   <Link href="/admin/login">
-                    <UserCog className="mr-2 h-4 w-4" /> Admin Login
+                    <UserCog className="mr-2 h-4 w-4" /> Admin
                   </Link>
                 </Button>
               </li>
             )}
+
+            <li>
+              <Button variant="ghost" asChild className="relative">
+                <Link href="/bag">
+                  <ShoppingBag />
+                  <span className="sr-only">View Shopping Bag</span>
+                  {!isLoading && cartCount > 0 && (
+                     <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-1 text-xs">
+                      {cartCount}
+                    </Badge>
+                  )}
+                </Link>
+              </Button>
+            </li>
           </ul>
         </nav>
       </div>

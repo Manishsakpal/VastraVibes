@@ -10,3 +10,7 @@ export interface ClothingItem {
   imageUrl: string;
   imageHint?: string; // For placeholder image generation hint
 }
+
+export type CartItem = ClothingItem & {
+  quantity: number;
+};

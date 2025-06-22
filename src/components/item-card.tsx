@@ -4,8 +4,9 @@ import Image from 'next/image';
 import type { ClothingItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ShoppingBag, Tag } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useBagContext } from '@/context/bag-context';
 
 interface ItemCardProps {
   item: ClothingItem;
@@ -13,12 +14,14 @@ interface ItemCardProps {
 
 const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   const { toast } = useToast();
+  const { addToBag } = useBagContext();
 
   const handleAddToBag = () => {
+    addToBag(item);
     toast({
       title: "Added to Bag!",
-      description: `${item.title} has been simulated as added to your bag.`,
-      variant: "default", // 'default' uses primary colors as per theme
+      description: `${item.title} has been added to your shopping bag.`,
+      variant: "default",
     });
   };
 
@@ -29,9 +32,10 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
           <Image
             src={item.imageUrl}
             alt={item.title}
-            layout="fill"
-            objectFit="cover"
+            fill={true}
+            style={{objectFit: 'cover'}}
             className="transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             data-ai-hint={item.imageHint || "clothing item"}
           />
         </div>
