@@ -11,9 +11,10 @@ import { Badge } from '@/components/ui/badge';
 
 interface ItemCardProps {
   item: ClothingItem;
+  priority?: boolean;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
+const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
   const { toast } = useToast();
   const { addToBag } = useBagContext();
   
@@ -37,10 +38,10 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
             src={item.imageUrl}
             alt={item.title}
             fill={true}
-            style={{objectFit: 'cover'}}
-            className="transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             data-ai-hint={item.imageHint || "clothing item"}
+            priority={priority}
           />
         </div>
          {hasDiscount && (
