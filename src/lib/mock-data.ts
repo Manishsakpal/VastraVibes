@@ -10,7 +10,7 @@ export const initialItems: ClothingItem[] = [
     discount: 15,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png', 'https://placehold.co/600x800.png', 'https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=600&h=800&fit=crop', 'https://images.unsplash.com/photo-1622218491323-6522a10616a6?q=80&w=600&h=800&fit=crop', 'https://plus.unsplash.com/premium_photo-1678565999588-08f3a9cf4083?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens kurta front', 'mens kurta side', 'mens kurta back'],
     specifications: [
       'Fabric: Blended Silk',
@@ -27,7 +27,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png', 'https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1594175274438-c1363977a641?q=80&w=600&h=800&fit=crop', 'https://plus.unsplash.com/premium_photo-1682310159983-125794e78107?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens anarkali', 'anarkali detail'],
     specifications: [
       'Fabric: Georgette',
@@ -43,7 +43,7 @@ export const initialItems: ClothingItem[] = [
     discount: 10,
     size: '2-4Y, 4-6Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1620703323533-f542478f1b61?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids sherwani'],
   },
   {
@@ -54,7 +54,7 @@ export const initialItems: ClothingItem[] = [
     discount: 20,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png', 'https://placehold.co/600x800.png', 'https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617922001433-418b3d346330?q=80&w=600&h=800&fit=crop', 'https://images.unsplash.com/photo-1610192494895-3100d83492b4?q=80&w=600&h=800&fit=crop', 'https://images.unsplash.com/photo-1617922001243-559313a0e633?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic saree full', 'saree pallu', 'saree blouse'],
     specifications: [
       'Fabric: Banarasi Silk',
@@ -70,7 +70,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1543087903-1ac2ec7aa8c5?q=80&w=600&h=800&fit=crop'],
     imageHints: ['denim jacket'],
   },
   {
@@ -81,7 +81,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL, XXL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1593030206231-419a4e32064d?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens shirt'],
   },
   {
@@ -92,7 +92,7 @@ export const initialItems: ClothingItem[] = [
     discount: 5,
     size: 'XS, S, M, L',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1581044777550-4cfa6ce67943?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens dress'],
   },
   {
@@ -103,7 +103,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '1-2Y, 2-3Y, 3-4Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1620703323533-f542478f1b61?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids tshirt'],
   },
   {
@@ -114,7 +114,7 @@ export const initialItems: ClothingItem[] = [
     discount: 10,
     size: 'L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1603252109360-778baaf1f253?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens sherwani'],
   },
   {
@@ -125,7 +125,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1682310159983-125794e78107?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens lehenga'],
   },
   {
@@ -136,7 +136,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1605557991694-43759714c1c6?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids gown'],
   },
   {
@@ -147,7 +147,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1561302869-2a2b9a71e4e7?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic shawl'],
   },
   {
@@ -158,7 +158,7 @@ export const initialItems: ClothingItem[] = [
     discount: 25,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1596958632822-c34d38c64c78?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western jumpsuit'],
   },
   {
@@ -169,7 +169,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '32, 34, 36',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens trousers'],
   },
   {
@@ -180,7 +180,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1694475924298-82552917a250?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens kurti'],
   },
   {
@@ -191,7 +191,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1616836417937-8742b8265a0b?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids pajama'],
   },
   {
@@ -202,7 +202,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1616190419108-085fab4163b3?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic clutch'],
   },
   {
@@ -213,7 +213,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1551803091-e2ab622d37e2?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western top'],
   },
   {
@@ -224,7 +224,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1596426768377-94436a0f6208?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens scarf'],
   },
   {
@@ -235,7 +235,7 @@ export const initialItems: ClothingItem[] = [
     discount: 10,
     size: 'Free Size',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617922001433-418b3d346330?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens saree'],
   },
   {
@@ -246,7 +246,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '2-4Y, 4-6Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1595333532682-1e91c69f2d80?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids dungarees'],
   },
   {
@@ -257,7 +257,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1616190419108-085fab4163b3?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic earrings'],
   },
   {
@@ -268,7 +268,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1594610196319-a1b5a2975298?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western skirt'],
   },
   {
@@ -279,7 +279,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1675129626437-a9254319fb73?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens suit'],
   },
   {
@@ -290,7 +290,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1618397441613-5ba992211429?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens pants'],
   },
   {
@@ -301,7 +301,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1605557991694-43759714c1c6?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids frock'],
   },
   {
@@ -312,7 +312,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '8, 9, 10',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1605101479041-a173c333918a?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic shoes'],
   },
   {
@@ -323,7 +323,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '32-38',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1619894982404-3678972e7059?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western belt'],
   },
   {
@@ -334,7 +334,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1627122933423-99373e6b9aca?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens waistcoat'],
   },
   {
@@ -345,7 +345,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1525507119028-ed4c624a8ec3?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens top'],
   },
   {
@@ -356,7 +356,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1600293333333-40f462a74439?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids sweatshirt'],
   },
   {
@@ -367,7 +367,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1694475924298-82552917a250?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic bag'],
   },
   {
@@ -378,7 +378,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1588104593456-3a78571069a7?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western coat'],
   },
   {
@@ -389,7 +389,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1627122933423-99373e6b9aca?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens jacket'],
   },
   {
@@ -400,7 +400,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1618397441613-5ba992211429?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens suit'],
   },
   {
@@ -411,7 +411,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1519340241574-289a9d3183b2?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids dhoti'],
   },
   {
@@ -422,7 +422,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1631622322974-e32714467554?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic jewelry'],
   },
   {
@@ -433,7 +433,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '28, 30, 32',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1604176354204-926873782855?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western jeans'],
   },
   {
@@ -444,7 +444,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1678565999588-08f3a9cf4083?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens kurta'],
   },
   {
@@ -455,7 +455,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617922001433-418b3d346330?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens dupatta'],
   },
   {
@@ -466,7 +466,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1605557991694-43759714c1c6?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids lehenga'],
   },
   {
@@ -477,7 +477,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1631622322974-e32714467554?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic nath'],
   },
   {
@@ -488,7 +488,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1588104593456-3a78571069a7?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western cardigan'],
   },
   {
@@ -499,7 +499,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '8, 9, 10',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1449505978434-394f737142b2?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens shoes'],
   },
   {
@@ -510,7 +510,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1618397441613-5ba992211429?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens salwar'],
   },
   {
@@ -521,7 +521,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1519340241574-289a9d3183b2?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids kurta'],
   },
   {
@@ -532,7 +532,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '2.4, 2.6, 2.8',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1595169442217-1050518713d7?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic bangles'],
   },
   {
@@ -543,7 +543,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western scarf'],
   },
   {
@@ -554,7 +554,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1627122933423-99373e6b9aca?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens jacket'],
   },
   {
@@ -565,7 +565,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1594175274438-c1363977a641?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens blouse'],
   },
   {
@@ -576,7 +576,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1612871689353-cccf581d0d6b?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids shorts'],
   },
   {
@@ -587,7 +587,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Adjustable',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1631622322974-e32714467554?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic kamarbandh'],
   },
   {
@@ -598,7 +598,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'One Size',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1575428652377-a3d80e281e6e?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western cap'],
   },
   {
@@ -609,7 +609,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1622218491323-6522a10616a6?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens lungi'],
   },
   {
@@ -620,7 +620,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617058814436-d87178a3f258?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens kaftan'],
   },
   {
@@ -631,7 +631,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1519340241574-289a9d3183b2?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids raincoat'],
   },
   {
@@ -642,7 +642,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Standard',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1615174548077-92f143d604b9?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic turban'],
   },
   {
@@ -653,7 +653,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'One Size',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western sunglasses'],
   },
   {
@@ -664,7 +664,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1603252109360-778baaf1f253?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens jodhpuri'],
   },
   {
@@ -675,7 +675,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1594610196319-a1b5a2975298?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens skirt'],
   },
   {
@@ -686,7 +686,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1600293333333-40f462a74439?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids sweater'],
   },
   {
@@ -697,7 +697,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Standard',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1631622322974-e32714467554?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic anklets'],
   },
   {
@@ -708,7 +708,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'XS, S, M',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1581044777550-4cfa6ce67943?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western dress'],
   },
   {
@@ -719,7 +719,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1622218491323-6522a10616a6?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens dhoti'],
   },
   {
@@ -730,7 +730,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1694475924298-82552917a250?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens tunic'],
   },
   {
@@ -741,7 +741,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1521120288289-5c82945a0c7e?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids jacket'],
   },
   {
@@ -752,7 +752,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1616190419108-085fab4163b3?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic brooch'],
   },
   {
@@ -763,7 +763,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1618397441613-5ba992211429?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western leggings'],
   },
   {
@@ -774,7 +774,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1627122933423-99373e6b9aca?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens kurta'],
   },
   {
@@ -785,7 +785,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1594175274438-c1363977a641?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens jumpsuit'],
   },
   {
@@ -796,7 +796,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1620703323533-f542478f1b61?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids shirt'],
   },
   {
@@ -807,7 +807,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1561302869-2a2b9a71e4e7?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic dupatta'],
   },
   {
@@ -818,7 +818,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1594610196319-a1b5a2975298?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western skirt'],
   },
   {
@@ -829,7 +829,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Standard',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1615174548077-92f143d604b9?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens turban'],
   },
   {
@@ -840,7 +840,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1618397441613-5ba992211429?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens skirt'],
   },
   {
@@ -851,7 +851,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '0-6M, 6-12M',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1616836417937-8742b8265a0b?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids onesie'],
   },
   {
@@ -862,7 +862,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1616190419108-085fab4163b3?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic necklace'],
   },
   {
@@ -873,7 +873,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1588104593456-3a78571069a7?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western dress'],
   },
   {
@@ -884,7 +884,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1678565999588-08f3a9cf4083?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens kurta'],
   },
   {
@@ -895,7 +895,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1525507119028-ed4c624a8ec3?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens top'],
   },
   {
@@ -906,7 +906,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '6-12M, 12-18M',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1595333532682-1e91c69f2d80?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids romper'],
   },
   {
@@ -917,7 +917,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1631622322974-e32714467554?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic hair'],
   },
   {
@@ -928,7 +928,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '28, 30, 32',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1604176354204-926873782855?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western jeans'],
   },
   {
@@ -939,7 +939,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens kurta'],
   },
   {
@@ -950,7 +950,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617922001433-418b3d346330?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens saree'],
   },
   {
@@ -961,7 +961,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1595333532682-1e91c69f2d80?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids skirt'],
   },
   {
@@ -972,7 +972,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'N/A',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1631622322974-e32714467554?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic bindi'],
   },
   {
@@ -983,7 +983,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1551803091-e2ab622d37e2?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western top'],
   },
   {
@@ -994,7 +994,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL, XXL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1634752541103-9c9c38a16912?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens shirt'],
   },
   {
@@ -1005,7 +1005,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://plus.unsplash.com/premium_photo-1694475924298-82552917a250?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens kurta'],
   },
   {
@@ -1016,7 +1016,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '3-5Y, 5-7Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1605557991694-43759714c1c6?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids dress'],
   },
   {
@@ -1027,7 +1027,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Free Size',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617922001243-559313a0e633?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic veil'],
   },
   {
@@ -1038,7 +1038,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1525507119028-ed4c624a8ec3?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western top'],
   },
   {
@@ -1049,7 +1049,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1603252109360-778baaf1f253?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens jacket'],
   },
   {
@@ -1060,7 +1060,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1617922001433-418b3d346330?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens saree'],
   },
   {
@@ -1071,7 +1071,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: '4-6Y, 6-8Y',
     category: 'Kids',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1612871689353-cccf581d0d6b?q=80&w=600&h=800&fit=crop'],
     imageHints: ['kids capris'],
   },
   {
@@ -1082,7 +1082,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'Adjustable',
     category: 'Ethnic',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1631622322974-e32714467554?q=80&w=600&h=800&fit=crop'],
     imageHints: ['ethnic rings'],
   },
   {
@@ -1093,7 +1093,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'M, L, XL',
     category: 'Western',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1581044777550-4cfa6ce67943?q=80&w=600&h=800&fit=crop'],
     imageHints: ['western dress'],
   },
   {
@@ -1104,7 +1104,7 @@ export const initialItems: ClothingItem[] = [
     discount: 0,
     size: 'S, M, L, XL',
     category: 'Men',
-    imageUrls: ['https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=600&h=800&fit=crop'],
     imageHints: ['mens tshirt'],
   },
   {
@@ -1115,7 +1115,7 @@ export const initialItems: ClothingItem[] = [
     discount: 50,
     size: 'S, M, L',
     category: 'Women',
-    imageUrls: ['https://placehold.co/600x800.png', 'https://placehold.co/600x800.png'],
+    imageUrls: ['https://images.unsplash.com/photo-1525507119028-ed4c624a8ec3?q=80&w=600&h=800&fit=crop', 'https://images.unsplash.com/photo-1499939667766-4afceb292d0b?q=80&w=600&h=800&fit=crop'],
     imageHints: ['womens top', 'top detail'],
     specifications: [
         'Fabric: Cotton Blend',
@@ -1124,5 +1124,3 @@ export const initialItems: ClothingItem[] = [
       ],
   },
 ];
-
-    
