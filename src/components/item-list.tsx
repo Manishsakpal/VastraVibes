@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
@@ -104,6 +105,7 @@ function ItemList() {
                 return b.matchScore - a.matchScore;
             }
             
+            // Tie-breaker sorting
             switch (sortOption) {
                 case 'price-asc':
                     return a.finalPrice - b.finalPrice;
@@ -122,6 +124,7 @@ function ItemList() {
         return scoredItems;
     }
 
+    // Default sorting when no search term
     switch (sortOption) {
       case 'price-asc':
         tempItems.sort((a, b) => a.finalPrice - b.finalPrice);
@@ -153,21 +156,21 @@ function ItemList() {
     return filteredAndSortedItems.slice(0, displayCount);
   }, [filteredAndSortedItems, displayCount]);
 
-  // --- ROBUST INFINITE SCROLL LOGIC ---
   const observer = useRef<IntersectionObserver>();
-  const lastItemRef = useCallback((node: HTMLDivElement) => {
-    if (isLoading) return;
-    if (observer.current) observer.current.disconnect();
-
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && displayCount < filteredAndSortedItems.length) {
-        setDisplayCount(prevCount => prevCount + ITEMS_TO_LOAD_ON_SCROLL);
-      }
-    });
-
-    if (node) observer.current.observe(node);
-  }, [isLoading, displayCount, filteredAndSortedItems.length]);
-  // --- END ROBUST LOGIC ---
+  const lastItemRef = useCallback((node: HTMLAnchorElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+  
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && displayCount < filteredAndSortedItems.length) {
+          setDisplayCount(prevCount => prevCount + ITEMS_TO_LOAD_ON_SCROLL);
+        }
+      });
+  
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, displayCount, filteredAndSortedItems.length]
+  );
   
   if (isLoading) {
     return (
@@ -222,15 +225,15 @@ function ItemList() {
             <h2 id="clothing-items-section" className="sr-only">Clothing Items</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
               {itemsToDisplay.map((item, index) => {
-                if (itemsToDisplay.length === index + 1) {
-                  return (
-                    <div ref={lastItemRef} key={item.id}>
-                      <ItemCard item={item} priority={index < 4} />
-                    </div>
-                  );
-                } else {
-                  return <ItemCard key={item.id} item={item} priority={index < 4} />;
-                }
+                const isLast = itemsToDisplay.length === index + 1;
+                return (
+                  <ItemCard
+                    ref={isLast ? lastItemRef : null}
+                    key={item.id}
+                    item={item}
+                    priority={index < 4}
+                  />
+                );
               })}
             </div>
           </section>

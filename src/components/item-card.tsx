@@ -17,7 +17,7 @@ interface ItemCardProps {
   priority?: boolean;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
+const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, priority = false }, ref) => {
   const { toast } = useToast();
   const { addToBag } = useBagContext();
   
@@ -36,7 +36,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
   const safeImageUrl = item.imageUrls?.[0] || 'https://placehold.co/600x800.png';
 
   return (
-    <Link href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg" aria-label={`View details for ${item.title}`}>
+    <Link ref={ref} href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg" aria-label={`View details for ${item.title}`}>
       <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg group hover:-translate-y-1">
         <CardHeader className="p-0">
           <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative">
@@ -93,6 +93,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
       </Card>
     </Link>
   );
-};
+});
+
+ItemCard.displayName = "ItemCard";
 
 export default React.memo(ItemCard);
