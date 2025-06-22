@@ -60,7 +60,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, priority = false }) => {
           <h2 className="text-lg font-semibold leading-tight" title={`${item.title} (Sizes: ${item.size}) (Colors: ${item.colors})`}>
             {item.title} <span className="text-sm font-normal text-muted-foreground">({item.size})</span>
           </h2>
-          <p className="text-sm text-muted-foreground line-clamp-2" title={item.description}>
+          <p className="text-sm text-muted-foreground" title={item.description}>
             {item.description}
           </p>
           <div className="flex items-center justify-between text-sm pt-1">
