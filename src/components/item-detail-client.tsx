@@ -30,7 +30,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
   }
 
   const hasDiscount = typeof item.discount === 'number' && item.discount > 0;
-  const discountedPrice = hasDiscount ? item.price * (1 - item.discount! / 100) : item.price;
+  const discountedPrice = hasDiscount ? item.price * (1 - item.discount / 100) : item.price;
 
   const handleAddToBag = () => {
     addToBag(item);
@@ -108,7 +108,21 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
             </Button>
         </div>
 
-        <div className="text-sm text-muted-foreground space-y-2">
+        {item.specifications && item.specifications.length > 0 && (
+          <div className="space-y-3 pt-2">
+            <h3 className="text-lg font-semibold">Specifications</h3>
+            <ul className="space-y-2">
+              {item.specifications.map((spec, index) => (
+                <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  <span>{spec}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="text-sm text-muted-foreground space-y-2 pt-2">
             <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />
                 <span>Quality Assured Fabric</span>

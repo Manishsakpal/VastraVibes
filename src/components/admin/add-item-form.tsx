@@ -34,6 +34,7 @@ const AddItemForm = () => {
       category: undefined,
       imageUrls: '',
       imageHints: '',
+      specifications: '',
     },
   });
 
@@ -42,6 +43,7 @@ const AddItemForm = () => {
         ...data,
         imageUrls: data.imageUrls.split('\n').map(url => url.trim()).filter(url => url),
         imageHints: data.imageHints?.split('\n').map(hint => hint.trim()).filter(hint => hint) || [],
+        specifications: data.specifications?.split('\n').map(spec => spec.trim()).filter(spec => spec) || [],
       };
 
     addItem(processedData);
@@ -201,6 +203,21 @@ const AddItemForm = () => {
                 <Textarea placeholder="blue saree&#10;red dress" {...field} rows={4} />
               </FormControl>
               <FormDescription>Enter one hint per line, corresponding to each image URL. Max two keywords per hint.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="specifications"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Specifications (Optional)</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Feature 1: Detail&#10;Feature 2: Detail" {...field} rows={4} />
+              </FormControl>
+              <FormDescription>Enter one specification per line. These will be displayed as a list on the product page.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

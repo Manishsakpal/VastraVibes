@@ -12,6 +12,7 @@ export const addItemSchema = z.object({
   }),
   imageUrls: z.string().min(1, { message: "At least one image URL is required." }),
   imageHints: z.string().max(500, { message: "Image hints should be max 500 characters."}).optional(),
+  specifications: z.string().optional(),
 });
 
 export const checkoutSchema = z.object({

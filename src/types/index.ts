@@ -10,6 +10,7 @@ export interface ClothingItem {
   category: Category;
   imageUrls: string[];
   imageHints?: string[]; // For placeholder image generation hint
+  specifications?: string[];
 }
 
 export type CartItem = ClothingItem & {

@@ -11,6 +11,12 @@ export const initialItems: ClothingItem[] = [
     category: 'Men',
     imageUrls: ['https://picsum.photos/seed/1/600/800', 'https://picsum.photos/seed/1a/600/800', 'https://picsum.photos/seed/1b/600/800'],
     imageHints: ['mens kurta front', 'mens kurta side', 'mens kurta back'],
+    specifications: [
+      'Fabric: Blended Silk',
+      'Fit: Regular',
+      'Sleeve: Full Sleeves',
+      'Care: Dry Clean Only'
+    ],
   },
   {
     id: '2',
@@ -22,6 +28,11 @@ export const initialItems: ClothingItem[] = [
     category: 'Women',
     imageUrls: ['https://picsum.photos/seed/2/600/800', 'https://picsum.photos/seed/2a/600/800'],
     imageHints: ['womens anarkali', 'anarkali detail'],
+    specifications: [
+      'Fabric: Georgette',
+      'Work: Gota Patti',
+      'Occasion: Wedding, Festive'
+    ],
   },
   {
     id: '3',
@@ -44,6 +55,11 @@ export const initialItems: ClothingItem[] = [
     category: 'Ethnic',
     imageUrls: ['https://picsum.photos/seed/4/600/800', 'https://picsum.photos/seed/4a/600/800', 'https://picsum.photos/seed/4b/600/800'],
     imageHints: ['ethnic saree full', 'saree pallu', 'saree blouse'],
+    specifications: [
+      'Fabric: Banarasi Silk',
+      'Length: 5.5 meters',
+      'Includes matching blouse piece'
+    ],
   },
   {
     id: '5',
