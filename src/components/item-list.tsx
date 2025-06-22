@@ -102,12 +102,10 @@ function ItemList() {
   const filteredAndSortedItems = useMemo(() => {
     let tempItems = [...items];
 
-    // 1. Filter by category
     if (selectedCategory !== 'All') {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
     }
     
-    // 2. If search term exists, filter and sort by relevance
     if (debouncedSearchTerm) {
         const searchWords = debouncedSearchTerm.toLowerCase().split(' ').filter(Boolean);
         
@@ -118,13 +116,11 @@ function ItemList() {
             return { ...item, matchScore };
         }).filter(item => item.matchScore > 0);
 
-        // Sort by match score first, then by the selected sort option
         scoredItems.sort((a, b) => {
             if (a.matchScore !== b.matchScore) {
-                return b.matchScore - a.matchScore; // Higher score first
+                return b.matchScore - a.matchScore;
             }
             
-            // Secondary sort based on user selection
             switch (sortOption) {
                 case 'price-asc':
                     return a.finalPrice - b.finalPrice;
@@ -143,7 +139,6 @@ function ItemList() {
         return scoredItems;
     }
 
-    // 3. Sort the results if no search term
     switch (sortOption) {
       case 'price-asc':
         tempItems.sort((a, b) => a.finalPrice - b.finalPrice);
@@ -190,7 +185,6 @@ function ItemList() {
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, {
       root: null,
-      rootMargin: "200px",
       threshold: 0,
     });
 
@@ -273,7 +267,7 @@ function ItemList() {
       ) : (
         <div className="text-center py-12">
           <p className="text-xl text-muted-foreground">
-            {searchTerm ? "No items match your search." : `No items found in ${selectedCategory === 'All' ? 'this category' : selectedCategory}.`}
+            {debouncedSearchTerm ? "No items match your search." : `No items found in ${selectedCategory === 'All' ? 'this category' : selectedCategory}.`}
           </p>
         </div>
       )}

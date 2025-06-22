@@ -54,7 +54,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
             <Image
               src={selectedImage}
               alt={item.title}
-              fill
+              fill={true}
               className="object-contain transition-all duration-300"
               sizes="(max-width: 768px) 100vw, 50vw"
               priority
@@ -76,7 +76,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
                 <Image
                   src={imgUrl}
                   alt={`${item.title} thumbnail ${index + 1}`}
-                  fill
+                  fill={true}
                   className="object-contain"
                   sizes="20vw"
                 />
