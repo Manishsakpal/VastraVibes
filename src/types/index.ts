@@ -29,10 +29,16 @@ export type CartItem = ClothingItem & {
 
 export type CheckoutDetails = z.infer<typeof checkoutSchema>;
 
+export type OrderStatus = 'Placed' | 'Shipped' | 'Delivered' | 'Cancelled';
+
+export type OrderItem = CartItem & {
+  status: OrderStatus;
+};
+
 export interface Order {
   id: string;
   date: string; // ISO date string
-  items: CartItem[];
+  items: OrderItem[];
   customerDetails: CheckoutDetails;
   totalAmount: number;
 }

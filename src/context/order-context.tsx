@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { Order, CartItem, CheckoutDetails } from '@/types';
+import type { Order, CartItem, CheckoutDetails, OrderItem, OrderStatus } from '@/types';
 import { ORDERS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useItemContext } from './item-context';
@@ -9,6 +9,7 @@ import { useItemContext } from './item-context';
 interface OrderContextType {
   orders: Order[];
   addOrder: (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => void;
+  updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus) => void;
   isLoading: boolean;
 }
 
@@ -28,7 +29,6 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   useEffect(() => {
-    // We must wait for the master item list to be loaded before we can sanitize orders.
     if (isItemsLoading) {
       return;
     }
@@ -39,36 +39,34 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       if (storedOrders) {
         const parsedOrders: Order[] = JSON.parse(storedOrders);
         if(Array.isArray(parsedOrders)) {
-            // Create a Map for efficient lookup of master items.
             const masterItemMap = new Map(masterItems.map(item => [item.id, item]));
 
-            // This is the data sanitization step. It ensures that older orders
-            // stored in localStorage without a `finalPrice` or `adminId` get them added.
+            // Sanitize older orders stored in localStorage that might be missing new fields.
             const sanitizedOrders = parsedOrders.map(order => ({
                 ...order,
                 items: order.items.map(itemInOrder => {
                     const masterItem = masterItemMap.get(itemInOrder.id);
-                    let finalPrice = itemInOrder.finalPrice;
-                    let adminId = itemInOrder.adminId;
+                    let { finalPrice, adminId, status } = itemInOrder;
 
-                    // Fix #1: If finalPrice is missing, calculate it.
                     if (finalPrice === undefined && typeof itemInOrder.price === 'number') {
                         finalPrice = (typeof itemInOrder.discount === 'number' && itemInOrder.discount > 0)
                             ? itemInOrder.price * (1 - itemInOrder.discount / 100)
                             : itemInOrder.price;
                     }
                     
-                    // Fix #2: If adminId is missing, look it up from the master list.
                     if (adminId === undefined && masterItem) {
                         adminId = masterItem.adminId;
                     }
+                    
+                    if (status === undefined) {
+                      status = 'Placed'; // Add default status if missing
+                    }
 
-                    return { ...itemInOrder, finalPrice, adminId };
+                    return { ...itemInOrder, finalPrice, adminId, status };
                 })
             }));
 
             setOrders(sanitizedOrders);
-            // Re-save the sanitized orders back to localStorage to prevent this check on every load.
             updateLocalStorage(sanitizedOrders);
         }
       }
@@ -80,10 +78,15 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [isItemsLoading, masterItems]);
 
   const addOrder = useCallback((items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => {
+    const orderItems: OrderItem[] = items.map(item => ({
+      ...item,
+      status: 'Placed', // Set default status for new orders
+    }));
+    
     const newOrder: Order = {
       id: `order-${Date.now()}`,
       date: new Date().toISOString(),
-      items,
+      items: orderItems,
       customerDetails,
       totalAmount,
     };
@@ -95,8 +98,27 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     });
   }, []);
 
+  const updateOrderItemStatus = useCallback((orderId: string, itemId: string, newStatus: OrderStatus) => {
+    setOrders(prevOrders => {
+      const updatedOrders = prevOrders.map(order => {
+        if (order.id === orderId) {
+          const updatedItems = order.items.map(item => {
+            if (item.id === itemId) {
+              return { ...item, status: newStatus };
+            }
+            return item;
+          });
+          return { ...order, items: updatedItems };
+        }
+        return order;
+      });
+      updateLocalStorage(updatedOrders);
+      return updatedOrders;
+    });
+  }, []);
+
   return (
-    <OrderContext.Provider value={{ orders, addOrder, isLoading }}>
+    <OrderContext.Provider value={{ orders, addOrder, updateOrderItemStatus, isLoading }}>
       {children}
     </OrderContext.Provider>
   );

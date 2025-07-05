@@ -6,13 +6,31 @@ import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Loader2, PackageOpen, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useMemo } from 'react';
+import type { OrderStatus } from '@/types';
+
+const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
+  switch (status) {
+    case 'Delivered':
+      return 'default';
+    case 'Shipped':
+      return 'secondary';
+    case 'Cancelled':
+      return 'destructive';
+    case 'Placed':
+    default:
+      return 'outline';
+  }
+};
+
 
 export default function OrdersPage() {
-  const { orders, isLoading: isOrdersLoading } = useOrderContext();
+  const { orders, isLoading: isOrdersLoading, updateOrderItemStatus } = useOrderContext();
   const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
 
   const isLoading = isOrdersLoading || isAdminLoading;
@@ -63,12 +81,10 @@ export default function OrdersPage() {
             <Accordion type="single" collapsible className="w-full">
               {relevantOrders.map((order) => {
                 
-                // Filter items for the current admin's view, if not a super admin
                 const itemsForThisAdmin = isSuperAdmin
                   ? order.items
                   : order.items.filter(item => item.adminId === currentAdminId);
 
-                // Calculate the sub-total for this admin's items in this order
                 const subTotalForThisAdmin = itemsForThisAdmin.reduce((acc, item) => {
                   const finalPricePerItem = item.finalPrice ?? (item.price * (1 - (item.discount ?? 0) / 100));
                   return acc + (finalPricePerItem * item.quantity);
@@ -99,26 +115,48 @@ export default function OrdersPage() {
                            <h4 className="font-semibold mb-2">
                             {isSuperAdmin ? 'Purchased Items' : 'Your Purchased Items'}
                           </h4>
-                          <ul className="space-y-3">
+                          <ul className="space-y-4">
                             {itemsForThisAdmin.map(item => {
                               return (
                                 <li key={item.id} className="flex items-start gap-3">
                                   <Image 
                                     src={item.imageUrls[0]} 
                                     alt={item.title} 
-                                    width={40} 
-                                    height={40}
+                                    width={50} 
+                                    height={50}
                                     className="rounded-sm object-contain bg-white" 
                                   />
                                   <div className="flex-grow">
                                     <p className="font-medium text-sm">{item.title}</p>
-                                    <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice.toFixed(2)}</p>
+                                    <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice?.toFixed(2)}</p>
+                                    
                                     {isSuperAdmin && item.adminId && (
-                                      <div className="flex items-center text-xs text-accent mt-1">
+                                      <div className="flex items-center text-xs text-primary mt-1">
                                         <User className="mr-1.5 h-3 w-3" />
                                         <span>Sold by: {item.adminId}</span>
                                       </div>
                                     )}
+
+                                    <div className="flex items-center gap-4 mt-2">
+                                      <Badge variant={statusBadgeVariant(item.status)} className="capitalize">{item.status}</Badge>
+                                      
+                                      <Select
+                                        value={item.status}
+                                        onValueChange={(newStatus: OrderStatus) => {
+                                          updateOrderItemStatus(order.id, item.id, newStatus);
+                                        }}
+                                      >
+                                        <SelectTrigger className="h-8 w-[140px] text-xs">
+                                          <SelectValue placeholder="Update status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="Placed">Placed</SelectItem>
+                                          <SelectItem value="Shipped">Shipped</SelectItem>
+                                          <SelectItem value="Delivered">Delivered</SelectItem>
+                                          <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
                                   </div>
                                 </li>
                               );
