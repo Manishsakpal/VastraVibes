@@ -1,3 +1,6 @@
+import { checkoutSchema } from "@/lib/schemas";
+import { z } from "zod";
+
 export type Category = "Men" | "Women" | "Kids" | "Ethnic" | "Western";
 
 export interface ClothingItem {
@@ -21,3 +24,13 @@ export interface ClothingItem {
 export type CartItem = ClothingItem & {
   quantity: number;
 };
+
+export type CheckoutDetails = z.infer<typeof checkoutSchema>;
+
+export interface Order {
+  id: string;
+  date: string; // ISO date string
+  items: CartItem[];
+  customerDetails: CheckoutDetails;
+  totalAmount: number;
+}

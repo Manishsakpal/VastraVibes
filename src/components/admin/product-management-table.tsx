@@ -1,0 +1,99 @@
+"use client";
+
+import { useState } from 'react';
+import { useItemContext } from '@/context/item-context';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Edit, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import type { ClothingItem } from '@/types';
+
+export default function ProductManagementTable() {
+    const { items, deleteItem, isLoading } = useItemContext();
+    const { toast } = useToast();
+    const [itemToDelete, setItemToDelete] = useState<ClothingItem | null>(null);
+
+    const handleDelete = () => {
+        if (itemToDelete) {
+            deleteItem(itemToDelete.id);
+            toast({
+                title: 'Item Deleted',
+                description: `"${itemToDelete.title}" has been removed from the store.`,
+                variant: 'destructive',
+            });
+            setItemToDelete(null);
+        }
+    };
+    
+    if (isLoading) {
+        return <p>Loading products...</p>;
+    }
+
+    return (
+        <>
+            <div className="border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[80px]">Image</TableHead>
+                            <TableHead>Title</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead className="text-right">Price</TableHead>
+                            <TableHead className="text-center">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {items.map((item) => (
+                            <TableRow key={item.id}>
+                                <TableCell>
+                                    <Image
+                                        src={item.imageUrls[0] || 'https://placehold.co/100x100.png'}
+                                        alt={item.title}
+                                        width={50}
+                                        height={66}
+                                        className="rounded-md object-contain"
+                                    />
+                                </TableCell>
+                                <TableCell className="font-medium">{item.title}</TableCell>
+                                <TableCell>{item.category}</TableCell>
+                                <TableCell className="text-right">₹{item.finalPrice.toFixed(2)}</TableCell>
+                                <TableCell className="text-center">
+                                    <Button variant="ghost" size="icon" disabled>
+                                        <Edit className="h-4 w-4" />
+                                        <span className="sr-only">Edit</span>
+                                    </Button>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => setItemToDelete(item)}>
+                                            <Trash2 className="h-4 w-4" />
+                                            <span className="sr-only">Delete</span>
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+            
+            <AlertDialog open={!!itemToDelete} onOpenChange={(isOpen) => !isOpen && setItemToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the item
+                             "{itemToDelete?.title}" from your store.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setItemToDelete(null)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
+    );
+}

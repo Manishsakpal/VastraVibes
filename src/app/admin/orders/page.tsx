@@ -1,0 +1,89 @@
+"use client";
+
+import { useOrderContext } from '@/context/order-context';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { ArrowLeft, Loader2, PackageOpen } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+
+export default function OrdersPage() {
+  const { orders, isLoading } = useOrderContext();
+
+  return (
+    <div className="container mx-auto py-8 px-4 animate-fade-in-up">
+      <Button variant="outline" asChild className="mb-6">
+        <Link href="/admin/dashboard">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Dashboard
+        </Link>
+      </Button>
+
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-primary">Customer Orders</CardTitle>
+          <CardDescription>Review all orders placed through your store.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex items-center justify-center p-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="ml-4">Loading orders...</p>
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="text-center py-12 flex flex-col items-center">
+              <PackageOpen className="h-20 w-20 text-muted-foreground mb-4" />
+              <p className="text-xl text-muted-foreground">No orders have been placed yet.</p>
+            </div>
+          ) : (
+            <Accordion type="single" collapsible className="w-full">
+              {orders.map((order) => (
+                <AccordionItem value={order.id} key={order.id}>
+                  <AccordionTrigger>
+                    <div className="flex justify-between w-full pr-4">
+                      <span className="font-mono text-sm">{order.id}</span>
+                      <span className="text-muted-foreground text-sm">{new Date(order.date).toLocaleString()}</span>
+                      <span className="font-bold">₹{order.totalAmount.toFixed(2)}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-muted/50 rounded-md">
+                      <div>
+                        <h4 className="font-semibold mb-2">Customer Details</h4>
+                        <p><strong>Name:</strong> {order.customerDetails.name}</p>
+                        <p><strong>Email:</strong> {order.customerDetails.email}</p>
+                        <p><strong>Phone:</strong> {order.customerDetails.phone}</p>
+                        <p><strong>Address:</strong> {order.customerDetails.address}, {order.customerDetails.city}, {order.customerDetails.state} {order.customerDetails.zip}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-2">Purchased Items</h4>
+                        <ul className="space-y-2">
+                          {order.items.map(item => (
+                            <li key={item.id} className="flex items-center gap-3">
+                              <Image 
+                                src={item.imageUrls[0]} 
+                                alt={item.title} 
+                                width={40} 
+                                height={40}
+                                className="rounded-sm object-contain bg-white" 
+                              />
+                              <div className="flex-grow">
+                                <p className="font-medium text-sm">{item.title}</p>
+                                <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice.toFixed(2)}</p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
