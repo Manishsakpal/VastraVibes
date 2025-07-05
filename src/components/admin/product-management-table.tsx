@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useItemContext } from '@/context/item-context';
@@ -7,6 +8,7 @@ import { Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 import type { ClothingItem } from '@/types';
 
 export default function ProductManagementTable() {
@@ -54,9 +56,11 @@ export default function ProductManagementTable() {
                             <TableCell>{item.category}</TableCell>
                             <TableCell className="text-right">₹{item.finalPrice.toFixed(2)}</TableCell>
                             <TableCell className="text-center">
-                                <Button variant="ghost" size="icon" disabled>
-                                    <Edit className="h-4 w-4" />
-                                    <span className="sr-only">Edit</span>
+                                <Button variant="ghost" size="icon" asChild>
+                                    <Link href={`/admin/edit-item/${item.id}`}>
+                                        <Edit className="h-4 w-4" />
+                                        <span className="sr-only">Edit</span>
+                                    </Link>
                                 </Button>
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>

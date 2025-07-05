@@ -29,6 +29,7 @@ const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableTex
 interface ItemContextType {
   items: ClothingItem[];
   addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => void;
+  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => void;
   deleteItem: (itemId: string) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
   isLoading: boolean;
@@ -101,6 +102,28 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   }, []);
 
+  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => {
+    setItems(prevItems => {
+        const updatedItems = prevItems.map(item => {
+            if (item.id === itemId) {
+                const rawToProcess = { ...itemData, id: itemId };
+                const sanitizedItem = sanitizeItems([rawToProcess])[0];
+                const [processedItem] = processRawItems([sanitizedItem]);
+                return processedItem;
+            }
+            return item;
+        });
+
+        const rawItemsToSave = updatedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
+        try {
+            localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawItemsToSave));
+        } catch (error) {
+            console.warn("Could not update items in localStorage:", error);
+        }
+        return updatedItems;
+    });
+  }, []);
+
   const deleteItem = useCallback((itemId: string) => {
     setItems(prevItems => {
         const updatedItems = prevItems.filter(item => item.id !== itemId);
@@ -130,7 +153,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <ItemContext.Provider value={{ items, addItem, deleteItem, recordPurchase, isLoading }}>
+    <ItemContext.Provider value={{ items, addItem, updateItem, deleteItem, recordPurchase, isLoading }}>
       {children}
     </ItemContext.Provider>
   );
