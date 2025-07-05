@@ -30,3 +30,7 @@ export const ITEMS_STORAGE_KEY = "vastraVibesItems";
 export const BAG_STORAGE_KEY = "vastraVibesBag";
 export const PURCHASE_COUNTS_STORAGE_KEY = "vastraVibesPurchaseCounts";
 export const ORDERS_STORAGE_KEY = "vastraVibesOrders";
+
+// Visitor tracking keys
+export const VISITOR_COUNT_KEY = "vastraVibesVisitorCount";
+export const LAST_VISIT_KEY = "vastraVibesLastVisit";
