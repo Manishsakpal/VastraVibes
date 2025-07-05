@@ -1,36 +1,40 @@
 
 "use client";
 
-import type { ClothingItem, CartItem } from '@/types';
+import type { ClothingItem, CartItem, AdminUser } from '@/types';
 import { initialItems as rawInitialItems } from '@/lib/mock-data';
 import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { sanitizeItems } from '@/lib/utils';
 import { useAdminAuth } from './admin-auth-context';
 
-// Helper function to add performance-optimized fields
-const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]): ClothingItem[] => {
+// Helper function to add performance-optimized fields, including the admin's name
+const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableText' | 'adminName'>[], admins: AdminUser[]): ClothingItem[] => {
   return items.map(item => {
     const finalPrice = (item.discount && item.discount > 0)
       ? item.price * (1 - item.discount / 100)
       : item.price;
+    
+    const admin = admins.find(a => a.id === item.adminId);
+    const adminName = admin ? admin.name : 'Vastra Vibes';
 
     const searchableText = [
       item.title,
       item.description,
       item.colors,
       item.size,
+      adminName,
     ].join(' ').toLowerCase();
 
     // The type assertion is safe because we are adding the missing properties.
-    return { ...item, finalPrice, searchableText } as ClothingItem;
+    return { ...item, finalPrice, searchableText, adminName } as ClothingItem;
   });
 };
 
 interface ItemContextType {
   items: ClothingItem[];
-  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
-  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
+  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => void;
+  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => void;
   deleteItem: (itemId: string) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
   isLoading: boolean;
@@ -41,69 +45,65 @@ const ItemContext = createContext<ItemContextType | undefined>(undefined);
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { currentAdminId } = useAdminAuth();
+  const { currentAdminId, admins, isLoading: isAdminLoading } = useAdminAuth();
 
   useEffect(() => {
-    setIsLoading(true);
+    // Wait for the admin list to be loaded before processing items
+    if (isAdminLoading) {
+      setIsLoading(true);
+      return;
+    }
+    
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
       let storedItemsParsed: any[] | null = null;
 
       if (storedItemsRaw) {
-        try {
-          storedItemsParsed = JSON.parse(storedItemsRaw);
-        } catch {
-          // Handle JSON parsing error
-          storedItemsParsed = null;
-        }
+        try { storedItemsParsed = JSON.parse(storedItemsRaw); } catch { storedItemsParsed = null; }
       }
 
-      // Self-healing: Check if stored data is invalid or in an old format (missing adminId).
       const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed) || storedItemsParsed.length === 0 || !storedItemsParsed[0].hasOwnProperty('adminId');
 
+      let itemsToProcess: any[];
       if (storedItemsRaw && !isDataInvalid) {
-        // Data is valid and in the new format, use it.
-        const processedItems = processRawItems(sanitizeItems(storedItemsParsed));
-        setItems(processedItems);
+        itemsToProcess = storedItemsParsed;
       } else {
-        // Data is missing, invalid, or old. Reload from mock-data.ts.
-        if (storedItemsRaw) {
-          console.log("Re-initializing item data from mock-data.ts due to invalid or old storage format.");
-        }
-        
-        const sanitizedInitialItems = sanitizeItems(rawInitialItems);
-        const processedInitialItems = processRawItems(sanitizedInitialItems);
-        setItems(processedInitialItems);
-        
-        // Overwrite the invalid stored data with the fresh, correct data.
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitizedInitialItems));
+        if (storedItemsRaw) { console.log("Re-initializing item data from mock-data.ts due to invalid or old storage format."); }
+        itemsToProcess = rawInitialItems;
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(itemsToProcess));
       }
+      
+      const sanitized = sanitizeItems(itemsToProcess);
+      const processed = processRawItems(sanitized, admins);
+      setItems(processed);
+
     } catch (error) {
       console.warn("Could not read from localStorage, falling back to initial data:", error);
-      // Fallback in case of any other error
-      const sanitizedInitialItems = sanitizeItems(rawInitialItems);
-      const processedInitialItems = processRawItems(sanitizedInitialItems);
-      setItems(processedInitialItems);
+      const sanitized = sanitizeItems(rawInitialItems);
+      const processed = processRawItems(sanitized, admins);
+      setItems(processed);
     } finally {
         setIsLoading(false);
     }
-  }, []);
+  }, [admins, isAdminLoading]);
 
-  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
+  // Helper to strip processed fields before saving back to storage
+  const getRawItemsFromState = (processedItems: ClothingItem[]) => {
+    return processedItems.map(({ finalPrice, searchableText, adminName, ...rawItem }) => rawItem);
+  }
+
+  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => {
     setItems(prevItems => {
-      const newItemRaw: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = {
+      const newItemRaw: Omit<ClothingItem, 'finalPrice' | 'searchableText' | 'adminName'> = {
         ...itemData,
         id: String(Date.now() + Math.random()),
         adminId: currentAdminId || undefined,
       };
       
       const sanitizedNewItem = sanitizeItems([newItemRaw])[0];
-      const [processedNewItem] = processRawItems([sanitizedNewItem]);
-
+      const [processedNewItem] = processRawItems([sanitizedNewItem], admins);
       const updatedProcessedItems = [...prevItems, processedNewItem];
-      
-      // Get the raw items from the updated processed list to save to localStorage
-      const updatedRawItems = updatedProcessedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
+      const updatedRawItems = getRawItemsFromState(updatedProcessedItems);
       
       try {
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedRawItems));
@@ -112,21 +112,21 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       return updatedProcessedItems;
     });
-  }, [currentAdminId]);
+  }, [currentAdminId, admins]);
 
-  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
+  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => {
     setItems(prevItems => {
         const updatedItems = prevItems.map(item => {
             if (item.id === itemId) {
-                const rawToProcess: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = { ...itemData, id: itemId, adminId: item.adminId };
+                const rawToProcess: Omit<ClothingItem, 'finalPrice' | 'searchableText' | 'adminName'> = { ...itemData, id: itemId, adminId: item.adminId };
                 const sanitizedItem = sanitizeItems([rawToProcess])[0];
-                const [processedItem] = processRawItems([sanitizedItem]);
+                const [processedItem] = processRawItems([sanitizedItem], admins);
                 return processedItem;
             }
             return item;
         });
 
-        const rawItemsToSave = updatedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
+        const rawItemsToSave = getRawItemsFromState(updatedItems);
         try {
             localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawItemsToSave));
         } catch (error) {
@@ -134,12 +134,12 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
         return updatedItems;
     });
-  }, []);
+  }, [admins]);
 
   const deleteItem = useCallback((itemId: string) => {
     setItems(prevItems => {
         const updatedItems = prevItems.filter(item => item.id !== itemId);
-        const rawItemsToSave = updatedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
+        const rawItemsToSave = getRawItemsFromState(updatedItems);
         try {
             localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawItemsToSave));
         } catch (error) {

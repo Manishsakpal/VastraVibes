@@ -91,7 +91,8 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
         <div>
           <Badge>{item.category}</Badge>
           <h1 className="text-3xl lg:text-4xl font-bold text-primary mt-2">{item.title}</h1>
-          <p className="text-lg text-muted-foreground mt-2">{item.description}</p>
+          <p className="text-md text-muted-foreground mt-1">Sold by <span className="font-semibold">{item.adminName}</span></p>
+          <p className="text-lg text-muted-foreground mt-4">{item.description}</p>
         </div>
 
         <div className="flex items-baseline gap-4">

@@ -68,6 +68,9 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
               <p className="truncate" title={item.colors}>
                 <span className="font-medium text-foreground/80">Colors:</span> {item.colors}
               </p>
+               <p className="truncate" title={`Sold by: ${item.adminName}`}>
+                <span className="font-medium text-foreground/80">Seller:</span> {item.adminName}
+              </p>
             </div>
           </div>
           
