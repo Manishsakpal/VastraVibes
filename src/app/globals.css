@@ -6,140 +6,140 @@
   :root,
   .theme-default {
     /* Ethnic/Default Theme: Warm, earthy, inviting */
-    --background: 35 71% 96%; /* Lighter, more sandy beige */
-    --foreground: 25 55% 20%; /* Darker earthy brown for more contrast */
-    --card: 35 71% 98%;
-    --card-foreground: 25 55% 20%;
-    --popover: 35 71% 98%;
-    --popover-foreground: 25 55% 20%;
+    --background: 35 71% 97%; /* Sandy Cream */
+    --foreground: 25 55% 25%; /* Dark Earthy Brown */
+    --card: 35 71% 99%;
+    --card-foreground: 25 55% 25%;
+    --popover: 35 71% 99%;
+    --popover-foreground: 25 55% 25%;
     --primary: 33 94% 53%; /* Saffron */
     --primary-foreground: 20 100% 98%;
-    --secondary: 45 60% 92%; /* Muted Gold/Cream */
-    --secondary-foreground: 35 50% 25%;
-    --muted: 35 71% 94%;
-    --muted-foreground: 25 45% 45%;
-    --accent: 33 94% 53%; /* Saffron */
+    --secondary: 45 60% 94%; /* Muted Gold/Cream */
+    --secondary-foreground: 35 50% 30%;
+    --muted: 35 71% 95%;
+    --muted-foreground: 25 45% 50%;
+    --accent: 33 94% 53%; /* Saffron - Keep consistent with primary */
     --accent-foreground: 20 100% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 35 60% 88%;
-    --input: 35 60% 92%;
+    --border: 35 60% 90%;
+    --input: 35 60% 94%;
     --ring: 33 94% 53%;
     --radius: 0.5rem;
   }
   
   .theme-ethnic {
-    --background: 35 71% 96%;
-    --foreground: 25 55% 20%;
-    --card: 35 71% 98%;
-    --card-foreground: 25 55% 20%;
-    --popover: 35 71% 98%;
-    --popover-foreground: 25 55% 20%;
-    --primary: 15 85% 55%;
+    --background: 35 71% 97%;
+    --foreground: 25 55% 25%;
+    --card: 35 71% 99%;
+    --card-foreground: 25 55% 25%;
+    --popover: 35 71% 99%;
+    --popover-foreground: 25 55% 25%;
+    --primary: 15 85% 55%; /* Rich Terracotta */
     --primary-foreground: 20 100% 98%;
-    --secondary: 40 70% 90%;
-    --secondary-foreground: 35 50% 25%;
-    --muted: 35 71% 94%;
-    --muted-foreground: 25 45% 45%;
-    --accent: 33 94% 53%;
+    --secondary: 40 70% 92%; /* Pale Gold */
+    --secondary-foreground: 35 50% 30%;
+    --muted: 35 71% 95%;
+    --muted-foreground: 25 45% 50%;
+    --accent: 15 85% 55%; /* Rich Terracotta - Keep consistent with primary */
     --accent-foreground: 20 100% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 35 60% 88%;
-    --input: 35 60% 92%;
+    --border: 35 60% 90%;
+    --input: 35 60% 94%;
     --ring: 15 85% 55%;
   }
 
   /* Men Theme: Cool, modern, sophisticated */
   .theme-men {
-    --background: 215 40% 96%;
-    --foreground: 220 40% 10%;
+    --background: 215 40% 96%; /* Light Slate Blue */
+    --foreground: 220 40% 15%; /* Charcoal Blue */
     --card: 215 40% 98%;
-    --card-foreground: 220 40% 10%;
+    --card-foreground: 220 40% 15%;
     --popover: 215 40% 98%;
-    --popover-foreground: 220 40% 10%;
-    --primary: 220 80% 50%; /* Vibrant Royal Blue */
+    --popover-foreground: 220 40% 15%;
+    --primary: 220 80% 55%; /* Vibrant Royal Blue */
     --primary-foreground: 210 100% 98%;
-    --secondary: 215 25% 88%;
-    --secondary-foreground: 220 40% 20%;
+    --secondary: 215 25% 90%; /* Light Steel Gray */
+    --secondary-foreground: 220 40% 25%;
     --muted: 215 40% 94%;
-    --muted-foreground: 215 25% 55%;
-    --accent: 33 94% 53%; /* Saffron */
+    --muted-foreground: 215 25% 60%;
+    --accent: 220 80% 55%; /* Vibrant Royal Blue - Keep consistent */
     --accent-foreground: 210 100% 98%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 215 30% 88%;
-    --input: 215 30% 92%;
-    --ring: 195 90% 50%;
+    --border: 215 30% 90%;
+    --input: 215 30% 94%;
+    --ring: 220 80% 55%;
   }
 
   /* Women Theme: Soft, elegant, chic */
   .theme-women {
-    --background: 340 80% 97%; /* Lighter dusty rose */
-    --foreground: 335 35% 20%; /* Deeper Plum */
+    --background: 340 80% 98%; /* Very Light Dusty Rose */
+    --foreground: 335 35% 25%; /* Deep Plum */
     --card: 340 80% 99%;
-    --card-foreground: 335 35% 20%;
+    --card-foreground: 335 35% 25%;
     --popover: 340 80% 99%;
-    --popover-foreground: 335 35% 20%;
-    --primary: 330 80% 60%; /* Brighter Fuchsia */
+    --popover-foreground: 335 35% 25%;
+    --primary: 330 85% 65%; /* Bright Magenta */
     --primary-foreground: 335 100% 98%;
-    --secondary: 300 60% 94%; /* Paler Lavender */
-    --secondary-foreground: 300 30% 30%;
-    --muted: 340 80% 95%;
-    --muted-foreground: 340 25% 50%;
-    --accent: 33 94% 53%; /* Saffron */
-    --accent-foreground: 45 50% 15%;
+    --secondary: 300 60% 96%; /* Very Pale Lavender */
+    --secondary-foreground: 300 30% 35%;
+    --muted: 340 80% 96%;
+    --muted-foreground: 340 25% 55%;
+    --accent: 330 85% 65%; /* Bright Magenta - Keep consistent */
+    --accent-foreground: 335 100% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 340 70% 90%;
-    --input: 340 70% 94%;
-    --ring: 330 80% 60%;
+    --border: 340 70% 92%;
+    --input: 340 70% 96%;
+    --ring: 330 85% 65%;
   }
 
   /* Kids Theme: Bright, playful, fun */
   .theme-kids {
-    --background: 45 100% 96%; /* Light sunny yellow */
-    --foreground: 25 60% 25%; /* Warm dark brown */
-    --card: 45 100% 98%;
-    --card-foreground: 25 60% 25%;
-    --popover: 45 100% 98%;
-    --popover-foreground: 25 60% 25%;
-    --primary: 15 100% 60%; /* Bright orange */
-    --primary-foreground: 15 60% 20%;
-    --secondary: 190 80% 90%; /* Light Sky Blue */
-    --secondary-foreground: 190 50% 30%;
-    --muted: 45 100% 94%;
-    --muted-foreground: 35 50% 55%;
-    --accent: 33 94% 53%; /* Saffron */
-    --accent-foreground: 210 100% 98%;
+    --background: 185 60% 96%; /* Light Sky Blue */
+    --foreground: 25 60% 30%; /* Warm Dark Brown */
+    --card: 185 60% 98%;
+    --card-foreground: 25 60% 30%;
+    --popover: 185 60% 98%;
+    --popover-foreground: 25 60% 30%;
+    --primary: 40 100% 60%; /* Sunny Orange */
+    --primary-foreground: 25 80% 98%;
+    --secondary: 90 70% 92%; /* Light Lime Green */
+    --secondary-foreground: 90 50% 35%;
+    --muted: 185 60% 94%;
+    --muted-foreground: 25 50% 60%;
+    --accent: 40 100% 60%; /* Sunny Orange - Keep consistent */
+    --accent-foreground: 25 80% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 45 80% 90%;
-    --input: 45 80% 92%;
-    --ring: 15 100% 60%;
+    --border: 185 50% 90%;
+    --input: 185 50% 92%;
+    --ring: 40 100% 60%;
   }
 
   /* Western Theme: Natural, rugged, classic */
   .theme-western {
-    --background: 35 30% 95%; /* Neutral sand */
-    --foreground: 25 45% 18%; /* Richer dark brown */
+    --background: 35 30% 96%; /* Neutral Sand */
+    --foreground: 25 45% 25%; /* Rich Dark Brown */
     --card: 35 30% 98%;
-    --card-foreground: 25 45% 18%;
+    --card-foreground: 25 45% 25%;
     --popover: 35 30% 98%;
-    --popover-foreground: 25 45% 18%;
-    --primary: 205 65% 40%; /* Deeper Denim Blue */
+    --popover-foreground: 25 45% 25%;
+    --primary: 205 70% 45%; /* Deep Denim Blue */
     --primary-foreground: 205 100% 98%;
-    --secondary: 25 60% 88%; /* Lighter Leather Tan */
-    --secondary-foreground: 20 40% 20%;
-    --muted: 35 30% 92%;
-    --muted-foreground: 30 25% 50%;
-    --accent: 33 94% 53%; /* Saffron */
-    --accent-foreground: 0 100% 98%;
+    --secondary: 25 60% 90%; /* Lighter Leather Tan */
+    --secondary-foreground: 20 40% 25%;
+    --muted: 35 30% 93%;
+    --muted-foreground: 30 25% 55%;
+    --accent: 205 70% 45%; /* Deep Denim Blue - Keep consistent */
+    --accent-foreground: 205 100% 98%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 35 30% 88%;
-    --input: 35 30% 90%;
-    --ring: 0 70% 55%;
+    --border: 35 30% 90%;
+    --input: 35 30% 92%;
+    --ring: 25 70% 55%;
   }
 
   /* --- DARK THEMES --- */
@@ -155,86 +155,52 @@
     --card-foreground: 35 30% 95%;
     --border: 25 20% 25%;
     --input: 25 20% 30%;
-    --primary: 15 80% 65%; /* Warm Terracotta */
-    --primary-foreground: 15 100% 98%;
-    --secondary: 180 40% 25%;
-    --secondary-foreground: 180 40% 85%;
-    --accent: 33 94% 53%; /* Saffron */
-    --accent-foreground: 180 100% 96%;
+    --primary: 33 94% 60%; /* Saffron */
+    --primary-foreground: 20 100% 98%;
+    --secondary: 45 40% 25%;
+    --secondary-foreground: 45 40% 85%;
+    --accent: 33 94% 60%; /* Saffron */
+    --accent-foreground: 20 100% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --ring: 15 80% 65%;
+    --ring: 33 94% 60%;
   }
 
   .dark.theme-ethnic {
     --background: 25 20% 12%;
     --foreground: 35 30% 95%;
-    --muted: 25 20% 22%;
-    --muted-foreground: 35 30% 75%;
-    --popover: 25 20% 10%;
-    --popover-foreground: 35 30% 95%;
-    --card: 25 20% 14%;
-    --card-foreground: 35 30% 95%;
-    --border: 25 20% 25%;
-    --input: 25 20% 30%;
     --primary: 15 80% 65%; /* Warm Terracotta */
-    --primary-foreground: 15 100% 98%;
-    --secondary: 180 40% 25%;
-    --secondary-foreground: 180 40% 85%;
-    --accent: 33 94% 53%; /* Saffron */
-    --accent-foreground: 180 100% 96%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --ring: 15 80% 65%;
+    --secondary: 40 40% 25%;
+    --accent: 15 80% 65%; /* Warm Terracotta */
   }
   
   .dark.theme-men {
-    --background: 220 20% 10%;
-    --foreground: 210 40% 95%;
-    --card: 220 20% 12%;
-    --card-foreground: 210 40% 95%;
-    --popover: 220 20% 12%;
-    --popover-foreground: 210 40% 95%;
+    --background: 220 20% 11%;
+    --foreground: 210 40% 96%;
     --primary: 220 70% 65%;
     --secondary: 220 15% 25%;
-    --accent: 33 94% 53%;
-    --ring: 195 90% 55%;
+    --accent: 220 70% 65%;
   }
   .dark.theme-women {
     --background: 335 15% 12%;
-    --foreground: 340 50% 95%;
-    --card: 335 15% 14%;
-    --card-foreground: 340 50% 95%;
-    --popover: 335 15% 14%;
-    --popover-foreground: 340 50% 95%;
+    --foreground: 340 50% 96%;
     --primary: 330 75% 70%;
     --secondary: 300 20% 25%;
-    --accent: 33 94% 53%;
-    --ring: 330 75% 70%;
+    --accent: 330 75% 70%;
   }
   .dark.theme-kids {
-    --background: 25 20% 10%;
-    --foreground: 45 80% 95%;
-    --card: 25 20% 12%;
-    --card-foreground: 45 80% 95%;
-    --popover: 25 20% 12%;
-    --popover-foreground: 45 80% 95%;
-    --primary: 15 90% 65%; /* Bright Orange */
-    --secondary: 210 30% 20%;
-    --accent: 33 94% 53%; /* Saffron */
-    --ring: 15 90% 65%;
+    --background: 190 20% 11%;
+    --foreground: 45 80% 96%;
+    --primary: 40 100% 65%; /* Sunny Orange */
+    --secondary: 90 30% 20%;
+    --accent: 40 100% 65%; /* Sunny Orange */
   }
   .dark.theme-western {
-    --background: 25 15% 10%;
-    --foreground: 35 40% 95%;
-    --card: 25 15% 12%;
-    --card-foreground: 35 40% 95%;
-    --popover: 25 15% 12%;
-    --popover-foreground: 35 40% 95%;
-    --primary: 205 55% 60%; /* Denim Blue */
+    --background: 25 15% 11%;
+    --foreground: 35 40% 96%;
+    --primary: 205 55% 65%; /* Denim Blue */
     --secondary: 30 20% 25%;
-    --accent: 33 94% 53%; /* Saffron */
-    --ring: 0 60% 60%;
+    --accent: 205 55% 65%; /* Denim Blue */
   }
 
   * {

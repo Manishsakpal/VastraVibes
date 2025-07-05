@@ -87,7 +87,7 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
         <CardFooter className="p-2 border-t mt-auto">
           <Button
             onClick={handleAddToBag}
-            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
             aria-label={`Add ${item.title} to bag`}
           >
             <ShoppingBag className="mr-2 h-4 w-4" /> Add to Bag
