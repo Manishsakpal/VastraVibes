@@ -8,13 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2, PackageOpen, Truck, User } from 'lucide-react';
+import { ArrowLeft, Loader2, PackageOpen, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { OrderStatus, OrderItem } from '@/types';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
@@ -38,34 +35,6 @@ export default function OrdersPage() {
 
   const isLoading = isOrdersLoading || isAdminLoading;
   
-  const [isTrackingDialogOpen, setIsTrackingDialogOpen] = useState(false);
-  const [trackingIdInput, setTrackingIdInput] = useState("");
-  const [selectedItemForTracking, setSelectedItemForTracking] = useState<{orderId: string; item: OrderItem} | null>(null);
-
-  const handleStatusChange = (orderId: string, item: OrderItem, newStatus: OrderStatus) => {
-    if (newStatus === 'Shipped') {
-      setSelectedItemForTracking({ orderId, item });
-      setTrackingIdInput(item.trackingId || "");
-      setIsTrackingDialogOpen(true);
-    } else {
-      updateOrderItemStatus(orderId, item.id, newStatus);
-    }
-  };
-
-  const handleSaveTrackingId = () => {
-    if (selectedItemForTracking) {
-      updateOrderItemStatus(
-        selectedItemForTracking.orderId, 
-        selectedItemForTracking.item.id, 
-        'Shipped',
-        trackingIdInput
-      );
-      setIsTrackingDialogOpen(false);
-      setSelectedItemForTracking(null);
-      setTrackingIdInput("");
-    }
-  };
-
   const relevantOrders = useMemo(() => {
     if (isSuperAdmin) {
       return orders;
@@ -81,7 +50,6 @@ export default function OrdersPage() {
   const dashboardPath = isSuperAdmin ? "/superAdmin" : "/admin/dashboard";
 
   return (
-    <>
     <div className="container mx-auto py-8 px-4 animate-fade-in-up">
       <Button variant="outline" asChild className="mb-6">
         <Link href={dashboardPath}>
@@ -172,19 +140,12 @@ export default function OrdersPage() {
                                       </div>
                                     )}
 
-                                    {item.trackingId && (
-                                      <Link href={`https://www.bluedart.com/tracking?track=awb&awb_no_txt=${item.trackingId}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1.5 mt-1">
-                                        <Truck className="h-3 w-3"/>
-                                        Tracking: {item.trackingId}
-                                      </Link>
-                                    )}
-
                                     <div className="flex items-center gap-4 mt-2">
                                       <Badge variant={statusBadgeVariant(item.status)} className="capitalize">{item.status}</Badge>
                                       
                                       <Select
                                         value={item.status}
-                                        onValueChange={(newStatus: OrderStatus) => handleStatusChange(order.id, item, newStatus)}
+                                        onValueChange={(newStatus: OrderStatus) => updateOrderItemStatus(order.id, item.id, newStatus)}
                                       >
                                         <SelectTrigger className="h-8 w-[140px] text-xs">
                                           <SelectValue placeholder="Update status" />
@@ -213,36 +174,5 @@ export default function OrdersPage() {
         </CardContent>
       </Card>
     </div>
-    
-    <Dialog open={isTrackingDialogOpen} onOpenChange={setIsTrackingDialogOpen}>
-        <DialogContent>
-            <DialogHeader>
-            <DialogTitle>Enter Shipment Tracking ID</DialogTitle>
-            <DialogDescription>
-                Please enter the Blue Dart AWB number for the item "{selectedItemForTracking?.item.title}". This will mark the item as "Shipped".
-            </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="tracking-id" className="text-right">
-                        Tracking ID
-                    </Label>
-                    <Input
-                        id="tracking-id"
-                        value={trackingIdInput}
-                        onChange={(e) => setTrackingIdInput(e.target.value)}
-                        className="col-span-3"
-                        placeholder="e.g., 123456789"
-                    />
-                </div>
-            </div>
-            <DialogFooter>
-                <Button variant="outline" onClick={() => setIsTrackingDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleSaveTrackingId}>Save and Ship</Button>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>
-
-    </>
   );
 }
