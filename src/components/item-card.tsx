@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useCallback } from 'react';
@@ -55,11 +56,24 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-4 flex-grow flex flex-col space-y-2">
-          <h2 className="text-base font-semibold leading-tight flex-grow group-hover:text-primary transition-colors">
-            {item.title}
-          </h2>
-          <div className="flex items-baseline gap-2 pt-2">
+        <CardContent className="p-4 flex-grow flex flex-col">
+          <div>
+            <h2 className="text-base font-semibold leading-tight group-hover:text-primary transition-colors">
+              {item.title}
+            </h2>
+            <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+              <p className="truncate" title={item.size}>
+                <span className="font-medium text-foreground/80">Sizes:</span> {item.size}
+              </p>
+              <p className="truncate" title={item.colors}>
+                <span className="font-medium text-foreground/80">Colors:</span> {item.colors}
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex-grow" />
+          
+          <div className="flex items-baseline gap-2 pt-4">
             {hasDiscount && (
               <p className="text-muted-foreground line-through text-sm">
                 ₹{item.price.toFixed(2)}
