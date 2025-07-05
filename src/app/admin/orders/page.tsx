@@ -97,10 +97,10 @@ export default function OrdersPage() {
                 return (
                   <AccordionItem value={order.id} key={order.id}>
                     <AccordionTrigger>
-                      <div className="flex flex-col sm:flex-row justify-between w-full pr-4 text-left sm:text-right">
-                        <span className="font-mono text-sm sm:text-left">{order.id}</span>
-                        <span className="text-muted-foreground text-xs sm:text-sm">{new Date(order.date).toLocaleString()}</span>
-                        <span className="font-bold text-sm sm:text-base">
+                      <div className="flex flex-col text-left sm:flex-row sm:justify-between w-full pr-4 sm:items-center gap-2">
+                        <span className="font-mono text-sm">{order.id}</span>
+                        <span className="text-muted-foreground text-xs">{new Date(order.date).toLocaleString()}</span>
+                        <span className="font-bold text-sm">
                           {isSuperAdmin ? `₹${order.totalAmount.toFixed(2)}` : `Your items: ₹${subTotalForThisAdmin.toFixed(2)}`}
                         </span>
                       </div>
@@ -120,6 +120,7 @@ export default function OrdersPage() {
                           </h4>
                           <ul className="space-y-4">
                             {itemsForThisAdmin.map(item => {
+                              const isActionDisabled = item.status === 'Delivered' || item.status === 'Cancelled';
                               return (
                                 <li key={item.id} className="flex flex-col sm:flex-row items-start gap-3">
                                   <Image 
@@ -146,6 +147,7 @@ export default function OrdersPage() {
                                       <Select
                                         value={item.status}
                                         onValueChange={(newStatus: OrderStatus) => updateOrderItemStatus(order.id, item.id, newStatus)}
+                                        disabled={isActionDisabled}
                                       >
                                         <SelectTrigger className="h-8 w-[140px] text-xs">
                                           <SelectValue placeholder="Update status" />

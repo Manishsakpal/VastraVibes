@@ -1,18 +1,17 @@
 
 "use client";
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect, useCallback } from 'react';
 import { useOrderContext } from '@/context/order-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 import type { Order, OrderStatus } from '@/types';
-import { AlertCircle, PackageSearch, Search, Truck } from 'lucide-react';
+import { AlertCircle, PackageSearch, Search } from 'lucide-react';
+import { RECENT_ORDER_ID_KEY } from '@/lib/constants';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -34,6 +33,34 @@ export default function TrackOrderPage() {
   const [foundOrder, setFoundOrder] = useState<Order | null>(null);
   const [error, setError] = useState('');
 
+  const searchOrderById = useCallback((idToSearch: string) => {
+    if (!idToSearch) return;
+
+    const order = orders.find(o => o.id.toLowerCase() === idToSearch.trim().toLowerCase());
+
+    if (order) {
+      setFoundOrder(order);
+      setError('');
+    } else {
+      setFoundOrder(null);
+      setError('No order found with that ID. Please check the ID and try again.');
+    }
+  }, [orders]);
+
+  useEffect(() => {
+    if (isLoading) return; // Wait until orders are loaded
+    try {
+      const recentOrderId = localStorage.getItem(RECENT_ORDER_ID_KEY);
+      if (recentOrderId) {
+        setOrderId(recentOrderId);
+        searchOrderById(recentOrderId);
+      }
+    } catch (error) {
+      console.warn("Could not read recent order ID from localStorage:", error);
+    }
+  }, [isLoading, orders, searchOrderById]);
+
+
   const handleTrackOrder = (e: FormEvent) => {
     e.preventDefault();
     setError('');
@@ -43,14 +70,7 @@ export default function TrackOrderPage() {
       setError('Please enter an Order ID.');
       return;
     }
-
-    const order = orders.find(o => o.id.toLowerCase() === orderId.trim().toLowerCase());
-
-    if (order) {
-      setFoundOrder(order);
-    } else {
-      setError('No order found with that ID. Please check the ID and try again.');
-    }
+    searchOrderById(orderId);
   };
 
   return (
@@ -69,7 +89,7 @@ export default function TrackOrderPage() {
               type="text"
               value={orderId}
               onChange={(e) => setOrderId(e.target.value)}
-              placeholder="Enter your Order ID (e.g., order-1678886400000)"
+              placeholder="Enter your Order ID"
               className="flex-grow"
               aria-label="Order ID"
             />
@@ -79,7 +99,7 @@ export default function TrackOrderPage() {
             </Button>
           </form>
 
-          {error && (
+          {error && !foundOrder && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Tracking Error</AlertTitle>
@@ -88,39 +108,54 @@ export default function TrackOrderPage() {
           )}
 
           {foundOrder && (
-            <div className="animate-fade-in-up">
-              <h3 className="text-xl font-semibold mb-4">Order Details</h3>
+            <div className="animate-fade-in-up mt-6 space-y-6">
               <Card>
                 <CardHeader>
-                    <CardTitle className="font-mono text-lg">{foundOrder.id}</CardTitle>
-                    <CardDescription>Placed on: {new Date(foundOrder.date).toLocaleString()}</CardDescription>
+                    <CardTitle className="text-xl">Order Details</CardTitle>
+                    <div className="flex flex-col sm:flex-row sm:justify-between text-sm text-muted-foreground">
+                      <p><strong>Order ID:</strong> <span className="font-mono">{foundOrder.id}</span></p>
+                      <p><strong>Placed on:</strong> {new Date(foundOrder.date).toLocaleString()}</p>
+                    </div>
                 </CardHeader>
                 <CardContent>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="font-semibold mb-2">Shipping To:</h4>
+                        <div className="text-sm text-muted-foreground space-y-1">
+                          <p>{foundOrder.customerDetails.name}</p>
+                          <p>{foundOrder.customerDetails.address}</p>
+                          <p>{foundOrder.customerDetails.city}, {foundOrder.customerDetails.state} {foundOrder.customerDetails.zip}</p>
+                           <p>Email: {foundOrder.customerDetails.email}</p>
+                           <p>Phone: {foundOrder.customerDetails.phone}</p>
+                        </div>
+                      </div>
+                      <div>
+                          <h4 className="font-semibold mb-2">Total Amount:</h4>
+                          <p className="text-2xl font-bold text-primary">₹{foundOrder.totalAmount.toFixed(2)}</p>
+                      </div>
+                   </div>
+                </CardContent>
+              </Card>
+
+              <div>
+                  <h3 className="text-lg font-semibold mb-4">Item Status</h3>
                   <ul className="space-y-4">
                     {foundOrder.items.map(item => (
-                      <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md">
+                      <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md bg-muted/50">
                         <Image src={item.imageUrls[0]} alt={item.title} width={80} height={80} className="rounded-md object-contain bg-white"/>
                         <div className="flex-grow">
                             <p className="font-medium">{item.title}</p>
                             <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                            <p className="text-sm text-muted-foreground">Price: ₹{item.finalPrice?.toFixed(2)}</p>
+                            <p className="text-sm text-muted-foreground">Price: ₹{(item.finalPrice ?? 0).toFixed(2)}</p>
                         </div>
                         <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
                            <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>
-                           {item.trackingId && (
-                                <Button asChild size="sm" variant="outline">
-                                    <Link href={`https://www.bluedart.com/tracking?track=awb&awb_no_txt=${item.trackingId}`} target="_blank" rel="noopener noreferrer">
-                                        <Truck className="mr-2 h-4 w-4"/>
-                                        Track on Blue Dart
-                                    </Link>
-                                </Button>
-                           )}
                         </div>
                       </li>  
                     ))}
                   </ul>
-                </CardContent>
-              </Card>
+              </div>
+
             </div>
           )}
         </CardContent>

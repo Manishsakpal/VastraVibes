@@ -20,6 +20,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
+import { RECENT_ORDER_ID_KEY } from '@/lib/constants';
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
@@ -37,7 +38,7 @@ const CheckoutSkeleton = () => (
             <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
             <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
             <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
               <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
               <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
@@ -103,18 +104,23 @@ export default function CheckoutPage() {
   }, [isLoading, cartCount, router]);
 
   const onSubmit = (data: CheckoutFormValues) => {
-    // Record purchase for popularity sorting
     recordPurchase(cartItems);
 
-    // Add the full order details to our new order system
-    addOrder(cartItems, data, grandTotal);
+    const newOrderId = addOrder(cartItems, data, grandTotal);
+
+    try {
+        localStorage.setItem(RECENT_ORDER_ID_KEY, newOrderId);
+    } catch (error) {
+        console.warn("Could not save recent order ID to localStorage:", error);
+    }
 
     toast({
       title: 'Order Placed!',
-      description: 'Thank you for your purchase. A confirmation has been sent to your email.',
+      description: 'Thank you for your purchase. You are being redirected to track your order.',
     });
+
     clearBag();
-    router.push('/');
+    router.push('/track');
   };
 
   if (isLoading || cartCount === 0) {
@@ -165,10 +171,10 @@ export default function CheckoutPage() {
                     <FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input type="tel" placeholder="(123) 456-7890" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <Button type="submit" className="w-full mt-6" size="lg" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? 'Processing...' : 'Proceed to Payment'}
+                    {form.formState.isSubmitting ? 'Processing...' : 'Place Order'}
                   </Button>
                    <p className="text-xs text-center text-muted-foreground mt-2">
-                    You will be redirected to PhonePe to complete your payment securely.
+                    Your order will be confirmed upon placement.
                   </p>
                 </form>
               </Form>

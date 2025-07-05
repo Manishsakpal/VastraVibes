@@ -1,19 +1,16 @@
-
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import type { ClothingItem, Category } from '@/types';
+import type { ClothingItem } from '@/types';
 import ItemCard from '@/components/item-card';
 import CategorySelector from '@/components/category-selector';
-import { CATEGORIES, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTheme, themeToCategory, categoryToTheme } from '@/app/layout';
-import { useItemContext } from '@/context/item-context';
+import { useTheme } from '@/context/theme-context';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
-
+import { PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 
 const ITEMS_PER_PAGE = 8;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
@@ -26,14 +23,14 @@ const ItemCardSkeleton = () => (
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-1/2" />
         </div>
-        <div className="p-4 border-t">
+        <div className="p-2 sm:p-4 border-t">
             <Skeleton className="h-10 w-full" />
         </div>
     </div>
 );
 
 const ItemListControlsSkeleton = () => (
-  <div className="flex flex-col lg:flex-row gap-4 items-center mb-8">
+  <div className="flex flex-col lg:flex-row gap-4 mb-8">
     <div className="w-full flex-grow">
       <Skeleton className="h-10 w-full" />
     </div>
@@ -49,27 +46,24 @@ const ItemListControlsSkeleton = () => (
 );
 
 const ItemListSkeleton = () => (
-  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-8 sm:gap-4">
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
     {[...Array(ITEMS_PER_PAGE)].map((_, i) => <ItemCardSkeleton key={i} />)}
   </div>
 );
 
+interface ItemListProps {
+  initialItems: ClothingItem[];
+}
 
-function ItemList() {
-  const { items, isLoading } = useItemContext();
-  const { theme, setTheme } = useTheme();
+function ItemList({ initialItems }: ItemListProps) {
+  const { selectedCategory } = useTheme();
   
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [sortOption, setSortOption] = useState('popular');
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
-
-  const selectedCategory = useMemo(() => themeToCategory(theme), [theme]);
-
-  const handleCategorySelect = useCallback((category: Category | 'All') => {
-    setTheme(categoryToTheme(category));
-  }, [setTheme]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
@@ -79,11 +73,13 @@ function ItemList() {
       }
     } catch (error) {
       console.warn("Could not read purchase counts for sorting:", error);
+    } finally {
+        setIsLoading(false);
     }
   }, []);
 
   const filteredAndSortedItems = useMemo(() => {
-    let tempItems = [...items];
+    let tempItems = [...initialItems];
 
     if (selectedCategory !== 'All') {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
@@ -145,7 +141,7 @@ function ItemList() {
     }
 
     return tempItems;
-  }, [items, selectedCategory, debouncedSearchTerm, sortOption, purchaseCounts]);
+  }, [initialItems, selectedCategory, debouncedSearchTerm, sortOption, purchaseCounts]);
   
   useEffect(() => {
     setDisplayCount(ITEMS_PER_PAGE);
@@ -184,11 +180,7 @@ function ItemList() {
     <>
       <div className="flex flex-col lg:flex-row gap-4 items-center mb-8">
         <div className="w-full flex-grow">
-          <CategorySelector
-            categories={['All', ...CATEGORIES]}
-            selectedCategory={selectedCategory}
-            onSelectCategory={handleCategorySelect}
-          />
+          <CategorySelector />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-shrink-0">
           <div className="relative w-full sm:w-auto sm:flex-grow max-w-sm">
