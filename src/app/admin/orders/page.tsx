@@ -1,20 +1,40 @@
 "use client";
 
 import { useOrderContext } from '@/context/order-context';
+import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ArrowLeft, Loader2, PackageOpen } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useMemo } from 'react';
 
 export default function OrdersPage() {
-  const { orders, isLoading } = useOrderContext();
+  const { orders, isLoading: isOrdersLoading } = useOrderContext();
+  const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
+
+  const isLoading = isOrdersLoading || isAdminLoading;
+
+  const relevantOrders = useMemo(() => {
+    if (isSuperAdmin) {
+      return orders; // Super admin sees all orders
+    }
+    if (!currentAdminId) {
+      return []; // No admin logged in, show no orders
+    }
+    // Regular admin sees only orders containing their products
+    return orders.filter(order =>
+      order.items.some(item => item.adminId === currentAdminId)
+    );
+  }, [orders, currentAdminId, isSuperAdmin]);
+
+  const dashboardPath = isSuperAdmin ? "/superAdmin" : "/admin/dashboard";
 
   return (
     <div className="container mx-auto py-8 px-4 animate-fade-in-up">
       <Button variant="outline" asChild className="mb-6">
-        <Link href="/admin/dashboard">
+        <Link href={dashboardPath}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
         </Link>
@@ -23,7 +43,9 @@ export default function OrdersPage() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-primary">Customer Orders</CardTitle>
-          <CardDescription>Review all orders placed through your store.</CardDescription>
+          <CardDescription>
+            {isSuperAdmin ? "Viewing all orders across the store." : "Viewing orders relevant to your products."}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -31,14 +53,14 @@ export default function OrdersPage() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="ml-4">Loading orders...</p>
             </div>
-          ) : orders.length === 0 ? (
+          ) : relevantOrders.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center">
               <PackageOpen className="h-20 w-20 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground">No orders have been placed yet.</p>
+              <p className="text-xl text-muted-foreground">No relevant orders have been placed yet.</p>
             </div>
           ) : (
             <Accordion type="single" collapsible className="w-full">
-              {orders.map((order) => (
+              {relevantOrders.map((order) => (
                 <AccordionItem value={order.id} key={order.id}>
                   <AccordionTrigger>
                     <div className="flex justify-between w-full pr-4">
