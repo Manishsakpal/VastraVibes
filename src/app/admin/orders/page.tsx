@@ -5,14 +5,14 @@ import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ArrowLeft, Loader2, PackageOpen } from 'lucide-react';
+import { ArrowLeft, Loader2, PackageOpen, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useMemo } from 'react';
 
 export default function OrdersPage() {
   const { orders, isLoading: isOrdersLoading } = useOrderContext();
-  const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
+  const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading, admins } = useAdminAuth();
 
   const isLoading = isOrdersLoading || isAdminLoading;
 
@@ -80,22 +80,34 @@ export default function OrdersPage() {
                       </div>
                       <div>
                         <h4 className="font-semibold mb-2">Purchased Items</h4>
-                        <ul className="space-y-2">
-                          {order.items.map(item => (
-                            <li key={item.id} className="flex items-center gap-3">
-                              <Image 
-                                src={item.imageUrls[0]} 
-                                alt={item.title} 
-                                width={40} 
-                                height={40}
-                                className="rounded-sm object-contain bg-white" 
-                              />
-                              <div className="flex-grow">
-                                <p className="font-medium text-sm">{item.title}</p>
-                                <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice.toFixed(2)}</p>
-                              </div>
-                            </li>
-                          ))}
+                        <ul className="space-y-3">
+                          {order.items.map(item => {
+                             // Find the seller's name from the admins list
+                            const sellerAdmin = admins.find(admin => admin.id === item.adminId);
+                            const sellerName = sellerAdmin ? sellerAdmin.name : 'Unknown Seller';
+                            
+                            return (
+                              <li key={item.id} className="flex items-start gap-3">
+                                <Image 
+                                  src={item.imageUrls[0]} 
+                                  alt={item.title} 
+                                  width={40} 
+                                  height={40}
+                                  className="rounded-sm object-contain bg-white" 
+                                />
+                                <div className="flex-grow">
+                                  <p className="font-medium text-sm">{item.title}</p>
+                                  <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice.toFixed(2)}</p>
+                                  {isSuperAdmin && (
+                                    <div className="flex items-center text-xs text-accent mt-1">
+                                      <User className="mr-1.5 h-3 w-3" />
+                                      <span>Sold by: {sellerName}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </li>
+                            );
+                          })}
                         </ul>
                       </div>
                     </div>
