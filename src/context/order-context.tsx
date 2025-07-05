@@ -9,7 +9,7 @@ import { useItemContext } from './item-context';
 interface OrderContextType {
   orders: Order[];
   addOrder: (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => void;
-  updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus) => void;
+  updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus, trackingId?: string) => void;
   isLoading: boolean;
 }
 
@@ -41,7 +41,6 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         if(Array.isArray(parsedOrders)) {
             const masterItemMap = new Map(masterItems.map(item => [item.id, item]));
 
-            // Sanitize older orders stored in localStorage that might be missing new fields.
             const sanitizedOrders = parsedOrders.map(order => ({
                 ...order,
                 items: order.items.map(itemInOrder => {
@@ -59,7 +58,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     }
                     
                     if (status === undefined) {
-                      status = 'Placed'; // Add default status if missing
+                      status = 'Placed';
                     }
 
                     return { ...itemInOrder, finalPrice, adminId, status };
@@ -67,7 +66,11 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             }));
 
             setOrders(sanitizedOrders);
-            updateLocalStorage(sanitizedOrders);
+            // No need to write back immediately unless there were actual changes.
+            // This prevents an infinite loop if we were to depend on 'orders' state.
+            if (JSON.stringify(parsedOrders) !== JSON.stringify(sanitizedOrders)) {
+                updateLocalStorage(sanitizedOrders);
+            }
         }
       }
     } catch (error) {
@@ -78,9 +81,12 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [isItemsLoading, masterItems]);
 
   const addOrder = useCallback((items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => {
+    const masterItemMap = new Map(masterItems.map(item => [item.id, item]));
+
     const orderItems: OrderItem[] = items.map(item => ({
       ...item,
-      status: 'Placed', // Set default status for new orders
+      adminId: masterItemMap.get(item.id)?.adminId, // Ensure adminId is attached from master list
+      status: 'Placed',
     }));
     
     const newOrder: Order = {
@@ -96,15 +102,23 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       updateLocalStorage(updatedOrders);
       return updatedOrders;
     });
-  }, []);
+  }, [masterItems]);
 
-  const updateOrderItemStatus = useCallback((orderId: string, itemId: string, newStatus: OrderStatus) => {
+  const updateOrderItemStatus = useCallback((orderId: string, itemId: string, newStatus: OrderStatus, trackingId?: string) => {
     setOrders(prevOrders => {
       const updatedOrders = prevOrders.map(order => {
         if (order.id === orderId) {
           const updatedItems = order.items.map(item => {
             if (item.id === itemId) {
-              return { ...item, status: newStatus };
+              const updatedItem: OrderItem = { ...item, status: newStatus };
+              
+              if (newStatus === 'Shipped' && trackingId) {
+                updatedItem.trackingId = trackingId;
+              } else if (newStatus !== 'Shipped' && newStatus !== 'Delivered') {
+                // Remove tracking ID if status is no longer shipped/delivered
+                delete updatedItem.trackingId;
+              }
+              return updatedItem;
             }
             return item;
           });

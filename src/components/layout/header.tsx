@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from 'next/link';
-import { ShoppingBasket, UserCog, LogOut, ShieldCheck, ShoppingBag, UserPlus } from 'lucide-react';
+import { ShoppingBasket, UserCog, LogOut, ShieldCheck, ShoppingBag, UserPlus, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { usePathname } from 'next/navigation';
@@ -25,10 +26,19 @@ const Header = () => {
           </div>
         </Link>
         <nav>
-          <ul className="flex items-center space-x-2 md:space-x-4">
+          <ul className="flex items-center space-x-1 md:space-x-2">
             <li>
               <Button variant={pathname === "/" ? "default" : "ghost"} asChild>
                 <Link href="/">Home</Link>
+              </Button>
+            </li>
+
+            <li>
+              <Button variant={pathname === "/track" ? "default" : "ghost"} asChild>
+                <Link href="/track">
+                   <Truck className="mr-0 md:mr-2 h-4 w-4" />
+                   <span className="hidden md:inline">Track Order</span>
+                </Link>
               </Button>
             </li>
             

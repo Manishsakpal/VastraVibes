@@ -8,11 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Loader2, PackageOpen, User } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ArrowLeft, Loader2, PackageOpen, Truck, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useMemo } from 'react';
-import type { OrderStatus } from '@/types';
+import { useMemo, useState } from 'react';
+import type { OrderStatus, OrderItem } from '@/types';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -31,18 +34,45 @@ const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'out
 
 export default function OrdersPage() {
   const { orders, isLoading: isOrdersLoading, updateOrderItemStatus } = useOrderContext();
-  const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
+  const { admins, currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
 
   const isLoading = isOrdersLoading || isAdminLoading;
+  
+  const [isTrackingDialogOpen, setIsTrackingDialogOpen] = useState(false);
+  const [trackingIdInput, setTrackingIdInput] = useState("");
+  const [selectedItemForTracking, setSelectedItemForTracking] = useState<{orderId: string; item: OrderItem} | null>(null);
+
+  const handleStatusChange = (orderId: string, item: OrderItem, newStatus: OrderStatus) => {
+    if (newStatus === 'Shipped') {
+      setSelectedItemForTracking({ orderId, item });
+      setTrackingIdInput(item.trackingId || "");
+      setIsTrackingDialogOpen(true);
+    } else {
+      updateOrderItemStatus(orderId, item.id, newStatus);
+    }
+  };
+
+  const handleSaveTrackingId = () => {
+    if (selectedItemForTracking) {
+      updateOrderItemStatus(
+        selectedItemForTracking.orderId, 
+        selectedItemForTracking.item.id, 
+        'Shipped',
+        trackingIdInput
+      );
+      setIsTrackingDialogOpen(false);
+      setSelectedItemForTracking(null);
+      setTrackingIdInput("");
+    }
+  };
 
   const relevantOrders = useMemo(() => {
     if (isSuperAdmin) {
-      return orders; // Super admin sees all orders
+      return orders;
     }
     if (!currentAdminId) {
-      return []; // No admin logged in, show no orders
+      return [];
     }
-    // Regular admin sees only orders containing at least one of their products
     return orders.filter(order =>
       order.items.some(item => item.adminId === currentAdminId)
     );
@@ -51,6 +81,7 @@ export default function OrdersPage() {
   const dashboardPath = isSuperAdmin ? "/superAdmin" : "/admin/dashboard";
 
   return (
+    <>
     <div className="container mx-auto py-8 px-4 animate-fade-in-up">
       <Button variant="outline" asChild className="mb-6">
         <Link href={dashboardPath}>
@@ -84,6 +115,10 @@ export default function OrdersPage() {
                 const itemsForThisAdmin = isSuperAdmin
                   ? order.items
                   : order.items.filter(item => item.adminId === currentAdminId);
+                
+                if (itemsForThisAdmin.length === 0 && !isSuperAdmin) {
+                    return null;
+                }
 
                 const subTotalForThisAdmin = itemsForThisAdmin.reduce((acc, item) => {
                   const finalPricePerItem = item.finalPrice ?? (item.price * (1 - (item.discount ?? 0) / 100));
@@ -128,13 +163,20 @@ export default function OrdersPage() {
                                   />
                                   <div className="flex-grow">
                                     <p className="font-medium text-sm">{item.title}</p>
-                                    <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice?.toFixed(2)}</p>
+                                    <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{(item.finalPrice ?? 0).toFixed(2)}</p>
                                     
                                     {isSuperAdmin && item.adminId && (
                                       <div className="flex items-center text-xs text-primary mt-1">
                                         <User className="mr-1.5 h-3 w-3" />
-                                        <span>Sold by: {item.adminId}</span>
+                                        <span>Sold by: {item.adminId ?? 'Unknown Seller'}</span>
                                       </div>
+                                    )}
+
+                                    {item.trackingId && (
+                                      <Link href={`https://www.bluedart.com/tracking?track=awb&awb_no_txt=${item.trackingId}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1.5 mt-1">
+                                        <Truck className="h-3 w-3"/>
+                                        Tracking: {item.trackingId}
+                                      </Link>
                                     )}
 
                                     <div className="flex items-center gap-4 mt-2">
@@ -142,9 +184,7 @@ export default function OrdersPage() {
                                       
                                       <Select
                                         value={item.status}
-                                        onValueChange={(newStatus: OrderStatus) => {
-                                          updateOrderItemStatus(order.id, item.id, newStatus);
-                                        }}
+                                        onValueChange={(newStatus: OrderStatus) => handleStatusChange(order.id, item, newStatus)}
                                       >
                                         <SelectTrigger className="h-8 w-[140px] text-xs">
                                           <SelectValue placeholder="Update status" />
@@ -173,5 +213,36 @@ export default function OrdersPage() {
         </CardContent>
       </Card>
     </div>
+    
+    <Dialog open={isTrackingDialogOpen} onOpenChange={setIsTrackingDialogOpen}>
+        <DialogContent>
+            <DialogHeader>
+            <DialogTitle>Enter Shipment Tracking ID</DialogTitle>
+            <DialogDescription>
+                Please enter the Blue Dart AWB number for the item "{selectedItemForTracking?.item.title}". This will mark the item as "Shipped".
+            </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="tracking-id" className="text-right">
+                        Tracking ID
+                    </Label>
+                    <Input
+                        id="tracking-id"
+                        value={trackingIdInput}
+                        onChange={(e) => setTrackingIdInput(e.target.value)}
+                        className="col-span-3"
+                        placeholder="e.g., 123456789"
+                    />
+                </div>
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsTrackingDialogOpen(false)}>Cancel</Button>
+                <Button onClick={handleSaveTrackingId}>Save and Ship</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
+    </>
   );
 }

@@ -33,6 +33,7 @@ export type OrderStatus = 'Placed' | 'Shipped' | 'Delivered' | 'Cancelled';
 
 export type OrderItem = CartItem & {
   status: OrderStatus;
+  trackingId?: string;
 };
 
 export interface Order {
