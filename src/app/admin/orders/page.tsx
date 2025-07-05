@@ -24,7 +24,7 @@ export default function OrdersPage() {
     if (!currentAdminId) {
       return []; // No admin logged in, show no orders
     }
-    // Regular admin sees only orders containing their products
+    // Regular admin sees only orders containing at least one of their products
     return orders.filter(order =>
       order.items.some(item => item.adminId === currentAdminId)
     );
@@ -45,7 +45,7 @@ export default function OrdersPage() {
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-primary">Customer Orders</CardTitle>
           <CardDescription>
-            {isSuperAdmin ? "Viewing all orders across the store." : "Viewing orders relevant to your products."}
+            {isSuperAdmin ? "Viewing all orders across the store." : "Viewing orders containing your products."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -61,56 +61,75 @@ export default function OrdersPage() {
             </div>
           ) : (
             <Accordion type="single" collapsible className="w-full">
-              {relevantOrders.map((order) => (
-                <AccordionItem value={order.id} key={order.id}>
-                  <AccordionTrigger>
-                    <div className="flex justify-between w-full pr-4">
-                      <span className="font-mono text-sm">{order.id}</span>
-                      <span className="text-muted-foreground text-sm">{new Date(order.date).toLocaleString()}</span>
-                      <span className="font-bold">₹{order.totalAmount.toFixed(2)}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-muted/50 rounded-md">
-                      <div>
-                        <h4 className="font-semibold mb-2">Customer Details</h4>
-                        <p><strong>Name:</strong> {order.customerDetails.name}</p>
-                        <p><strong>Email:</strong> {order.customerDetails.email}</p>
-                        <p><strong>Phone:</strong> {order.customerDetails.phone}</p>
-                        <p><strong>Address:</strong> {order.customerDetails.address}, {order.customerDetails.city}, {order.customerDetails.state} {order.customerDetails.zip}</p>
+              {relevantOrders.map((order) => {
+                
+                // Filter items for the current admin's view, if not a super admin
+                const itemsForThisAdmin = isSuperAdmin
+                  ? order.items
+                  : order.items.filter(item => item.adminId === currentAdminId);
+
+                // Calculate the sub-total for this admin's items in this order
+                const subTotalForThisAdmin = itemsForThisAdmin.reduce((acc, item) => {
+                  const finalPricePerItem = item.finalPrice ?? (item.price * (1 - (item.discount ?? 0) / 100));
+                  return acc + (finalPricePerItem * item.quantity);
+                }, 0);
+
+
+                return (
+                  <AccordionItem value={order.id} key={order.id}>
+                    <AccordionTrigger>
+                      <div className="flex justify-between w-full pr-4">
+                        <span className="font-mono text-sm">{order.id}</span>
+                        <span className="text-muted-foreground text-sm">{new Date(order.date).toLocaleString()}</span>
+                        <span className="font-bold">
+                          {isSuperAdmin ? `₹${order.totalAmount.toFixed(2)}` : `Your items: ₹${subTotalForThisAdmin.toFixed(2)}`}
+                        </span>
                       </div>
-                      <div>
-                        <h4 className="font-semibold mb-2">Purchased Items</h4>
-                        <ul className="space-y-3">
-                          {order.items.map(item => {
-                            return (
-                              <li key={item.id} className="flex items-start gap-3">
-                                <Image 
-                                  src={item.imageUrls[0]} 
-                                  alt={item.title} 
-                                  width={40} 
-                                  height={40}
-                                  className="rounded-sm object-contain bg-white" 
-                                />
-                                <div className="flex-grow">
-                                  <p className="font-medium text-sm">{item.title}</p>
-                                  <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice.toFixed(2)}</p>
-                                  {isSuperAdmin && item.adminId && (
-                                    <div className="flex items-center text-xs text-accent mt-1">
-                                      <User className="mr-1.5 h-3 w-3" />
-                                      <span>Sold by: {item.adminId}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </li>
-                            );
-                          })}
-                        </ul>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-muted/50 rounded-md">
+                        <div>
+                          <h4 className="font-semibold mb-2">Customer Details</h4>
+                          <p><strong>Name:</strong> {order.customerDetails.name}</p>
+                          <p><strong>Email:</strong> {order.customerDetails.email}</p>
+                          <p><strong>Phone:</strong> {order.customerDetails.phone}</p>
+                          <p><strong>Address:</strong> {order.customerDetails.address}, {order.customerDetails.city}, {order.customerDetails.state} {order.customerDetails.zip}</p>
+                        </div>
+                        <div>
+                           <h4 className="font-semibold mb-2">
+                            {isSuperAdmin ? 'Purchased Items' : 'Your Purchased Items'}
+                          </h4>
+                          <ul className="space-y-3">
+                            {itemsForThisAdmin.map(item => {
+                              return (
+                                <li key={item.id} className="flex items-start gap-3">
+                                  <Image 
+                                    src={item.imageUrls[0]} 
+                                    alt={item.title} 
+                                    width={40} 
+                                    height={40}
+                                    className="rounded-sm object-contain bg-white" 
+                                  />
+                                  <div className="flex-grow">
+                                    <p className="font-medium text-sm">{item.title}</p>
+                                    <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice.toFixed(2)}</p>
+                                    {isSuperAdmin && item.adminId && (
+                                      <div className="flex items-center text-xs text-accent mt-1">
+                                        <User className="mr-1.5 h-3 w-3" />
+                                        <span>Sold by: {item.adminId}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
                       </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                )
+              })}
             </Accordion>
           )}
         </CardContent>
