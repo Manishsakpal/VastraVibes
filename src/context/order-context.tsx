@@ -16,6 +16,14 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const updateLocalStorage = (updatedOrders: Order[]) => {
+    try {
+      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updatedOrders));
+    } catch (error) {
+      console.warn("Could not save orders to localStorage:", error);
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
     try {
@@ -23,7 +31,26 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       if (storedOrders) {
         const parsedOrders: Order[] = JSON.parse(storedOrders);
         if(Array.isArray(parsedOrders)) {
-            setOrders(parsedOrders);
+            // This is the data sanitization step. It ensures that older orders
+            // stored in localStorage without a `finalPrice` get one calculated.
+            const sanitizedOrders = parsedOrders.map(order => ({
+                ...order,
+                items: order.items.map(item => {
+                    // If finalPrice is missing, but price and discount exist, calculate it.
+                    if (item.finalPrice === undefined && typeof item.price === 'number') {
+                        const finalPrice = (typeof item.discount === 'number' && item.discount > 0)
+                            ? item.price * (1 - item.discount / 100)
+                            : item.price;
+                        return { ...item, finalPrice };
+                    }
+                    // If finalPrice is present, or price is missing, return item as-is.
+                    return item;
+                })
+            }));
+
+            setOrders(sanitizedOrders);
+            // Re-save the sanitized orders back to localStorage to prevent this check on every load.
+            updateLocalStorage(sanitizedOrders);
         }
       }
     } catch (error) {
@@ -32,14 +59,6 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setIsLoading(false);
     }
   }, []);
-
-  const updateLocalStorage = (updatedOrders: Order[]) => {
-    try {
-      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updatedOrders));
-    } catch (error) {
-      console.warn("Could not save orders to localStorage:", error);
-    }
-  };
 
   const addOrder = useCallback((items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => {
     const newOrder: Order = {
