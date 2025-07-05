@@ -6,8 +6,8 @@ export const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
 export const COLORS = ["Red", "Blue", "Green", "Black", "White", "Yellow", "Pink", "Purple", "Orange", "Brown", "Gray", "Beige", "Navy"];
 
 // Super Admin Credentials
-export const SUPERADMIN_ID = "superadmin";
-export const SUPERADMIN_PASSWORD = "superpassword";
+export const SUPERADMIN_ID = "nimda";
+export const SUPERADMIN_PASSWORD = "asdrowssap";
 
 // Initial Admin Users
 export const INITIAL_ADMIN_USERS: AdminUser[] = [
