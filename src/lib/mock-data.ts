@@ -1,10 +1,14 @@
 
 import type { ClothingItem } from '@/types';
 
+// Helper to assign adminId cyclically
+const getAdminId = (index: number) => `admin${(index % 5) + 1}`;
+
 export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[] = [
   {
     id: '1',
     title: 'Men\'s Classic Kurta',
+    adminId: getAdminId(0),
     description: 'Elegant silk kurta for festive occasions. Traditional embroidery with a modern cut.',
     price: 79.99,
     discount: 15,
@@ -23,6 +27,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '2',
     title: 'Women\'s Anarkali Suit',
+    adminId: getAdminId(1),
     description: 'Beautiful georgette Anarkali suit with intricate gota patti work. Perfect for weddings.',
     price: 129.99,
     discount: 0,
@@ -40,6 +45,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '3',
     title: 'Kids Sherwani Set',
+    adminId: getAdminId(2),
     description: 'Cute and comfortable sherwani set for boys. Ideal for cultural events.',
     price: 49.99,
     discount: 10,
@@ -53,6 +59,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '4',
     title: 'Ethnic Embroidered Saree',
+    adminId: getAdminId(3),
     description: 'Luxurious Banarasi silk saree with all-over embroidery. Comes with a matching blouse piece.',
     price: 199.99,
     discount: 20,
@@ -70,6 +77,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '5',
     title: 'Western Denim Jacket',
+    adminId: getAdminId(4),
     description: 'Stylish blue denim jacket with a distressed look. Versatile for casual outings.',
     price: 65.00,
     discount: 0,
@@ -83,6 +91,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '6',
     title: 'Men\'s Casual Shirt',
+    adminId: getAdminId(5),
     description: 'Comfortable cotton shirt for everyday wear. Available in multiple colors.',
     price: 35.50,
     discount: 0,
@@ -96,6 +105,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '7',
     title: 'Women\'s Floral Maxi Dress',
+    adminId: getAdminId(6),
     description: 'Light and airy floral maxi dress, perfect for summer. Features an elastic waistband.',
     price: 55.99,
     discount: 5,
@@ -109,6 +119,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '8',
     title: 'Kids Printed T-Shirt',
+    adminId: getAdminId(7),
     description: 'Soft cotton t-shirt with fun prints for kids. Durable and easy to wash.',
     price: 15.00,
     discount: 0,
@@ -122,6 +133,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '9',
     title: 'Elegant Men\'s Sherwani',
+    adminId: getAdminId(8),
     description: 'A beautifully crafted sherwani for weddings and formal events.',
     price: 189.99,
     discount: 10,
@@ -135,6 +147,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '10',
     title: 'Vibrant Women\'s Lehenga',
+    adminId: getAdminId(9),
     description: 'A stunning lehenga choli with heavy embroidery, perfect for bridal wear.',
     price: 299.99,
     discount: 0,
@@ -148,6 +161,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '11',
     title: 'Cute Kids\' Ethnic Gown',
+    adminId: getAdminId(10),
     description: 'A comfortable and stylish ethnic gown for little girls.',
     price: 39.99,
     discount: 0,
@@ -161,6 +175,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '12',
     title: 'Handwoven Ethnic Shawl',
+    adminId: getAdminId(11),
     description: 'A warm and intricate handwoven shawl with traditional patterns.',
     price: 85.00,
     discount: 0,
@@ -174,6 +189,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '13',
     title: 'Modern Western Jumpsuit',
+    adminId: getAdminId(12),
     description: 'A chic and comfortable jumpsuit for a modern, stylish look.',
     price: 75.00,
     discount: 25,
@@ -187,6 +203,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '14',
     title: 'Classic Men\'s Trousers',
+    adminId: getAdminId(13),
     description: 'Well-fitted formal trousers for a professional look.',
     price: 45.00,
     discount: 0,
@@ -200,6 +217,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '15',
     title: 'Stylish Women\'s Kurti',
+    adminId: getAdminId(14),
     description: 'A trendy kurti with unique prints, suitable for casual and office wear.',
     price: 40.00,
     discount: 0,
@@ -213,6 +231,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '16',
     title: 'Comfy Kids\' Pajama Set',
+    adminId: getAdminId(15),
     description: 'A soft cotton pajama set to ensure a good night\'s sleep for your child.',
     price: 25.00,
     discount: 0,
@@ -226,6 +245,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '17',
     title: 'Designer Ethnic Clutch',
+    adminId: getAdminId(16),
     description: 'An exquisitely designed clutch to complement your ethnic attire.',
     price: 50.00,
     discount: 0,
@@ -239,6 +259,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '18',
     title: 'Casual Western Top',
+    adminId: getAdminId(17),
     description: 'A simple yet elegant top for daily wear.',
     price: 30.00,
     discount: 0,
@@ -252,6 +273,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '19',
     title: 'Men\'s Silk Scarf',
+    adminId: getAdminId(18),
     description: 'A luxurious silk scarf to add a touch of class to your outfit.',
     price: 35.00,
     discount: 0,
@@ -265,6 +287,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '20',
     title: 'Women\'s Georgette Saree',
+    adminId: getAdminId(19),
     description: 'A light and flowy georgette saree, perfect for daytime events.',
     price: 95.00,
     discount: 10,
@@ -278,6 +301,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '21',
     title: 'Kids\' Denim Dungarees',
+    adminId: getAdminId(20),
     description: 'Fun and durable denim dungarees for playful kids.',
     price: 45.00,
     discount: 0,
@@ -291,19 +315,21 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '22',
     title: 'Ethnic Jhumka Earrings',
+    adminId: getAdminId(21),
     description: 'Traditional jhumka earrings to complete your ethnic look.',
     price: 25.00,
     discount: 0,
     size: 'Free Size',
     colors: 'Gold, Silver',
     category: 'Ethnic',
-    imageUrls: ['https://images.unsplash.com/photo-1616421394589-354920215169?w=600&q=80'],
+    imageUrls: ['https://images.unsplash.com/photo-1616421394590-4e38cce1a8e9?w=600&q=80'],
     imageHints: ['ethnic earrings gold'],
     specifications: ['Material: Alloy', 'Plating: Gold-plated'],
   },
   {
     id: '23',
     title: 'Western Pencil Skirt',
+    adminId: getAdminId(22),
     description: 'A formal pencil skirt for a sharp, professional appearance.',
     price: 55.00,
     discount: 0,
@@ -317,6 +343,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '24',
     title: 'Men\'s Pathani Suit',
+    adminId: getAdminId(23),
     description: 'A traditional Pathani suit that offers both comfort and style.',
     price: 110.00,
     discount: 0,
@@ -330,6 +357,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '25',
     title: 'Women\'s Palazzo Pants',
+    adminId: getAdminId(24),
     description: 'Comfortable and wide-legged palazzo pants for a relaxed style.',
     price: 35.00,
     discount: 0,
@@ -343,6 +371,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '26',
     title: 'Kids\' Party Frock',
+    adminId: getAdminId(25),
     description: 'A beautiful frock for birthday parties and special occasions.',
     price: 60.00,
     discount: 0,
@@ -356,6 +385,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '27',
     title: 'Ethnic Mojari Shoes',
+    adminId: getAdminId(26),
     description: 'Handcrafted mojari shoes to go with your traditional wear.',
     price: 70.00,
     discount: 0,
@@ -369,6 +399,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '28',
     title: 'Western Leather Belt',
+    adminId: getAdminId(27),
     description: 'A high-quality leather belt to accessorize your outfits.',
     price: 40.00,
     discount: 0,
@@ -382,6 +413,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '29',
     title: 'Men\'s Waistcoat',
+    adminId: getAdminId(28),
     description: 'A stylish waistcoat to wear over a kurta or shirt.',
     price: 65.00,
     discount: 0,
@@ -395,6 +427,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '30',
     title: 'Women\'s Crop Top',
+    adminId: getAdminId(29),
     description: 'A trendy crop top that can be paired with skirts or jeans.',
     price: 28.00,
     discount: 0,
@@ -408,6 +441,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '31',
     title: 'Kids\' Hooded Sweatshirt',
+    adminId: getAdminId(30),
     description: 'A warm and cozy sweatshirt for kids during colder months.',
     price: 35.00,
     discount: 0,
@@ -421,6 +455,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '32',
     title: 'Ethnic Potli Bag',
+    adminId: getAdminId(31),
     description: 'A traditional potli bag with beadwork, perfect for festivities.',
     price: 45.00,
     discount: 0,
@@ -434,6 +469,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '33',
     title: 'Western Trench Coat',
+    adminId: getAdminId(32),
     description: 'A classic trench coat for a sophisticated winter look.',
     price: 150.00,
     discount: 0,
@@ -447,6 +483,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '34',
     title: 'Men\'s Bandhgala Jacket',
+    adminId: getAdminId(33),
     description: 'A royal Bandhgala jacket for formal occasions.',
     price: 170.00,
     discount: 0,
@@ -460,6 +497,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '35',
     title: 'Women\'s Sharara Suit',
+    adminId: getAdminId(34),
     description: 'A fashionable sharara suit with flared pants and a short kameez.',
     price: 140.00,
     discount: 0,
@@ -473,6 +511,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '36',
     title: 'Kids\' Traditional Dhoti Kurta',
+    adminId: getAdminId(35),
     description: 'A cute dhoti kurta set for boys for cultural functions.',
     price: 55.00,
     discount: 0,
@@ -486,6 +525,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '37',
     title: 'Ethnic Maang Tikka',
+    adminId: getAdminId(36),
     description: 'A beautiful piece of head jewelry to adorn your forehead.',
     price: 30.00,
     discount: 0,
@@ -499,6 +539,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '38',
     title: 'Western High-Waist Jeans',
+    adminId: getAdminId(37),
     description: 'Flattering high-waist jeans for a trendy, casual look.',
     price: 60.00,
     discount: 0,
@@ -512,6 +553,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '39',
     title: 'Men\'s Brocade Kurta',
+    adminId: getAdminId(38),
     description: 'A rich brocade kurta for a touch of opulence.',
     price: 120.00,
     discount: 0,
@@ -525,6 +567,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '40',
     title: 'Women\'s Chiffon Dupatta',
+    adminId: getAdminId(39),
     description: 'A light and elegant chiffon dupatta with a delicate border.',
     price: 25.00,
     discount: 0,
@@ -538,6 +581,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '41',
     title: 'Kids\' Lehenga Choli',
+    adminId: getAdminId(40),
     description: 'A miniature lehenga choli for girls to wear at festivals.',
     price: 75.00,
     discount: 0,
@@ -551,6 +595,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '42',
     title: 'Ethnic Nose Ring (Nath)',
+    adminId: getAdminId(41),
     description: 'A traditional nose ring to complete a bridal look.',
     price: 35.00,
     discount: 0,
@@ -564,6 +609,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '43',
     title: 'Western Cardigan',
+    adminId: getAdminId(42),
     description: 'A soft knit cardigan, perfect for layering.',
     price: 50.00,
     discount: 0,
@@ -577,6 +623,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '44',
     title: 'Men\'s Formal Shoes',
+    adminId: getAdminId(43),
     description: 'Polished leather shoes for a complete formal attire.',
     price: 80.00,
     discount: 0,
@@ -590,6 +637,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '45',
     title: 'Women\'s Patiala Salwar',
+    adminId: getAdminId(44),
     description: 'A comfortable and voluminous Patiala salwar.',
     price: 45.00,
     discount: 0,
@@ -603,6 +651,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '46',
     title: 'Kids\' Kurta Pajama',
+    adminId: getAdminId(45),
     description: 'A simple and elegant kurta pajama set for boys.',
     price: 50.00,
     discount: 0,
@@ -616,6 +665,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '47',
     title: 'Ethnic Bangles Set',
+    adminId: getAdminId(46),
     description: 'A colorful set of bangles to match your outfits.',
     price: 20.00,
     discount: 0,
@@ -629,6 +679,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '48',
     title: 'Western Scarf',
+    adminId: getAdminId(47),
     description: 'A stylish scarf to accessorize your western outfits.',
     price: 25.00,
     discount: 0,
@@ -642,6 +693,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '49',
     title: 'Men\'s Nehru Jacket',
+    adminId: getAdminId(48),
     description: 'A sleeveless Nehru jacket, a modern take on traditional wear.',
     price: 75.00,
     discount: 0,
@@ -655,6 +707,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '50',
     title: 'Women\'s Designer Blouse',
+    adminId: getAdminId(49),
     description: 'A beautifully designed blouse to pair with sarees or lehengas.',
     price: 60.00,
     discount: 0,
@@ -668,6 +721,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '51',
     title: 'Kids\' Sports Shorts',
+    adminId: getAdminId(50),
     description: 'Comfortable shorts for sports and outdoor activities.',
     price: 20.00,
     discount: 0,
@@ -681,6 +735,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '52',
     title: 'Ethnic Kamarbandh',
+    adminId: getAdminId(51),
     description: 'A decorative waistband to accentuate your ethnic look.',
     price: 40.00,
     discount: 0,
@@ -694,6 +749,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '53',
     title: 'Western Beanie Cap',
+    adminId: getAdminId(52),
     description: 'A warm beanie cap for the winter season.',
     price: 20.00,
     discount: 0,
@@ -707,6 +763,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '54',
     title: 'Men\'s Cotton Lungi',
+    adminId: getAdminId(53),
     description: 'A traditional and comfortable cotton lungi for daily use.',
     price: 20.00,
     discount: 0,
@@ -720,6 +777,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '55',
     title: 'Women\'s Kaftan Dress',
+    adminId: getAdminId(54),
     description: 'A loose and airy kaftan dress for maximum comfort.',
     price: 65.00,
     discount: 0,
@@ -733,6 +791,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '56',
     title: 'Kids\' Raincoat',
+    adminId: getAdminId(55),
     description: 'A waterproof raincoat to keep your child dry during monsoons.',
     price: 30.00,
     discount: 0,
@@ -746,6 +805,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '57',
     title: 'Ethnic Turban (Pagdi)',
+    adminId: getAdminId(56),
     description: 'A pre-stitched turban for weddings and special occasions.',
     price: 50.00,
     discount: 0,
@@ -759,6 +819,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '58',
     title: 'Western Sunglasses',
+    adminId: getAdminId(57),
     description: 'Stylish sunglasses to protect your eyes from the sun.',
     price: 35.00,
     discount: 0,
@@ -772,6 +833,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '59',
     title: 'Men\'s Jodhpuri Suit',
+    adminId: getAdminId(58),
     description: 'A regal Jodhpuri suit for a majestic look.',
     price: 220.00,
     discount: 0,
@@ -785,6 +847,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '60',
     title: 'Women\'s A-Line Skirt',
+    adminId: getAdminId(59),
     description: 'A flattering A-line skirt for a feminine silhouette.',
     price: 48.00,
     discount: 0,
@@ -798,6 +861,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '61',
     title: 'Kids\' Woolen Sweater',
+    adminId: getAdminId(60),
     description: 'A warm woolen sweater to keep your child cozy.',
     price: 40.00,
     discount: 0,
@@ -811,6 +875,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '62',
     title: 'Ethnic Anklets (Payal)',
+    adminId: getAdminId(61),
     description: 'A pair of beautiful silver-plated anklets.',
     price: 30.00,
     discount: 0,
@@ -824,6 +889,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '63',
     title: 'Western Bodycon Dress',
+    adminId: getAdminId(62),
     description: 'A figure-hugging bodycon dress for parties.',
     price: 70.00,
     discount: 0,
@@ -837,6 +903,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '64',
     title: 'Men\'s Dhoti Pants',
+    adminId: getAdminId(63),
     description: 'Modern dhoti pants that combine tradition with trend.',
     price: 55.00,
     discount: 0,
@@ -850,6 +917,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '65',
     title: 'Women\'s Tunic Top',
+    adminId: getAdminId(64),
     description: 'A versatile tunic top that can be worn with leggings or jeans.',
     price: 42.00,
     discount: 0,
@@ -863,6 +931,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '66',
     title: 'Kids\' Winter Jacket',
+    adminId: getAdminId(65),
     description: 'A padded winter jacket for ultimate warmth.',
     price: 65.00,
     discount: 0,
@@ -876,6 +945,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '67',
     title: 'Ethnic Brooch',
+    adminId: getAdminId(66),
     description: 'An elegant brooch to accessorize a saree or sherwani.',
     price: 25.00,
     discount: 0,
@@ -889,6 +959,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '68',
     title: 'Western Leggings',
+    adminId: getAdminId(67),
     description: 'Stretchable and comfortable leggings for everyday wear.',
     price: 22.00,
     discount: 0,
@@ -902,6 +973,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '69',
     title: 'Men\'s Kurta with Jacket',
+    adminId: getAdminId(68),
     description: 'A stylish kurta set that comes with a contrasting jacket.',
     price: 135.00,
     discount: 0,
@@ -915,6 +987,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '70',
     title: 'Women\'s Jumpsuit Saree',
+    adminId: getAdminId(69),
     description: 'A modern and innovative jumpsuit saree for the fashion-forward woman.',
     price: 160.00,
     discount: 0,
@@ -928,6 +1001,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '71',
     title: 'Kids\' Cartoon-Print Shirt',
+    adminId: getAdminId(70),
     description: 'A fun shirt with cartoon prints that kids will love.',
     price: 28.00,
     discount: 0,
@@ -941,6 +1015,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '72',
     title: 'Ethnic Hand-Painted Dupatta',
+    adminId: getAdminId(71),
     description: 'A unique hand-painted dupatta that is a piece of art.',
     price: 75.00,
     discount: 0,
@@ -954,6 +1029,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '73',
     title: 'Western Pleated Skirt',
+    adminId: getAdminId(72),
     description: 'A classic pleated skirt for a timeless look.',
     price: 52.00,
     discount: 0,
@@ -967,6 +1043,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '74',
     title: 'Men\'s Traditional Turban',
+    adminId: getAdminId(73),
     description: 'A majestic turban for a royal groom look.',
     price: 85.00,
     discount: 0,
@@ -980,6 +1057,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '75',
     title: 'Women\'s Long Skirt',
+    adminId: getAdminId(74),
     description: 'A flowy long skirt with ethnic prints.',
     price: 68.00,
     discount: 0,
@@ -993,6 +1071,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '76',
     title: 'Kids\' Onesie',
+    adminId: getAdminId(75),
     description: 'A cute and comfortable onesie for infants.',
     price: 32.00,
     discount: 0,
@@ -1006,6 +1085,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '77',
     title: 'Ethnic Necklace Set',
+    adminId: getAdminId(76),
     description: 'A complete necklace set with matching earrings.',
     price: 90.00,
     discount: 0,
@@ -1019,6 +1099,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '78',
     title: 'Western Blazer Dress',
+    adminId: getAdminId(77),
     description: 'A chic blazer dress for a powerful and stylish statement.',
     price: 88.00,
     discount: 0,
@@ -1032,6 +1113,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '79',
     title: 'Men\'s Chikankari Kurta',
+    adminId: getAdminId(78),
     description: 'An elegant kurta with fine Chikankari embroidery from Lucknow.',
     price: 145.00,
     discount: 0,
@@ -1045,6 +1127,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '80',
     title: 'Women\'s Cape Top',
+    adminId: getAdminId(79),
     description: 'A stylish top with an attached cape for a dramatic flair.',
     price: 58.00,
     discount: 0,
@@ -1058,6 +1141,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '81',
     title: 'Kids\' Romper Suit',
+    adminId: getAdminId(80),
     description: 'An adorable romper suit for babies, easy to wear.',
     price: 35.00,
     discount: 0,
@@ -1071,6 +1155,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '82',
     title: 'Ethnic Hair Accessories',
+    adminId: getAdminId(81),
     description: 'A set of traditional hair accessories for braids and buns.',
     price: 28.00,
     discount: 0,
@@ -1084,6 +1169,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '83',
     title: 'Western Boyfriend Jeans',
+    adminId: getAdminId(82),
     description: 'Relaxed fit boyfriend jeans for ultimate comfort and style.',
     price: 62.00,
     discount: 0,
@@ -1097,6 +1183,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '84',
     title: 'Men\'s Angrakha Kurta',
+    adminId: getAdminId(83),
     description: 'A traditional Angrakha style kurta with a side-tie design.',
     price: 98.00,
     discount: 0,
@@ -1110,6 +1197,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '85',
     title: 'Women\'s Dhoti Saree',
+    adminId: getAdminId(84),
     description: 'A pre-draped dhoti saree for a hassle-free, modern ethnic look.',
     price: 175.00,
     discount: 0,
@@ -1123,6 +1211,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '86',
     title: 'Kids\' Denim Skirt',
+    adminId: getAdminId(85),
     description: 'A cute and versatile denim skirt for little girls.',
     price: 38.00,
     discount: 0,
@@ -1136,6 +1225,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '87',
     title: 'Ethnic Bindi Pack',
+    adminId: getAdminId(86),
     description: 'A pack of decorative bindis in various shapes and colors.',
     price: 10.00,
     discount: 0,
@@ -1149,6 +1239,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '88',
     title: 'Western Peplum Top',
+    adminId: getAdminId(87),
     description: 'A top with a flared peplum waist for a flattering shape.',
     price: 48.00,
     discount: 0,
@@ -1162,6 +1253,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '89',
     title: 'Men\'s Linen Shirt',
+    adminId: getAdminId(88),
     description: 'A breathable linen shirt, perfect for summer days.',
     price: 55.00,
     discount: 0,
@@ -1175,6 +1267,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '90',
     title: 'Women\'s Asymmetric Kurta',
+    adminId: getAdminId(89),
     description: 'A kurta with a modern, asymmetric hemline.',
     price: 62.00,
     discount: 0,
@@ -1188,6 +1281,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '91',
     title: 'Kids\' Tutu Dress',
+    adminId: getAdminId(90),
     description: 'A fluffy tutu dress for the little ballerina in your life.',
     price: 55.00,
     discount: 0,
@@ -1201,6 +1295,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '92',
     title: 'Ethnic Bridal Veil (Dupatta)',
+    adminId: getAdminId(91),
     description: 'A heavily embellished veil to complete a bridal lehenga.',
     price: 110.00,
     discount: 0,
@@ -1214,6 +1309,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '93',
     title: 'Western Off-Shoulder Top',
+    adminId: getAdminId(92),
     description: 'A trendy off-shoulder top for a chic look.',
     price: 40.00,
     discount: 0,
@@ -1227,6 +1323,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '94',
     title: 'Men\'s Khadi Jacket',
+    adminId: getAdminId(93),
     description: 'A jacket made from handspun khadi fabric.',
     price: 85.00,
     discount: 0,
@@ -1240,6 +1337,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '95',
     title: 'Women\'s Pant Saree',
+    adminId: getAdminId(94),
     description: 'A modern fusion of pants and saree, easy to wear and stylish.',
     price: 155.00,
     discount: 0,
@@ -1253,6 +1351,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '96',
     title: 'Kids\' Capris',
+    adminId: getAdminId(95),
     description: 'Comfortable capri pants for kids for everyday play.',
     price: 25.00,
     discount: 0,
@@ -1266,6 +1365,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '97',
     title: 'Ethnic Toe Rings',
+    adminId: getAdminId(96),
     description: 'A pair of adjustable silver-plated toe rings.',
     price: 15.00,
     discount: 0,
@@ -1279,6 +1379,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '98',
     title: 'Western Shirt Dress',
+    adminId: getAdminId(97),
     description: 'A comfortable and stylish dress designed like a long shirt.',
     price: 68.00,
     discount: 0,
@@ -1292,6 +1393,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '99',
     title: 'Men\'s Printed T-shirt',
+    adminId: getAdminId(98),
     description: 'A casual t-shirt with cool, modern prints.',
     price: 25.00,
     discount: 0,
@@ -1305,6 +1407,7 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
   {
     id: '100',
     title: 'Women\'s Cold-Shoulder Top',
+    adminId: getAdminId(99),
     description: 'A top with cut-outs at the shoulders for a trendy look.',
     price: 42.00,
     discount: 50,
@@ -1320,5 +1423,3 @@ export const initialItems: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]
       ],
   },
 ];
-
-    

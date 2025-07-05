@@ -15,6 +15,7 @@ export interface ClothingItem {
   imageUrls: string[];
   imageHints?: string[]; // For placeholder image generation hint
   specifications?: string[];
+  adminId?: string; // ID of the admin who owns this product
   
   // Added for performance optimization
   finalPrice: number;
@@ -33,4 +34,10 @@ export interface Order {
   items: CartItem[];
   customerDetails: CheckoutDetails;
   totalAmount: number;
+}
+
+export interface AdminUser {
+  id: string;
+  password?: string;
+  name: string;
 }

@@ -9,10 +9,11 @@ import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import type { ClothingItem } from '@/types';
+import { useAdminAuth } from '@/context/admin-auth-context';
 
 export default function ProductManagementTable() {
     const { items, deleteItem, isLoading } = useItemContext();
+    const { currentAdminId } = useAdminAuth();
     const { toast } = useToast();
 
     const handleDelete = (itemId: string, itemTitle: string) => {
@@ -28,6 +29,8 @@ export default function ProductManagementTable() {
         return <p>Loading products...</p>;
     }
 
+    const adminItems = items.filter(item => item.adminId === currentAdminId);
+
     return (
         <div className="border rounded-lg">
             <Table>
@@ -41,7 +44,7 @@ export default function ProductManagementTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {items.map((item) => (
+                    {adminItems.length > 0 ? adminItems.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>
                                 <Image
@@ -90,7 +93,13 @@ export default function ProductManagementTable() {
                                 </AlertDialog>
                             </TableCell>
                         </TableRow>
-                    ))}
+                    )) : (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center h-24">
+                                You have not added any products yet.
+                            </TableCell>
+                        </TableRow>
+                    )}
                 </TableBody>
             </Table>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingBasket, UserCog, LogOut, ShieldCheck, ShoppingBag } from 'lucide-react';
+import { ShoppingBasket, UserCog, LogOut, ShieldCheck, ShoppingBag, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { usePathname } from 'next/navigation';
@@ -9,9 +9,11 @@ import { useBagContext } from '@/context/bag-context';
 import { Badge } from '@/components/ui/badge';
 
 const Header = () => {
-  const { isAdmin, logout } = useAdminAuth();
+  const { isAdmin, isSuperAdmin, logout } = useAdminAuth();
   const { cartCount, isLoading } = useBagContext();
   const pathname = usePathname();
+
+  const isAnyAdmin = isAdmin || isSuperAdmin;
 
   return (
     <header className="bg-card shadow-md sticky top-0 z-50">
@@ -30,15 +32,27 @@ const Header = () => {
               </Button>
             </li>
             
-            {isAdmin ? (
-              <>
-                <li>
-                  <Button variant={pathname.startsWith("/admin") ? "default" : "ghost"} asChild>
-                    <Link href="/admin/dashboard">
-                      <ShieldCheck className="mr-2 h-4 w-4" /> Admin
+            {isSuperAdmin && (
+               <li>
+                  <Button variant={pathname.startsWith("/superAdmin") ? "default" : "ghost"} asChild>
+                    <Link href="/superAdmin">
+                      <UserPlus className="mr-2 h-4 w-4" /> Super Admin
                     </Link>
                   </Button>
                 </li>
+            )}
+            
+            {isAnyAdmin ? (
+              <>
+               {isAdmin && (
+                 <li>
+                    <Button variant={pathname.startsWith("/admin") && !pathname.startsWith('/admin/login') ? "default" : "ghost"} asChild>
+                      <Link href="/admin/dashboard">
+                        <ShieldCheck className="mr-2 h-4 w-4" /> Admin
+                      </Link>
+                    </Button>
+                  </li>
+               )}
                 <li>
                   <Button variant="ghost" onClick={logout} aria-label="Logout from admin account">
                     <LogOut className="mr-2 h-4 w-4" /> Logout

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, ShoppingBag, Users, ClipboardList } from 'lucide-react';
+import { PlusCircle, ShoppingBag, ClipboardList } from 'lucide-react';
 
 const AdminDashboardPage = () => {
   return (
@@ -62,23 +62,6 @@ const AdminDashboardPage = () => {
             <Button asChild className="w-full">
               <Link href="/admin/orders">
                 View Orders
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Users className="text-secondary-foreground h-6 w-6" />
-              User Management
-            </CardTitle>
-            <CardDescription>Oversee customer accounts and roles.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="w-full">
-              <Link href="/admin/user-management">
-                Manage Users
               </Link>
             </Button>
           </CardContent>

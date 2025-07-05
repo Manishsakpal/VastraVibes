@@ -6,6 +6,7 @@ import { initialItems as rawInitialItems } from '@/lib/mock-data';
 import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { sanitizeItems } from '@/lib/utils';
+import { useAdminAuth } from './admin-auth-context';
 
 // Helper function to add performance-optimized fields
 const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]): ClothingItem[] => {
@@ -28,8 +29,8 @@ const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableTex
 
 interface ItemContextType {
   items: ClothingItem[];
-  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => void;
-  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => void;
+  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
+  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
   deleteItem: (itemId: string) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
   isLoading: boolean;
@@ -40,6 +41,7 @@ const ItemContext = createContext<ItemContextType | undefined>(undefined);
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { currentAdminId } = useAdminAuth();
 
   useEffect(() => {
     setIsLoading(true);
@@ -78,11 +80,12 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => {
+  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
     setItems(prevItems => {
-      const newItemRaw: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'> & { id: string } = {
+      const newItemRaw: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = {
         ...itemData,
         id: String(Date.now() + Math.random()),
+        adminId: currentAdminId || undefined,
       };
       
       const sanitizedNewItem = sanitizeItems([newItemRaw])[0];
@@ -100,13 +103,13 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       return updatedProcessedItems;
     });
-  }, []);
+  }, [currentAdminId]);
 
-  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>) => {
+  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
     setItems(prevItems => {
         const updatedItems = prevItems.map(item => {
             if (item.id === itemId) {
-                const rawToProcess = { ...itemData, id: itemId };
+                const rawToProcess: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = { ...itemData, id: itemId, adminId: item.adminId };
                 const sanitizedItem = sanitizeItems([rawToProcess])[0];
                 const [processedItem] = processRawItems([sanitizedItem]);
                 return processedItem;
