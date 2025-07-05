@@ -6,15 +6,16 @@ import { useAdminAuth } from '@/context/admin-auth-context';
 import { Loader2 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  const { isAdmin, isLoading } = useAdminAuth();
+  const { isAdmin, isSuperAdmin, isLoading } = useAdminAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isLoading && !isAdmin && pathname !== '/admin/login') {
+    // If not loading, not an admin, not a super admin, and not on the login page, then redirect.
+    if (!isLoading && !isAdmin && !isSuperAdmin && pathname !== '/admin/login') {
       router.push('/admin/login');
     }
-  }, [isAdmin, isLoading, router, pathname]);
+  }, [isAdmin, isSuperAdmin, isLoading, router, pathname]);
 
   if (isLoading) {
     return (
@@ -26,10 +27,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
   
   // This logic is key:
-  // 1. If trying to access a protected route without being an admin, show "Access Denied" while redirecting.
-  // 2. If isAdmin is true, this condition is false, and children will render.
+  // 1. If trying to access a protected route without being an admin or super admin, show "Access Denied" while redirecting.
+  // 2. If isAdmin or isSuperAdmin is true, this condition is false, and children will render.
   // 3. If on '/admin/login', this condition is false, and children (the login page) will render.
-  if (!isAdmin && pathname !== '/admin/login') {
+  if (!isAdmin && !isSuperAdmin && pathname !== '/admin/login') {
     return (
        <div className="flex items-center justify-center h-screen">
         <p className="text-lg text-destructive">Access Denied. Redirecting to login...</p>
