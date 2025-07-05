@@ -47,31 +47,40 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(true);
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
-      
+      let storedItemsParsed: any[] | null = null;
+
       if (storedItemsRaw) {
-        // If items are in storage, use them as the source of truth.
-        const storedItemsParsed = JSON.parse(storedItemsRaw);
-        if (Array.isArray(storedItemsParsed)) {
-          const processedItems = processRawItems(sanitizeItems(storedItemsParsed));
-          setItems(processedItems);
-        } else {
-          // Handle corrupted data in storage by falling back to initial data.
-          throw new Error("Stored items are not an array.");
+        try {
+          storedItemsParsed = JSON.parse(storedItemsRaw);
+        } catch {
+          // Handle JSON parsing error
+          storedItemsParsed = null;
         }
+      }
+
+      // Self-healing: Check if stored data is invalid or in an old format (missing adminId).
+      const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed) || storedItemsParsed.length === 0 || !storedItemsParsed[0].hasOwnProperty('adminId');
+
+      if (storedItemsRaw && !isDataInvalid) {
+        // Data is valid and in the new format, use it.
+        const processedItems = processRawItems(sanitizeItems(storedItemsParsed));
+        setItems(processedItems);
       } else {
-        // If storage is empty, this is the first visit.
-        // Process the initial mock data and populate storage for subsequent visits.
+        // Data is missing, invalid, or old. Reload from mock-data.ts.
+        if (storedItemsRaw) {
+          console.log("Re-initializing item data from mock-data.ts due to invalid or old storage format.");
+        }
+        
         const sanitizedInitialItems = sanitizeItems(rawInitialItems);
         const processedInitialItems = processRawItems(sanitizedInitialItems);
-        
         setItems(processedInitialItems);
         
-        // Save the raw initial items to storage to act as a cache.
+        // Overwrite the invalid stored data with the fresh, correct data.
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(sanitizedInitialItems));
       }
     } catch (error) {
       console.warn("Could not read from localStorage, falling back to initial data:", error);
-      // Fallback in case of any error (e.g., parsing, corrupted data)
+      // Fallback in case of any other error
       const sanitizedInitialItems = sanitizeItems(rawInitialItems);
       const processedInitialItems = processRawItems(sanitizedInitialItems);
       setItems(processedInitialItems);
