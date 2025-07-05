@@ -1,11 +1,10 @@
-
 "use client";
 
 import React, { useCallback } from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Category } from "@/types";
 import { Shirt, PersonStanding, Baby, Palette, LayoutGrid, List } from 'lucide-react';
-import { useTheme, categoryToTheme, themeToCategory } from '@/context/theme-context';
+import { useTheme, categoryToTheme } from '@/context/theme-context';
 
 const ALL_CATEGORIES: (Category | 'All')[] = ['All', 'Men', 'Women', 'Kids', 'Ethnic', 'Western'];
 
@@ -19,8 +18,7 @@ const categoryIcons: { [key in Category | 'All']: React.ElementType } = {
 };
 
 const CategorySelector = () => {
-  const { theme, setTheme } = useTheme();
-  const selectedCategory = themeToCategory(theme);
+  const { setTheme, selectedCategory } = useTheme();
 
   const handleSelectCategory = useCallback((category: Category | 'All') => {
     setTheme(categoryToTheme(category));

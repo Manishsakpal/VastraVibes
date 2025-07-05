@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
@@ -8,7 +7,7 @@ import CategorySelector from '@/components/category-selector';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTheme, themeToCategory } from '@/context/theme-context';
+import { useTheme } from '@/context/theme-context';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
@@ -57,7 +56,7 @@ interface ItemListProps {
 }
 
 function ItemList({ initialItems }: ItemListProps) {
-  const { theme } = useTheme();
+  const { selectedCategory } = useTheme();
   
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -65,8 +64,6 @@ function ItemList({ initialItems }: ItemListProps) {
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [isLoading, setIsLoading] = useState(true);
-
-  const selectedCategory = useMemo(() => themeToCategory(theme), [theme]);
 
   useEffect(() => {
     try {

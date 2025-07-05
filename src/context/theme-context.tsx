@@ -1,10 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import type { Category } from '@/types';
 
 export type Theme = 'theme-default' | 'theme-men' | 'theme-women' | 'theme-kids' | 'theme-ethnic' | 'theme-western';
-const THEME_STORAGE_KEY = 'vastraVibesTheme';
+export const THEME_STORAGE_KEY = 'vastraVibesTheme';
 
 export const categoryToTheme = (category: Category | 'All'): Theme => {
   const map: Record<Category | 'All', Theme> = {
@@ -15,7 +15,7 @@ export const categoryToTheme = (category: Category | 'All'): Theme => {
     'Ethnic': 'theme-ethnic',
     'Western': 'theme-western',
   };
-  return map[category];
+  return map[category] || 'theme-default';
 };
 
 export const themeToCategory = (theme: Theme): Category | 'All' => {
@@ -33,6 +33,7 @@ export const themeToCategory = (theme: Theme): Category | 'All' => {
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  selectedCategory: Category | 'All';
 }
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -42,15 +43,5 @@ export const useTheme = (): ThemeContextType => {
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-  
-  // Persist theme changes to localStorage whenever setTheme is called.
-  useEffect(() => {
-    try {
-        localStorage.setItem(THEME_STORAGE_KEY, context.theme);
-    } catch (error) {
-        console.warn("Could not save theme to localStorage:", error);
-    }
-  }, [context.theme]);
-
   return context;
 };
