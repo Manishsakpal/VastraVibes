@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect, useCallback } from 'react';
 import { useOrderContext } from '@/context/order-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import type { Order, OrderStatus } from '@/types';
 import { AlertCircle, PackageSearch, Search } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { RECENT_ORDER_ID_KEY } from '@/lib/constants';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -33,6 +33,34 @@ export default function TrackOrderPage() {
   const [foundOrder, setFoundOrder] = useState<Order | null>(null);
   const [error, setError] = useState('');
 
+  const searchOrderById = useCallback((idToSearch: string) => {
+    if (!idToSearch) return;
+
+    const order = orders.find(o => o.id.toLowerCase() === idToSearch.trim().toLowerCase());
+
+    if (order) {
+      setFoundOrder(order);
+      setError('');
+    } else {
+      setFoundOrder(null);
+      setError('No order found with that ID. Please check the ID and try again.');
+    }
+  }, [orders]);
+
+  useEffect(() => {
+    if (isLoading) return; // Wait until orders are loaded
+    try {
+      const recentOrderId = localStorage.getItem(RECENT_ORDER_ID_KEY);
+      if (recentOrderId) {
+        setOrderId(recentOrderId);
+        searchOrderById(recentOrderId);
+      }
+    } catch (error) {
+      console.warn("Could not read recent order ID from localStorage:", error);
+    }
+  }, [isLoading, orders, searchOrderById]);
+
+
   const handleTrackOrder = (e: FormEvent) => {
     e.preventDefault();
     setError('');
@@ -42,14 +70,7 @@ export default function TrackOrderPage() {
       setError('Please enter an Order ID.');
       return;
     }
-
-    const order = orders.find(o => o.id.toLowerCase() === orderId.trim().toLowerCase());
-
-    if (order) {
-      setFoundOrder(order);
-    } else {
-      setError('No order found with that ID. Please check the ID and try again.');
-    }
+    searchOrderById(orderId);
   };
 
   return (
@@ -78,7 +99,7 @@ export default function TrackOrderPage() {
             </Button>
           </form>
 
-          {error && (
+          {error && !foundOrder && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Tracking Error</AlertTitle>
@@ -125,7 +146,7 @@ export default function TrackOrderPage() {
                         <div className="flex-grow">
                             <p className="font-medium">{item.title}</p>
                             <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                            <p className="text-sm text-muted-foreground">Price: ₹{item.finalPrice?.toFixed(2)}</p>
+                            <p className="text-sm text-muted-foreground">Price: ₹{(item.finalPrice ?? 0).toFixed(2)}</p>
                         </div>
                         <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
                            <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>

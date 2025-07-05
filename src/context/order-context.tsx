@@ -8,8 +8,8 @@ import { useItemContext } from './item-context';
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => void;
-  updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus, trackingId?: string) => void;
+  addOrder: (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => string;
+  updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus) => void;
   isLoading: boolean;
 }
 
@@ -67,7 +67,6 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
             setOrders(sanitizedOrders);
             // No need to write back immediately unless there were actual changes.
-            // This prevents an infinite loop if we were to depend on 'orders' state.
             if (JSON.stringify(parsedOrders) !== JSON.stringify(sanitizedOrders)) {
                 updateLocalStorage(sanitizedOrders);
             }
@@ -80,7 +79,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   }, [isItemsLoading, masterItems]);
 
-  const addOrder = useCallback((items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => {
+  const addOrder = useCallback((items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number): string => {
     const masterItemMap = new Map(masterItems.map(item => [item.id, item]));
 
     const orderItems: OrderItem[] = items.map(item => ({
@@ -102,22 +101,17 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       updateLocalStorage(updatedOrders);
       return updatedOrders;
     });
+
+    return newOrder.id;
   }, [masterItems]);
 
-  const updateOrderItemStatus = useCallback((orderId: string, itemId: string, newStatus: OrderStatus, trackingId?: string) => {
+  const updateOrderItemStatus = useCallback((orderId: string, itemId: string, newStatus: OrderStatus) => {
     setOrders(prevOrders => {
       const updatedOrders = prevOrders.map(order => {
         if (order.id === orderId) {
           const updatedItems = order.items.map(item => {
             if (item.id === itemId) {
               const updatedItem: OrderItem = { ...item, status: newStatus };
-              
-              if (newStatus === 'Shipped' && trackingId) {
-                updatedItem.trackingId = trackingId;
-              } else if (newStatus !== 'Shipped' && newStatus !== 'Delivered') {
-                // Remove tracking ID if status is no longer shipped/delivered
-                delete updatedItem.trackingId;
-              }
               return updatedItem;
             }
             return item;
