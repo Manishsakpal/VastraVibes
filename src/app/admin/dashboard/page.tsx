@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, ShoppingBag, Users } from 'lucide-react';
+import { PlusCircle, ShoppingBag, ClipboardList } from 'lucide-react';
 
 const AdminDashboardPage = () => {
   return (
@@ -39,11 +39,13 @@ const AdminDashboardPage = () => {
               <ShoppingBag className="text-primary h-6 w-6" />
               Manage Products
             </CardTitle>
-            <CardDescription>View, edit, or remove existing products from your inventory. (Feature coming soon)</CardDescription>
+            <CardDescription>View, edit, or remove existing products from your inventory.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full" disabled>
-              View Products
+            <Button asChild className="w-full">
+              <Link href="/admin/manage-products">
+                View Products
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -51,14 +53,16 @@ const AdminDashboardPage = () => {
         <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
-              <Users className="text-secondary-foreground h-6 w-6" />
-              User Management
+              <ClipboardList className="text-green-600 h-6 w-6" />
+              View Orders
             </CardTitle>
-            <CardDescription>Oversee customer accounts and roles. (Feature coming soon)</CardDescription>
+            <CardDescription>Review customer orders and their details.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full" disabled>
-              Manage Users
+            <Button asChild className="w-full">
+              <Link href="/admin/orders">
+                View Orders
+              </Link>
             </Button>
           </CardContent>
         </Card>

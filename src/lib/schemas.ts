@@ -26,6 +26,6 @@ export const checkoutSchema = z.object({
   address: z.string().min(10, { message: "Address must be at least 10 characters long." }),
   city: z.string().min(2, { message: "City must be at least 2 characters long." }),
   state: z.string().min(2, { message: "State/Province must be at least 2 characters long." }),
-  zip: z.string().regex(/^\d{5}(-\d{4})?$/, { message: "Please enter a valid ZIP code." }),
+  zip: z.string().regex(/^\d{6}$/, { message: "Please enter a valid 6-digit postal code." }),
   phone: z.string().regex(/^(\+\d{1,3}[- ]?)?\d{10}$/, { message: "Please enter a valid 10-digit phone number." }),
 });

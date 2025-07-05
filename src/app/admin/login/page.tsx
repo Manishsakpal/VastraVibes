@@ -15,22 +15,23 @@ const AdminLoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  const { login, isAdmin, isLoading: authIsLoading } = useAdminAuth();
+  const { login, isAdmin, isSuperAdmin, isLoading: authIsLoading } = useAdminAuth();
 
+  // This effect handles redirection after a successful login state change
   useEffect(() => {
-    if (isAdmin) {
+    if (isSuperAdmin) {
+      router.push('/superAdmin');
+    } else if (isAdmin) {
       router.push('/admin/dashboard');
     }
-  }, [isAdmin, router]);
+  }, [isAdmin, isSuperAdmin, router]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    if (login(id, password)) {
-      // The context now handles isAdmin state, and the useEffect above will trigger the redirect.
-      // Or we can be explicit here for faster navigation.
-      router.push('/admin/dashboard');
-    } else {
+    // The login function updates the context state.
+    // The useEffect hook above will then handle the redirection.
+    if (!login(id, password)) {
       setError('Invalid credentials. Please try again.');
     }
   };
@@ -43,7 +44,9 @@ const AdminLoginPage = () => {
     );
   }
   
-  if (isAdmin) return null; // Or a loading spinner while redirecting
+  // If user is already logged in, the useEffect will redirect them.
+  // This prevents the login form from flashing on screen for logged-in users.
+  if (isAdmin || isSuperAdmin) return null;
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)] bg-gradient-to-br from-background to-secondary/30 p-4">

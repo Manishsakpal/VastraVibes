@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useBagContext } from '@/context/bag-context';
 import { useItemContext } from '@/context/item-context';
+import { useOrderContext } from '@/context/order-context';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { checkoutSchema } from '@/lib/schemas';
@@ -73,6 +74,7 @@ const CheckoutSkeleton = () => (
 export default function CheckoutPage() {
   const { cartItems, totalPrice, clearBag, isLoading, cartCount } = useBagContext();
   const { recordPurchase } = useItemContext();
+  const { addOrder } = useOrderContext();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -101,9 +103,11 @@ export default function CheckoutPage() {
   }, [isLoading, cartCount, router]);
 
   const onSubmit = (data: CheckoutFormValues) => {
-    console.log('Order submitted:', data);
-    
+    // Record purchase for popularity sorting
     recordPurchase(cartItems);
+
+    // Add the full order details to our new order system
+    addOrder(cartItems, data, grandTotal);
 
     toast({
       title: 'Order Placed!',

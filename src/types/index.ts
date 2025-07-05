@@ -1,3 +1,7 @@
+
+import { checkoutSchema } from "@/lib/schemas";
+import { z } from "zod";
+
 export type Category = "Men" | "Women" | "Kids" | "Ethnic" | "Western";
 
 export interface ClothingItem {
@@ -12,6 +16,7 @@ export interface ClothingItem {
   imageUrls: string[];
   imageHints?: string[]; // For placeholder image generation hint
   specifications?: string[];
+  adminId?: string; // ID of the admin who owns this product
   
   // Added for performance optimization
   finalPrice: number;
@@ -21,3 +26,24 @@ export interface ClothingItem {
 export type CartItem = ClothingItem & {
   quantity: number;
 };
+
+export type CheckoutDetails = z.infer<typeof checkoutSchema>;
+
+export type OrderStatus = 'Placed' | 'Shipped' | 'Delivered' | 'Cancelled';
+
+export type OrderItem = CartItem & {
+  status: OrderStatus;
+};
+
+export interface Order {
+  id: string;
+  date: string; // ISO date string
+  items: OrderItem[];
+  customerDetails: CheckoutDetails;
+  totalAmount: number;
+}
+
+export interface AdminUser {
+  id: string;
+  password?: string;
+}
