@@ -1,3 +1,4 @@
+
 import { checkoutSchema } from "@/lib/schemas";
 import { z } from "zod";
 
@@ -16,7 +17,6 @@ export interface ClothingItem {
   imageHints?: string[]; // For placeholder image generation hint
   specifications?: string[];
   adminId?: string; // ID of the admin who owns this product
-  adminName?: string; // Name of the admin, added for display
   
   // Added for performance optimization
   finalPrice: number;

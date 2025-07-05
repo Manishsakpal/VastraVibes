@@ -1,40 +1,37 @@
 
 "use client";
 
-import type { ClothingItem, CartItem, AdminUser } from '@/types';
+import type { ClothingItem, CartItem } from '@/types';
 import { initialItems as rawInitialItems } from '@/lib/mock-data';
 import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { sanitizeItems } from '@/lib/utils';
 import { useAdminAuth } from './admin-auth-context';
 
-// Helper function to add performance-optimized fields, including the admin's name
-const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableText' | 'adminName'>[], admins: AdminUser[]): ClothingItem[] => {
+// Helper function to add performance-optimized fields
+const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]): ClothingItem[] => {
   return items.map(item => {
     const finalPrice = (item.discount && item.discount > 0)
       ? item.price * (1 - item.discount / 100)
       : item.price;
     
-    const admin = admins.find(a => a.id === item.adminId);
-    const adminName = admin ? admin.name : 'Vastra Vibes';
-
     const searchableText = [
       item.title,
       item.description,
       item.colors,
       item.size,
-      adminName,
     ].join(' ').toLowerCase();
 
     // The type assertion is safe because we are adding the missing properties.
-    return { ...item, finalPrice, searchableText, adminName } as ClothingItem;
+    return { ...item, finalPrice, searchableText } as ClothingItem;
   });
 };
 
+
 interface ItemContextType {
   items: ClothingItem[];
-  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => void;
-  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => void;
+  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
+  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
   deleteItem: (itemId: string) => void;
   recordPurchase: (purchasedItems: CartItem[]) => void;
   isLoading: boolean;
@@ -45,15 +42,10 @@ const ItemContext = createContext<ItemContextType | undefined>(undefined);
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { currentAdminId, admins, isLoading: isAdminLoading } = useAdminAuth();
+  const { currentAdminId, isLoading: isAdminLoading } = useAdminAuth();
 
   useEffect(() => {
-    // Wait for the admin list to be loaded before processing items
-    if (isAdminLoading) {
-      setIsLoading(true);
-      return;
-    }
-    
+    setIsLoading(true);
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
       let storedItemsParsed: any[] | null = null;
@@ -62,46 +54,54 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try { storedItemsParsed = JSON.parse(storedItemsRaw); } catch { storedItemsParsed = null; }
       }
 
+      // Check if data is invalid or in an old format (pre-adminId)
       const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed) || storedItemsParsed.length === 0 || !storedItemsParsed[0].hasOwnProperty('adminId');
 
       let itemsToProcess: any[];
       if (storedItemsRaw && !isDataInvalid) {
+        // Data is valid and in the new format
         itemsToProcess = storedItemsParsed;
       } else {
-        if (storedItemsRaw) { console.log("Re-initializing item data from mock-data.ts due to invalid or old storage format."); }
+        // Data is invalid, old, or missing. Re-initialize from mock data.
+        if (storedItemsRaw) { // Log if we're overwriting old data
+          console.log("Re-initializing item data from mock-data.ts due to invalid or old storage format.");
+        }
         itemsToProcess = rawInitialItems;
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(itemsToProcess));
       }
       
       const sanitized = sanitizeItems(itemsToProcess);
-      const processed = processRawItems(sanitized, admins);
+      const processed = processRawItems(sanitized);
       setItems(processed);
 
     } catch (error) {
       console.warn("Could not read from localStorage, falling back to initial data:", error);
       const sanitized = sanitizeItems(rawInitialItems);
-      const processed = processRawItems(sanitized, admins);
+      const processed = processRawItems(sanitized);
       setItems(processed);
     } finally {
-        setIsLoading(false);
+        // Only set loading to false once admin loading is also complete
+        if (!isAdminLoading) {
+            setIsLoading(false);
+        }
     }
-  }, [admins, isAdminLoading]);
+  }, [isAdminLoading]); // Depend on isAdminLoading to re-evaluate when auth state is ready
 
   // Helper to strip processed fields before saving back to storage
   const getRawItemsFromState = (processedItems: ClothingItem[]) => {
-    return processedItems.map(({ finalPrice, searchableText, adminName, ...rawItem }) => rawItem);
+    return processedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
   }
 
-  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => {
+  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
     setItems(prevItems => {
-      const newItemRaw: Omit<ClothingItem, 'finalPrice' | 'searchableText' | 'adminName'> = {
+      const newItemRaw: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = {
         ...itemData,
         id: String(Date.now() + Math.random()),
         adminId: currentAdminId || undefined,
       };
       
       const sanitizedNewItem = sanitizeItems([newItemRaw])[0];
-      const [processedNewItem] = processRawItems([sanitizedNewItem], admins);
+      const [processedNewItem] = processRawItems([sanitizedNewItem]);
       const updatedProcessedItems = [...prevItems, processedNewItem];
       const updatedRawItems = getRawItemsFromState(updatedProcessedItems);
       
@@ -112,15 +112,15 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       return updatedProcessedItems;
     });
-  }, [currentAdminId, admins]);
+  }, [currentAdminId]);
 
-  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId' | 'adminName'>) => {
+  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
     setItems(prevItems => {
         const updatedItems = prevItems.map(item => {
             if (item.id === itemId) {
-                const rawToProcess: Omit<ClothingItem, 'finalPrice' | 'searchableText' | 'adminName'> = { ...itemData, id: itemId, adminId: item.adminId };
+                const rawToProcess: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = { ...itemData, id: itemId, adminId: item.adminId };
                 const sanitizedItem = sanitizeItems([rawToProcess])[0];
-                const [processedItem] = processRawItems([sanitizedItem], admins);
+                const [processedItem] = processRawItems([sanitizedItem]);
                 return processedItem;
             }
             return item;
@@ -134,7 +134,7 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
         return updatedItems;
     });
-  }, [admins]);
+  }, []);
 
   const deleteItem = useCallback((itemId: string) => {
     setItems(prevItems => {
