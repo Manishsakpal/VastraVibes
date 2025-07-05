@@ -62,7 +62,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
           )}
         </div>
         {safeImageUrls.length > 1 && (
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
             {safeImageUrls.map((imgUrl, index) => (
               <button
                 key={index}

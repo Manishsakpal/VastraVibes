@@ -70,7 +70,7 @@ export default function TrackOrderPage() {
               value={orderId}
               onChange={(e) => setOrderId(e.target.value)}
               placeholder="Enter your Order ID (e.g., order-1678886400000)"
-              className="flex-grow text-base"
+              className="flex-grow"
               aria-label="Order ID"
             />
             <Button type="submit" className="w-full sm:w-auto" disabled={isLoading}>

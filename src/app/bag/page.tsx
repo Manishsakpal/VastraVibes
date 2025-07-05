@@ -99,33 +99,35 @@ export default function BagPage() {
                   const safeImageUrl = item.imageUrls?.[0] || 'https://placehold.co/100x100.png';
 
                   return (
-                    <li key={item.id} className="flex items-center p-4">
-                      <div className="relative h-24 w-24 rounded-md overflow-hidden mr-4">
-                        <Image src={safeImageUrl} alt={item.title} fill={true} className="object-contain" />
-                      </div>
-                      <div className="flex-grow">
-                        <h2 className="font-semibold">{item.title}</h2>
-                        <p className="text-sm">
-                          {hasDiscount && (
-                            <span className="text-muted-foreground line-through mr-2">₹{item.price.toFixed(2)}</span>
-                          )}
-                          <span className={hasDiscount ? 'text-destructive font-medium' : 'text-muted-foreground'}>
-                            ₹{finalPrice.toFixed(2)}
-                          </span>
-                        </p>
-                        <div className="flex items-center mt-2">
-                          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-10 text-center">{item.quantity}</span>
-                          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                            <Plus className="h-4 w-4" />
-                          </Button>
+                    <li key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4">
+                      <div className="flex items-center w-full">
+                        <div className="relative h-24 w-24 flex-shrink-0 rounded-md overflow-hidden mr-4">
+                          <Image src={safeImageUrl} alt={item.title} fill={true} className="object-contain" />
+                        </div>
+                        <div className="flex-grow">
+                          <h2 className="font-semibold">{item.title}</h2>
+                          <p className="text-sm">
+                            {hasDiscount && (
+                              <span className="text-muted-foreground line-through mr-2">₹{item.price.toFixed(2)}</span>
+                            )}
+                            <span className={hasDiscount ? 'text-destructive font-medium' : 'text-muted-foreground'}>
+                              ₹{finalPrice.toFixed(2)}
+                            </span>
+                          </p>
+                          <div className="flex items-center mt-2">
+                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-10 text-center">{item.quantity}</span>
+                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold">₹{(finalPrice * item.quantity).toFixed(2)}</p>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive mt-2" onClick={() => removeFromBag(item.id)}>
+                      <div className="w-full sm:w-auto text-left sm:text-right flex items-center justify-between">
+                         <p className="font-semibold text-base sm:text-lg">₹{(finalPrice * item.quantity).toFixed(2)}</p>
+                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive sm:mt-2" onClick={() => removeFromBag(item.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
