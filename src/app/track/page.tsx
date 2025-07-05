@@ -7,12 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 import type { Order, OrderStatus } from '@/types';
-import { AlertCircle, PackageSearch, Search, Truck } from 'lucide-react';
+import { AlertCircle, PackageSearch, Search } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -69,7 +68,7 @@ export default function TrackOrderPage() {
               type="text"
               value={orderId}
               onChange={(e) => setOrderId(e.target.value)}
-              placeholder="Enter your Order ID (e.g., order-1678886400000)"
+              placeholder="Enter your Order ID"
               className="flex-grow"
               aria-label="Order ID"
             />
@@ -88,17 +87,40 @@ export default function TrackOrderPage() {
           )}
 
           {foundOrder && (
-            <div className="animate-fade-in-up">
-              <h3 className="text-xl font-semibold mb-4">Order Details</h3>
+            <div className="animate-fade-in-up mt-6 space-y-6">
               <Card>
                 <CardHeader>
-                    <CardTitle className="font-mono text-lg">{foundOrder.id}</CardTitle>
-                    <CardDescription>Placed on: {new Date(foundOrder.date).toLocaleString()}</CardDescription>
+                    <CardTitle className="text-xl">Order Details</CardTitle>
+                    <div className="flex flex-col sm:flex-row sm:justify-between text-sm text-muted-foreground">
+                      <p><strong>Order ID:</strong> <span className="font-mono">{foundOrder.id}</span></p>
+                      <p><strong>Placed on:</strong> {new Date(foundOrder.date).toLocaleString()}</p>
+                    </div>
                 </CardHeader>
                 <CardContent>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="font-semibold mb-2">Shipping To:</h4>
+                        <div className="text-sm text-muted-foreground space-y-1">
+                          <p>{foundOrder.customerDetails.name}</p>
+                          <p>{foundOrder.customerDetails.address}</p>
+                          <p>{foundOrder.customerDetails.city}, {foundOrder.customerDetails.state} {foundOrder.customerDetails.zip}</p>
+                           <p>Email: {foundOrder.customerDetails.email}</p>
+                           <p>Phone: {foundOrder.customerDetails.phone}</p>
+                        </div>
+                      </div>
+                      <div>
+                          <h4 className="font-semibold mb-2">Total Amount:</h4>
+                          <p className="text-2xl font-bold text-primary">₹{foundOrder.totalAmount.toFixed(2)}</p>
+                      </div>
+                   </div>
+                </CardContent>
+              </Card>
+
+              <div>
+                  <h3 className="text-lg font-semibold mb-4">Item Status</h3>
                   <ul className="space-y-4">
                     {foundOrder.items.map(item => (
-                      <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md">
+                      <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md bg-muted/50">
                         <Image src={item.imageUrls[0]} alt={item.title} width={80} height={80} className="rounded-md object-contain bg-white"/>
                         <div className="flex-grow">
                             <p className="font-medium">{item.title}</p>
@@ -107,20 +129,12 @@ export default function TrackOrderPage() {
                         </div>
                         <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
                            <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>
-                           {item.trackingId && (
-                                <Button asChild size="sm" variant="outline">
-                                    <Link href={`https://www.bluedart.com/tracking?track=awb&awb_no_txt=${item.trackingId}`} target="_blank" rel="noopener noreferrer">
-                                        <Truck className="mr-2 h-4 w-4"/>
-                                        Track on Blue Dart
-                                    </Link>
-                                </Button>
-                           )}
                         </div>
                       </li>  
                     ))}
                   </ul>
-                </CardContent>
-              </Card>
+              </div>
+
             </div>
           )}
         </CardContent>

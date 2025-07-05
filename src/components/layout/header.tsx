@@ -49,7 +49,7 @@ const Header = () => {
             
             {isAnyAdmin ? (
               <>
-               {isAdmin && (
+               {isAdmin && !isSuperAdmin && (
                  <li>
                     <Button variant={pathname.startsWith("/admin") && !pathname.startsWith('/admin/login') ? "default" : "ghost"} asChild>
                       <Link href="/admin/dashboard">
@@ -67,14 +67,8 @@ const Header = () => {
                 </li>
               </>
             ) : (
-              <li>
-                <Button variant={pathname === "/admin/login" ? "default" : "ghost"} asChild>
-                  <Link href="/admin/login">
-                    <UserCog className="h-4 w-4 md:mr-2" />
-                     <span className="hidden md:inline">Admin</span>
-                  </Link>
-                </Button>
-              </li>
+              // No "Admin" button is shown to the public. They must navigate to /admin/login directly.
+              null
             )}
 
             <li>
