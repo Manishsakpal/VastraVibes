@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useCallback } from 'react';
@@ -49,12 +48,12 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
               data-ai-hint={item.imageHints?.[0] || "clothing item"}
               priority={priority}
             />
+            {hasDiscount && (
+              <Badge variant="destructive" className="absolute top-3 right-3">
+                {item.discount}% OFF
+              </Badge>
+            )}
           </div>
-          {hasDiscount && (
-            <Badge variant="destructive" className="absolute top-3 right-3">
-              {item.discount}% OFF
-            </Badge>
-          )}
         </CardHeader>
         <CardContent className="p-4 flex-grow space-y-2">
           <h2 className="text-lg font-semibold leading-tight">
