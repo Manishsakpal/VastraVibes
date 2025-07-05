@@ -35,8 +35,8 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
   const safeImageUrl = item.imageUrls?.[0] || 'https://placehold.co/600x800.png';
 
   return (
-    <Link ref={ref} href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg" aria-label={`View details for ${item.title}`}>
-      <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg group hover:-translate-y-1">
+    <Link ref={ref} href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg group" aria-label={`View details for ${item.title}`}>
+      <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg hover:-translate-y-1">
         <CardHeader className="p-0">
           <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative">
             <Image
@@ -49,38 +49,28 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
               priority={priority}
             />
             {hasDiscount && (
-              <Badge variant="destructive" className="absolute top-3 right-3">
+              <Badge variant="destructive" className="absolute top-2 left-2">
                 {item.discount}% OFF
               </Badge>
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-4 flex-grow space-y-2">
-          <h2 className="text-lg font-semibold leading-tight">
+        <CardContent className="p-4 flex-grow flex flex-col space-y-2">
+          <h2 className="text-base font-semibold leading-tight flex-grow group-hover:text-primary transition-colors">
             {item.title}
           </h2>
-          <p className="text-sm text-muted-foreground">
-            {item.description}
-          </p>
-           <div className="text-xs text-muted-foreground space-y-1 pt-1">
-             <p><span className="font-medium text-foreground/80">Sizes:</span> {item.size}</p>
-             <p><span className="font-medium text-foreground/80">Colors:</span> {item.colors}</p>
-           </div>
-          <div className="flex items-center justify-between text-sm pt-1">
-            <p className="text-xs bg-secondary/80 text-secondary-foreground px-2 py-1 rounded-full">{item.category}</p>
-            <div className="flex items-baseline gap-2">
-              {hasDiscount && (
-                <p className="text-muted-foreground line-through text-xs">
-                  ₹{item.price.toFixed(2)}
-                </p>
-              )}
-              <p className="font-medium text-primary">
-                ₹{item.finalPrice.toFixed(2)}
+          <div className="flex items-baseline gap-2 pt-2">
+            {hasDiscount && (
+              <p className="text-muted-foreground line-through text-sm">
+                ₹{item.price.toFixed(2)}
               </p>
-            </div>
+            )}
+            <p className="text-xl font-bold text-primary">
+              ₹{item.finalPrice.toFixed(2)}
+            </p>
           </div>
         </CardContent>
-        <CardFooter className="p-4 border-t mt-auto">
+        <CardFooter className="p-2 border-t mt-auto">
           <Button
             onClick={handleAddToBag}
             className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
