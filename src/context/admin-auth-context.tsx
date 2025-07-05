@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
@@ -20,7 +21,7 @@ interface AdminAuthContextType {
   admins: AdminUser[];
   login: (id: string, pass: string) => boolean;
   logout: () => void;
-  addAdmin: (id: string, pass: string, name: string) => boolean;
+  addAdmin: (id: string, pass: string) => boolean;
   removeAdmin: (id: string) => void;
   isLoading: boolean;
 }
@@ -120,11 +121,11 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
   }, [router]);
 
-  const addAdmin = useCallback((id: string, password: string, name: string): boolean => {
+  const addAdmin = useCallback((id: string, password: string): boolean => {
     const adminExists = admins.some(admin => admin.id === id);
     if(adminExists) return false;
 
-    const newAdmins = [...admins, { id, password, name }];
+    const newAdmins = [...admins, { id, password }];
     setAdmins(newAdmins);
     updateAdminStorage(newAdmins);
     return true;

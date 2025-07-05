@@ -1,6 +1,6 @@
+
 "use client";
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,6 @@ import { Trash2 } from 'lucide-react';
 const adminSchema = {
   id: (val: string) => val.length >= 3 || 'ID must be at least 3 characters',
   password: (val: string) => val.length >= 6 || 'Password must be at least 6 characters',
-  name: (val: string) => val.length >= 2 || 'Name must be at least 2 characters',
 };
 
 export default function AdminUserTable() {
@@ -23,22 +22,22 @@ export default function AdminUserTable() {
   const { toast } = useToast();
 
   const form = useForm({
-    defaultValues: { id: '', password: '', name: '' },
+    defaultValues: { id: '', password: '' },
     mode: 'onChange',
   });
 
-  const onSubmit = (data: { id: string; password: string; name: string; }) => {
-    if (addAdmin(data.id, data.password, data.name)) {
-      toast({ title: 'Admin Added', description: `Admin "${data.name}" has been created.` });
+  const onSubmit = (data: { id: string; password: string; }) => {
+    if (addAdmin(data.id, data.password)) {
+      toast({ title: 'Admin Added', description: `Admin "${data.id}" has been created.` });
       form.reset();
     } else {
       toast({ title: 'Error', description: `Admin with ID "${data.id}" already exists.`, variant: 'destructive' });
     }
   };
 
-  const handleDelete = (adminId: string, adminName: string) => {
+  const handleDelete = (adminId: string) => {
     removeAdmin(adminId);
-    toast({ title: 'Admin Removed', description: `Admin "${adminName}" has been removed.`, variant: 'destructive' });
+    toast({ title: 'Admin Removed', description: `Admin "${adminId}" has been removed.`, variant: 'destructive' });
   };
 
   return (
@@ -52,7 +51,6 @@ export default function AdminUserTable() {
             <TableHeader>
               <TableRow>
                 <TableHead>Admin ID</TableHead>
-                <TableHead>Name</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -60,7 +58,6 @@ export default function AdminUserTable() {
               {admins.map((admin) => (
                 <TableRow key={admin.id}>
                   <TableCell className="font-mono">{admin.id}</TableCell>
-                  <TableCell>{admin.name}</TableCell>
                   <TableCell className="text-right">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -73,13 +70,13 @@ export default function AdminUserTable() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This will permanently remove the admin "{admin.name}". This action cannot be undone.
+                            This will permanently remove the admin "{admin.id}". This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => handleDelete(admin.id, admin.name)}
+                            onClick={() => handleDelete(admin.id)}
                             className="bg-destructive hover:bg-destructive/90"
                           >
                             Remove Admin
@@ -102,7 +99,7 @@ export default function AdminUserTable() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="id"
@@ -126,20 +123,6 @@ export default function AdminUserTable() {
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input type="password" placeholder="••••••••" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="name"
-                   rules={{ validate: adminSchema.name }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Jane Doe" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

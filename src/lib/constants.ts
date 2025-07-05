@@ -1,3 +1,4 @@
+
 import type { AdminUser, Category } from '@/types';
 
 export const CATEGORIES: Category[] = ["Men", "Women", "Kids", "Ethnic", "Western"];
@@ -11,11 +12,11 @@ export const SUPERADMIN_PASSWORD = "asdrowssap";
 
 // Initial Admin Users
 export const INITIAL_ADMIN_USERS: AdminUser[] = [
-  { id: 'admin1', password: 'password1', name: 'Ravi Kumar' },
-  { id: 'admin2', password: 'password2', name: 'Priya Sharma' },
-  { id: 'admin3', password: 'password3', name: 'Amit Singh' },
-  { id: 'admin4', password: 'password4', name: 'Sunita Patel' },
-  { id: 'admin5', password: 'password5', name: 'Deepak Verma' },
+  { id: 'admin1', password: 'password1' },
+  { id: 'admin2', password: 'password2' },
+  { id: 'admin3', password: 'password3' },
+  { id: 'admin4', password: 'password4' },
+  { id: 'admin5', password: 'password5' },
 ];
 
 

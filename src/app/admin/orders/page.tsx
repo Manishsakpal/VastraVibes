@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useOrderContext } from '@/context/order-context';
@@ -12,7 +13,7 @@ import { useMemo } from 'react';
 
 export default function OrdersPage() {
   const { orders, isLoading: isOrdersLoading } = useOrderContext();
-  const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading, admins } = useAdminAuth();
+  const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
 
   const isLoading = isOrdersLoading || isAdminLoading;
 
@@ -82,10 +83,6 @@ export default function OrdersPage() {
                         <h4 className="font-semibold mb-2">Purchased Items</h4>
                         <ul className="space-y-3">
                           {order.items.map(item => {
-                             // Find the seller's name from the admins list
-                            const sellerAdmin = admins.find(admin => admin.id === item.adminId);
-                            const sellerName = sellerAdmin ? sellerAdmin.name : 'Unknown Seller';
-                            
                             return (
                               <li key={item.id} className="flex items-start gap-3">
                                 <Image 
@@ -98,10 +95,10 @@ export default function OrdersPage() {
                                 <div className="flex-grow">
                                   <p className="font-medium text-sm">{item.title}</p>
                                   <p className="text-xs text-muted-foreground">Qty: {item.quantity} @ ₹{item.finalPrice.toFixed(2)}</p>
-                                  {isSuperAdmin && (
+                                  {isSuperAdmin && item.adminId && (
                                     <div className="flex items-center text-xs text-accent mt-1">
                                       <User className="mr-1.5 h-3 w-3" />
-                                      <span>Sold by: {sellerName}</span>
+                                      <span>Sold by: {item.adminId}</span>
                                     </div>
                                   )}
                                 </div>

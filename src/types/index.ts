@@ -40,5 +40,4 @@ export interface Order {
 export interface AdminUser {
   id: string;
   password?: string;
-  name: string;
 }
