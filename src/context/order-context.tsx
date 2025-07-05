@@ -1,8 +1,10 @@
+
 "use client";
 
 import type { Order, CartItem, CheckoutDetails } from '@/types';
 import { ORDERS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { useItemContext } from './item-context';
 
 interface OrderContextType {
   orders: Order[];
@@ -15,6 +17,7 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { items: masterItems, isLoading: isItemsLoading } = useItemContext();
 
   const updateLocalStorage = (updatedOrders: Order[]) => {
     try {
@@ -25,26 +28,42 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   useEffect(() => {
+    // We must wait for the master item list to be loaded before we can sanitize orders.
+    if (isItemsLoading) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const storedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
       if (storedOrders) {
         const parsedOrders: Order[] = JSON.parse(storedOrders);
         if(Array.isArray(parsedOrders)) {
+            // Create a Map for efficient lookup of master items.
+            const masterItemMap = new Map(masterItems.map(item => [item.id, item]));
+
             // This is the data sanitization step. It ensures that older orders
-            // stored in localStorage without a `finalPrice` get one calculated.
+            // stored in localStorage without a `finalPrice` or `adminId` get them added.
             const sanitizedOrders = parsedOrders.map(order => ({
                 ...order,
-                items: order.items.map(item => {
-                    // If finalPrice is missing, but price and discount exist, calculate it.
-                    if (item.finalPrice === undefined && typeof item.price === 'number') {
-                        const finalPrice = (typeof item.discount === 'number' && item.discount > 0)
-                            ? item.price * (1 - item.discount / 100)
-                            : item.price;
-                        return { ...item, finalPrice };
+                items: order.items.map(itemInOrder => {
+                    const masterItem = masterItemMap.get(itemInOrder.id);
+                    let finalPrice = itemInOrder.finalPrice;
+                    let adminId = itemInOrder.adminId;
+
+                    // Fix #1: If finalPrice is missing, calculate it.
+                    if (finalPrice === undefined && typeof itemInOrder.price === 'number') {
+                        finalPrice = (typeof itemInOrder.discount === 'number' && itemInOrder.discount > 0)
+                            ? itemInOrder.price * (1 - itemInOrder.discount / 100)
+                            : itemInOrder.price;
                     }
-                    // If finalPrice is present, or price is missing, return item as-is.
-                    return item;
+                    
+                    // Fix #2: If adminId is missing, look it up from the master list.
+                    if (adminId === undefined && masterItem) {
+                        adminId = masterItem.adminId;
+                    }
+
+                    return { ...itemInOrder, finalPrice, adminId };
                 })
             }));
 
@@ -58,7 +77,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isItemsLoading, masterItems]);
 
   const addOrder = useCallback((items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => {
     const newOrder: Order = {
