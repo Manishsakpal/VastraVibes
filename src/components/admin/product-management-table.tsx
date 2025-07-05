@@ -4,7 +4,7 @@
 import { useItemContext } from '@/context/item-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Loader2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -12,9 +12,11 @@ import Link from 'next/link';
 import { useAdminAuth } from '@/context/admin-auth-context';
 
 export default function ProductManagementTable() {
-    const { items, deleteItem, isLoading } = useItemContext();
-    const { currentAdminId } = useAdminAuth();
+    const { items, deleteItem, isLoading: isItemsLoading } = useItemContext();
+    const { currentAdminId, isLoading: isAdminLoading } = useAdminAuth();
     const { toast } = useToast();
+
+    const isLoading = isItemsLoading || isAdminLoading;
 
     const handleDelete = (itemId: string, itemTitle: string) => {
         deleteItem(itemId);
@@ -26,7 +28,12 @@ export default function ProductManagementTable() {
     };
     
     if (isLoading) {
-        return <p>Loading products...</p>;
+        return (
+            <div className="flex items-center justify-center p-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="ml-4">Loading products...</p>
+            </div>
+        );
     }
 
     const adminItems = items.filter(item => item.adminId === currentAdminId);
