@@ -39,7 +39,7 @@ export default function ProductManagementTable() {
     const adminItems = items.filter(item => item.adminId === currentAdminId);
 
     return (
-        <div className="border rounded-lg">
+        <div className="border rounded-lg overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -62,7 +62,7 @@ export default function ProductManagementTable() {
                                     className="rounded-md object-contain"
                                 />
                             </TableCell>
-                            <TableCell className="font-medium">{item.title}</TableCell>
+                            <TableCell className="font-medium min-w-[200px]">{item.title}</TableCell>
                             <TableCell>{item.category}</TableCell>
                             <TableCell className="text-right">₹{item.finalPrice.toFixed(2)}</TableCell>
                             <TableCell className="text-center">

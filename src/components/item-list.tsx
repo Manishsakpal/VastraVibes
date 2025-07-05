@@ -9,11 +9,10 @@ import { CATEGORIES, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTheme } from '@/context/theme-context';
+import { useTheme, themeToCategory, categoryToTheme } from '@/app/layout';
 import { useItemContext } from '@/context/item-context';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
-import { themeToCategory, categoryToTheme } from '@/context/theme-context';
 
 
 const ITEMS_PER_PAGE = 8;
@@ -50,7 +49,7 @@ const ItemListControlsSkeleton = () => (
 );
 
 const ItemListSkeleton = () => (
-  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-8 sm:gap-4">
     {[...Array(ITEMS_PER_PAGE)].map((_, i) => <ItemCardSkeleton key={i} />)}
   </div>
 );
@@ -196,7 +195,7 @@ function ItemList() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search products, colors, sizes..."
+              placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -223,7 +222,7 @@ function ItemList() {
         <>
           <section aria-labelledby="clothing-items-section">
             <h2 id="clothing-items-section" className="sr-only">Clothing Items</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-8 sm:gap-4">
               {itemsToDisplay.map((item, index) => {
                 const isLast = itemsToDisplay.length === index + 1;
                 return (

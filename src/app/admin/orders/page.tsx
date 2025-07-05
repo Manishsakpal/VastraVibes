@@ -31,7 +31,7 @@ const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'out
 
 export default function OrdersPage() {
   const { orders, isLoading: isOrdersLoading, updateOrderItemStatus } = useOrderContext();
-  const { admins, currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
+  const { isSuperAdmin, currentAdminId, isLoading: isAdminLoading } = useAdminAuth();
 
   const isLoading = isOrdersLoading || isAdminLoading;
   
@@ -97,10 +97,10 @@ export default function OrdersPage() {
                 return (
                   <AccordionItem value={order.id} key={order.id}>
                     <AccordionTrigger>
-                      <div className="flex justify-between w-full pr-4">
-                        <span className="font-mono text-sm">{order.id}</span>
-                        <span className="text-muted-foreground text-sm">{new Date(order.date).toLocaleString()}</span>
-                        <span className="font-bold">
+                      <div className="flex flex-col sm:flex-row justify-between w-full pr-4 text-left sm:text-right">
+                        <span className="font-mono text-sm sm:text-left">{order.id}</span>
+                        <span className="text-muted-foreground text-xs sm:text-sm">{new Date(order.date).toLocaleString()}</span>
+                        <span className="font-bold text-sm sm:text-base">
                           {isSuperAdmin ? `₹${order.totalAmount.toFixed(2)}` : `Your items: ₹${subTotalForThisAdmin.toFixed(2)}`}
                         </span>
                       </div>
@@ -109,10 +109,10 @@ export default function OrdersPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-muted/50 rounded-md">
                         <div>
                           <h4 className="font-semibold mb-2">Customer Details</h4>
-                          <p><strong>Name:</strong> {order.customerDetails.name}</p>
-                          <p><strong>Email:</strong> {order.customerDetails.email}</p>
-                          <p><strong>Phone:</strong> {order.customerDetails.phone}</p>
-                          <p><strong>Address:</strong> {order.customerDetails.address}, {order.customerDetails.city}, {order.customerDetails.state} {order.customerDetails.zip}</p>
+                          <p className="text-sm"><strong>Name:</strong> {order.customerDetails.name}</p>
+                          <p className="text-sm"><strong>Email:</strong> {order.customerDetails.email}</p>
+                          <p className="text-sm"><strong>Phone:</strong> {order.customerDetails.phone}</p>
+                          <p className="text-sm"><strong>Address:</strong> {order.customerDetails.address}, {order.customerDetails.city}, {order.customerDetails.state} {order.customerDetails.zip}</p>
                         </div>
                         <div>
                            <h4 className="font-semibold mb-2">
@@ -121,7 +121,7 @@ export default function OrdersPage() {
                           <ul className="space-y-4">
                             {itemsForThisAdmin.map(item => {
                               return (
-                                <li key={item.id} className="flex items-start gap-3">
+                                <li key={item.id} className="flex flex-col sm:flex-row items-start gap-3">
                                   <Image 
                                     src={item.imageUrls[0]} 
                                     alt={item.title} 
