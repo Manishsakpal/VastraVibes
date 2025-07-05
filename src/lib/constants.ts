@@ -10,14 +10,9 @@ export const COLORS = ["Red", "Blue", "Green", "Black", "White", "Yellow", "Pink
 export const SUPERADMIN_ID = "superAdmin";
 export const SUPERADMIN_PASSWORD = "superPassword";
 
-// Initial Admin Users
-export const INITIAL_ADMIN_USERS: AdminUser[] = [
-  { id: 'admin1', password: 'password1' },
-  { id: 'admin2', password: 'password2' },
-  { id: 'admin3', password: 'password3' },
-  { id: 'admin4', password: 'password4' },
-  { id: 'admin5', password: 'password5' },
-];
+// Initial Admin Users are now managed by the Super Admin.
+// The array is intentionally left empty.
+export const INITIAL_ADMIN_USERS: AdminUser[] = [];
 
 
 // Local Storage Keys
