@@ -6,29 +6,28 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const ALLOWED_HOSTNAMES = ['placehold.co', 'images.unsplash.com', 'plus.unsplash.com', 'encrypted-tbn0.gstatic.com'];
 const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x800.png';
 
-// This function now enforces that all image URLs are from allowed hostnames.
-// If an invalid URL is found, it is replaced by a default placeholder.
+// This function now validates that image URLs are well-formed http/https links.
+// If an invalid URL is found, it is removed. A placeholder is used if no valid URLs remain.
 export function sanitizeItems<T extends ClothingItem | CartItem>(items: T[]): T[] {
   if (!Array.isArray(items)) return [];
 
   return items.map(item => {
-    // Ensure imageUrls is an array of valid strings from allowed hosts
+    // Ensure imageUrls is an array of valid strings from any valid host
     let imageUrls = (Array.isArray(item.imageUrls) ? item.imageUrls : [])
       .map(url => {
         if (typeof url !== 'string' || !url.trim()) return null;
         try {
           const urlObject = new URL(url.trim());
-          if (ALLOWED_HOSTNAMES.includes(urlObject.hostname)) {
+          if (urlObject.protocol === 'http:' || urlObject.protocol === 'https:') {
             return urlObject.href;
           }
         } catch (e) {
           // Invalid URL format, ignore
           return null;
         }
-        return null; // Hostname not allowed
+        return null; // Protocol not allowed
       })
       .filter((url): url is string => !!url); // Remove nulls and get an array of valid URLs
 
