@@ -14,6 +14,7 @@ const AdminLoginPage = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { login, isAdmin, isSuperAdmin, isLoading: authIsLoading } = useAdminAuth();
 
@@ -26,14 +27,19 @@ const AdminLoginPage = () => {
     }
   }, [isAdmin, isSuperAdmin, router]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    // The login function updates the context state.
-    // The useEffect hook above will then handle the redirection.
-    if (!login(id, password)) {
+    setIsSubmitting(true);
+    
+    const success = await login(id, password);
+
+    if (!success) {
       setError('Invalid credentials. Please try again.');
     }
+    
+    setIsSubmitting(false);
+    // On success, the useEffect hook above will handle the redirection.
   };
 
   if (authIsLoading) {
@@ -89,8 +95,8 @@ const AdminLoginPage = () => {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <Button type="submit" className="w-full text-lg py-3" disabled={authIsLoading}>
-              {authIsLoading ? 'Authenticating...' : 'Login'}
+            <Button type="submit" className="w-full text-lg py-3" disabled={isSubmitting}>
+              {isSubmitting ? 'Authenticating...' : 'Login'}
             </Button>
           </form>
         </CardContent>
