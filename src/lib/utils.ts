@@ -8,28 +8,34 @@ export function cn(...inputs: ClassValue[]) {
 
 const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x800.png';
 
-// This function now validates that image URLs are well-formed http/https links.
-// It will attempt to fix URLs that are missing a protocol.
+// This function now validates that image URLs are well-formed http/https links or valid data URIs.
+// It will attempt to fix web URLs that are missing a protocol.
 // If an invalid URL is found, it is removed. A placeholder is used if no valid URLs remain.
 export function sanitizeItems<T extends ClothingItem | CartItem>(items: T[]): T[] {
   if (!Array.isArray(items)) return [];
 
   return items.map(item => {
-    // Ensure imageUrls is an array of valid strings from any valid host
     let imageUrls = (Array.isArray(item.imageUrls) ? item.imageUrls : [])
       .map(url => {
         if (typeof url !== 'string' || !url.trim()) return null;
         
-        let sanitizedUrl = url.trim();
-        // Automatically add protocol if missing for convenience
-        if (!sanitizedUrl.startsWith('http://') && !sanitizedUrl.startsWith('https://')) {
-          sanitizedUrl = 'https://' + sanitizedUrl;
+        const trimmedUrl = url.trim();
+
+        // Check for valid data URI first
+        if (trimmedUrl.startsWith('data:image/')) {
+          return trimmedUrl;
+        }
+
+        // Handle web URLs
+        let webUrl = trimmedUrl;
+        if (!webUrl.startsWith('http://') && !webUrl.startsWith('https://')) {
+          webUrl = 'https://' + webUrl;
         }
 
         try {
-          // Final validation to ensure it's a parseable URL
-          const urlObject = new URL(sanitizedUrl);
-          return urlObject.href;
+          // Final validation to ensure it's a parseable web URL
+          new URL(webUrl);
+          return webUrl;
         } catch (e) {
           // If it's still invalid after attempting to fix, discard it
           console.warn(`Invalid URL provided and could not be sanitized: ${url}`);

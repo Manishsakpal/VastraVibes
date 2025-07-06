@@ -69,24 +69,32 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const addItem = useCallback(async (itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
+    // Sanitize URLs before sending to the database. Cast is acceptable as sanitizeItems only needs imageUrls and spreads the rest.
+    const [sanitizedItemData] = sanitizeItems([itemData as ClothingItem]);
+    
     const itemWithAdmin = {
-      ...itemData,
+      ...sanitizedItemData,
       adminId: currentAdminId || undefined,
     };
     
     const addedItemRaw = await addItemToDb(itemWithAdmin);
 
     if (addedItemRaw) {
-        const [processedNewItem] = processRawItems(sanitizeItems([addedItemRaw]));
+        // Data from DB is now clean. We just need to process for calculated fields.
+        const [processedNewItem] = processRawItems([addedItemRaw]);
         setItems(prevItems => [...prevItems, processedNewItem]);
     }
   }, [currentAdminId]);
 
   const updateItem = useCallback(async (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
-    const updatedItemRaw = await updateItemInDb(itemId, itemData);
+    // Sanitize URLs before sending to the database. Cast is acceptable as sanitizeItems only needs imageUrls and spreads the rest.
+    const [sanitizedItemData] = sanitizeItems([itemData as ClothingItem]);
+
+    const updatedItemRaw = await updateItemInDb(itemId, sanitizedItemData);
 
     if (updatedItemRaw) {
-      const [processedItem] = processRawItems(sanitizeItems([updatedItemRaw]));
+      // Data from DB is now clean. We just need to process for calculated fields.
+      const [processedItem] = processRawItems([updatedItemRaw]);
       setItems(prevItems => prevItems.map(item => item.id === itemId ? processedItem : item));
     }
   }, []);
