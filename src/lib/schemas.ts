@@ -29,3 +29,8 @@ export const checkoutSchema = z.object({
   zip: z.string().regex(/^\d{6}$/, { message: "Please enter a valid 6-digit postal code." }),
   phone: z.string().regex(/^(\+\d{1,3}[- ]?)?\d{10}$/, { message: "Please enter a valid 10-digit phone number." }),
 });
+
+export const adminUserSchema = z.object({
+  id: z.string().min(3, { message: 'ID must be at least 3 characters long.' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters long.' }),
+});

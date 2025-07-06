@@ -4,7 +4,7 @@
 import { useItemContext } from '@/context/item-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Edit, Loader2, Trash2 } from 'lucide-react';
+import { Edit, Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -102,8 +102,17 @@ export default function ProductManagementTable() {
                         </TableRow>
                     )) : (
                         <TableRow>
-                            <TableCell colSpan={5} className="text-center h-24">
-                                You have not added any products yet.
+                            <TableCell colSpan={5} className="h-48">
+                                <div className="flex flex-col items-center justify-center text-center gap-3">
+                                    <h3 className="text-xl font-semibold text-foreground">Your store is ready!</h3>
+                                    <p className="text-muted-foreground">It looks like you haven't added any products yet. Let's fix that.</p>
+                                    <Button asChild>
+                                        <Link href="/admin/add-item">
+                                            <PlusCircle className="mr-2 h-4 w-4" />
+                                            Add Your First Product
+                                        </Link>
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     )}

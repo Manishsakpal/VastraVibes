@@ -11,7 +11,6 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import type { Order, OrderStatus } from '@/types';
 import { AlertCircle, PackageSearch, Search } from 'lucide-react';
-import { RECENT_ORDER_ID_KEY } from '@/lib/constants';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -28,7 +27,7 @@ const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'out
 };
 
 export default function TrackOrderPage() {
-  const { orders, isLoading } = useOrderContext();
+  const { orders, isLoading, getRecentOrderId } = useOrderContext();
   const [orderId, setOrderId] = useState('');
   const [foundOrder, setFoundOrder] = useState<Order | null>(null);
   const [error, setError] = useState('');
@@ -49,16 +48,17 @@ export default function TrackOrderPage() {
 
   useEffect(() => {
     if (isLoading) return; // Wait until orders are loaded
-    try {
-      const recentOrderId = localStorage.getItem(RECENT_ORDER_ID_KEY);
-      if (recentOrderId) {
-        setOrderId(recentOrderId);
-        searchOrderById(recentOrderId);
-      }
-    } catch (error) {
-      console.warn("Could not read recent order ID from localStorage:", error);
+    
+    const checkRecentOrder = async () => {
+        const recentOrderId = await getRecentOrderId();
+        if (recentOrderId) {
+            setOrderId(recentOrderId);
+            searchOrderById(recentOrderId);
+        }
     }
-  }, [isLoading, orders, searchOrderById]);
+    checkRecentOrder();
+
+  }, [isLoading, orders, searchOrderById, getRecentOrderId]);
 
 
   const handleTrackOrder = (e: FormEvent) => {

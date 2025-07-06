@@ -2,14 +2,23 @@
 "use client";
 
 import type { Order, CartItem, CheckoutDetails, OrderItem, OrderStatus } from '@/types';
-import { ORDERS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useItemContext } from './item-context';
+import { 
+    getOrdersFromDb, 
+    addOrderToDb,
+    updateOrderItemStatusInDb,
+} from '@/lib/data-service';
+import { 
+    getRecentOrderIdFromStorage,
+    saveRecentOrderIdToStorage
+} from '@/lib/client-data-service';
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => string;
-  updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus) => void;
+  addOrder: (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => Promise<string>;
+  updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus) => Promise<void>;
+  getRecentOrderId: () => string | null;
   isLoading: boolean;
 }
 
@@ -20,113 +29,65 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isLoading, setIsLoading] = useState(true);
   const { items: masterItems, isLoading: isItemsLoading } = useItemContext();
 
-  const updateLocalStorage = (updatedOrders: Order[]) => {
-    try {
-      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updatedOrders));
-    } catch (error) {
-      console.warn("Could not save orders to localStorage:", error);
-    }
-  };
-
   useEffect(() => {
-    if (isItemsLoading) {
-      return;
+    if (isItemsLoading) return; // Wait for master items to load first
+
+    const loadOrders = async () => {
+        setIsLoading(true);
+        const storedOrders = await getOrdersFromDb();
+        setOrders(storedOrders);
+        setIsLoading(false);
     }
+    loadOrders();
+  }, [isItemsLoading]);
 
-    setIsLoading(true);
-    try {
-      const storedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (storedOrders) {
-        const parsedOrders: Order[] = JSON.parse(storedOrders);
-        if(Array.isArray(parsedOrders)) {
-            const masterItemMap = new Map(masterItems.map(item => [item.id, item]));
-
-            const sanitizedOrders = parsedOrders.map(order => ({
-                ...order,
-                items: order.items.map(itemInOrder => {
-                    const masterItem = masterItemMap.get(itemInOrder.id);
-                    let { finalPrice, adminId, status } = itemInOrder;
-
-                    if (finalPrice === undefined && typeof itemInOrder.price === 'number') {
-                        finalPrice = (typeof itemInOrder.discount === 'number' && itemInOrder.discount > 0)
-                            ? itemInOrder.price * (1 - itemInOrder.discount / 100)
-                            : itemInOrder.price;
-                    }
-                    
-                    if (adminId === undefined && masterItem) {
-                        adminId = masterItem.adminId;
-                    }
-                    
-                    if (status === undefined) {
-                      status = 'Placed';
-                    }
-
-                    return { ...itemInOrder, finalPrice, adminId, status };
-                })
-            }));
-
-            setOrders(sanitizedOrders);
-            // No need to write back immediately unless there were actual changes.
-            if (JSON.stringify(parsedOrders) !== JSON.stringify(sanitizedOrders)) {
-                updateLocalStorage(sanitizedOrders);
-            }
-        }
-      }
-    } catch (error) {
-      console.warn("Could not access localStorage for orders:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isItemsLoading, masterItems]);
-
-  const addOrder = useCallback((items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number): string => {
+  const addOrder = useCallback(async (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number): Promise<string> => {
     const masterItemMap = new Map(masterItems.map(item => [item.id, item]));
 
     const orderItems: OrderItem[] = items.map(item => ({
       ...item,
-      adminId: masterItemMap.get(item.id)?.adminId, // Ensure adminId is attached from master list
+      adminId: masterItemMap.get(item.id)?.adminId,
       status: 'Placed',
     }));
     
-    const newOrder: Order = {
-      id: `order-${Date.now()}`,
+    const newOrderData: Omit<Order, 'id'> = {
       date: new Date().toISOString(),
       items: orderItems,
       customerDetails,
       totalAmount,
     };
     
-    setOrders(prevOrders => {
-      const updatedOrders = [newOrder, ...prevOrders];
-      updateLocalStorage(updatedOrders);
-      return updatedOrders;
-    });
+    const newOrder = await addOrderToDb(newOrderData);
 
-    return newOrder.id;
+    if (newOrder) {
+      setOrders(prevOrders => [newOrder, ...prevOrders]);
+      saveRecentOrderIdToStorage(newOrder.id);
+      return newOrder.id;
+    }
+    return ''; // Should handle error case
   }, [masterItems]);
 
-  const updateOrderItemStatus = useCallback((orderId: string, itemId: string, newStatus: OrderStatus) => {
-    setOrders(prevOrders => {
-      const updatedOrders = prevOrders.map(order => {
+  const updateOrderItemStatus = useCallback(async (orderId: string, itemId: string, newStatus: OrderStatus) => {
+    const success = await updateOrderItemStatusInDb(orderId, itemId, newStatus);
+    if (success) {
+      setOrders(prevOrders => prevOrders.map(order => {
         if (order.id === orderId) {
-          const updatedItems = order.items.map(item => {
-            if (item.id === itemId) {
-              const updatedItem: OrderItem = { ...item, status: newStatus };
-              return updatedItem;
-            }
-            return item;
-          });
+          const updatedItems = order.items.map(item => 
+            item.id === itemId ? { ...item, status: newStatus } : item
+          );
           return { ...order, items: updatedItems };
         }
         return order;
-      });
-      updateLocalStorage(updatedOrders);
-      return updatedOrders;
-    });
+      }));
+    }
   }, []);
 
+  const getRecentOrderId = (): string | null => {
+    return getRecentOrderIdFromStorage();
+  };
+
   return (
-    <OrderContext.Provider value={{ orders, addOrder, updateOrderItemStatus, isLoading }}>
+    <OrderContext.Provider value={{ orders, addOrder, updateOrderItemStatus, getRecentOrderId, isLoading }}>
       {children}
     </OrderContext.Provider>
   );

@@ -2,32 +2,33 @@
 "use client";
 
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2 } from 'lucide-react';
+import { adminUserSchema } from '@/lib/schemas';
 
-const adminSchema = {
-  id: (val: string) => val.length >= 3 || 'ID must be at least 3 characters',
-  password: (val: string) => val.length >= 6 || 'Password must be at least 6 characters',
-};
+type AdminFormValues = z.infer<typeof adminUserSchema>;
 
 export default function AdminUserTable() {
   const { admins, addAdmin, removeAdmin } = useAdminAuth();
   const { toast } = useToast();
 
-  const form = useForm({
+  const form = useForm<AdminFormValues>({
+    resolver: zodResolver(adminUserSchema),
     defaultValues: { id: '', password: '' },
-    mode: 'onChange',
   });
 
-  const onSubmit = (data: { id: string; password: string; }) => {
-    if (addAdmin(data.id, data.password)) {
+  const onSubmit = async (data: AdminFormValues) => {
+    const success = await addAdmin(data.id, data.password);
+    if (success) {
       toast({ title: 'Admin Added', description: `Admin "${data.id}" has been created.` });
       form.reset();
     } else {
@@ -45,6 +46,7 @@ export default function AdminUserTable() {
       <Card>
         <CardHeader>
           <CardTitle>Current Admins</CardTitle>
+          <CardDescription>A list of all standard admin users for the store.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="border rounded-lg overflow-x-auto">
@@ -97,6 +99,7 @@ export default function AdminUserTable() {
       <Card>
         <CardHeader>
           <CardTitle>Add New Admin</CardTitle>
+           <CardDescription>Create a new standard admin user account.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -105,12 +108,11 @@ export default function AdminUserTable() {
                 <FormField
                   control={form.control}
                   name="id"
-                  rules={{ validate: adminSchema.id }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Admin ID</FormLabel>
+                      <FormLabel>New Admin ID</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., newadmin" {...field} />
+                        <Input placeholder="e.g., new.admin" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -119,7 +121,6 @@ export default function AdminUserTable() {
                 <FormField
                   control={form.control}
                   name="password"
-                   rules={{ validate: adminSchema.password }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Password</FormLabel>
@@ -131,8 +132,8 @@ export default function AdminUserTable() {
                   )}
                 />
               </div>
-              <Button type="submit" disabled={!form.formState.isValid}>
-                Add Admin User
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                 {form.formState.isSubmitting ? 'Adding...' : 'Add Admin User'}
               </Button>
             </form>
           </Form>

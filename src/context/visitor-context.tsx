@@ -1,7 +1,15 @@
+
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { VISITOR_COUNT_KEY, LAST_VISIT_KEY } from '@/lib/constants';
+import {
+  getVisitorDataFromDb,
+  incrementVisitorCountInDb,
+} from '@/lib/data-service';
+import {
+  getLastVisitFromStorage,
+  saveLastVisitToStorage
+} from '@/lib/client-data-service';
 
 interface VisitorContextType {
   visitorCount: number;
@@ -17,26 +25,27 @@ export const VisitorProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
-      const now = Date.now();
-      
-      let currentCount = parseInt(localStorage.getItem(VISITOR_COUNT_KEY) || '0', 10);
+    const trackVisitor = async () => {
+        setIsLoading(true);
+        const lastVisit = getLastVisitFromStorage();
+        const now = Date.now();
+        
+        let currentCount = 0;
 
-      if (!lastVisit || (now - parseInt(lastVisit, 10)) > VISIT_SESSION_DURATION) {
-        // It's a new session/visit
-        currentCount += 1;
-        localStorage.setItem(VISITOR_COUNT_KEY, String(currentCount));
-        localStorage.setItem(LAST_VISIT_KEY, String(now));
-      }
-      
-      setVisitorCount(currentCount);
-
-    } catch (error) {
-      console.warn("Could not access localStorage for visitor tracking:", error);
-    } finally {
-      setIsLoading(false);
+        if (!lastVisit || (now - lastVisit) > VISIT_SESSION_DURATION) {
+            // It's a new session/visit, update DB
+            currentCount = await incrementVisitorCountInDb();
+            saveLastVisitToStorage(now);
+        } else {
+            // It's a returning visit within the session, just get the count
+            const data = await getVisitorDataFromDb();
+            currentCount = data.count;
+        }
+        
+        setVisitorCount(currentCount);
+        setIsLoading(false);
     }
+    trackVisitor();
   }, []);
 
   return (
