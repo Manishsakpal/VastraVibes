@@ -3,19 +3,32 @@
 
 import type { ClothingItem, ClothingItemDb, AdminUser, AdminUserDb, Order, OrderDb, CartItem, OrderStatus, AdminCreationStatus } from '@/types';
 import clientPromise from './mongodb';
-import { ObjectId } from 'mongodb';
+import { ObjectId, type Db } from 'mongodb';
 
 // ================================================================= //
 //                      DATABASE HELPER FUNCTIONS                      //
 // ================================================================= //
 
-const getDb = async () => {
-  const dbName = process.env.DB_NAME;
-  if (!dbName) {
-    throw new Error('DB_NAME environment variable is not configured.');
+const getDb = async (): Promise<Db | null> => {
+  try {
+    // These variables are loaded from the Vercel environment, not from .env.local in production.
+    const dbName = process.env.DB_NAME;
+    
+    // During the build process (`next build`), these may not be available.
+    // We check for them here and return null to prevent the build from crashing.
+    if (!dbName) {
+      console.warn("DB_NAME environment variable is not configured. Database operations will be skipped.");
+      return null;
+    }
+    
+    const client = await clientPromise; // This promise handles the MONGODB_URI internally.
+    return client.db(dbName);
+
+  } catch (e) {
+    // This will catch a rejected clientPromise if MONGODB_URI is missing.
+    console.error("Failed to establish database connection.", e);
+    return null;
   }
-  const client = await clientPromise;
-  return client.db(dbName);
 }
 
 // Map MongoDB's _id to a string id for frontend use, now with added safety checks
@@ -27,58 +40,47 @@ const mapFromDb = <T extends { _id?: ObjectId }>(doc: T | null | undefined): (Om
   return { ...rest, id: _id.toHexString() };
 };
 
-const logDbError = (error: any, functionName: string) => {
-    console.error('============================================================');
-    console.error(`DATABASE ERROR in ${functionName}:`);
-    console.error('This is a server-side error. Check your server console.');
-    console.error('Potential causes:');
-    console.error('1. The MONGODB_URI in your .env.local file is incorrect.');
-    console.error('2. The database USER was deleted or has the wrong password.');
-    console.error('3. The IP address is not whitelisted in MongoDB Atlas (Network Access).');
-    console.error('4. The MongoDB cluster is paused.');
-    console.error('--- Original Error Message ---');
-    console.error(error);
-    console.error('============================================================');
-}
-
 // ================================================================= //
 //                        ITEM DATA SERVICE (DB)                       //
 // ================================================================= //
 
 export const getItemsFromDb = async (): Promise<(Omit<ClothingItem, 'finalPrice' | 'searchableText'>)[]> => {
+  const db = await getDb();
+  if (!db) return []; // Graceful exit for build process
+
   try {
-    const db = await getDb();
     const items = await db.collection('items').find({}).toArray();
-    
-    // Use a robust mapping that filters out any null values from bad data
     return items
         .map(item => mapFromDb(item as ClothingItemDb))
         .filter((item): item is (Omit<ClothingItem, 'finalPrice' | 'searchableText'>) => !!item);
-
   } catch (e) {
-    logDbError(e, 'getItemsFromDb');
+    console.error("Error in getItemsFromDb:", e);
     return [];
   }
 }
 
 export const getSingleItemFromDb = async (itemId: string): Promise<Omit<ClothingItem, 'finalPrice' | 'searchableText'> | null> => {
+    const db = await getDb();
+    if (!db) return null;
+
     try {
         if (!ObjectId.isValid(itemId)) {
             console.warn(`Invalid item ID format: ${itemId}`);
             return null;
         }
-        const db = await getDb();
         const item = await db.collection('items').findOne({ _id: new ObjectId(itemId) });
         return mapFromDb(item as ClothingItemDb);
     } catch (e) {
-        logDbError(e, 'getSingleItemFromDb');
+        console.error("Error in getSingleItemFromDb:", e);
         return null;
     }
 }
 
 export const addItemToDb = async (itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>): Promise<(Omit<ClothingItem, 'finalPrice' | 'searchableText'>) | null> => {
+    const db = await getDb();
+    if (!db) return null;
+
     try {
-        const db = await getDb();
         const result = await db.collection('items').insertOne(itemData);
         if (result.insertedId) {
             const insertedDoc = await db.collection('items').findOne({ _id: result.insertedId });
@@ -86,14 +88,16 @@ export const addItemToDb = async (itemData: Omit<ClothingItem, 'id' | 'finalPric
         }
         return null;
     } catch (e) {
-        logDbError(e, 'addItemToDb');
+        console.error("Error in addItemToDb:", e);
         return null;
     }
 };
 
 export const updateItemInDb = async (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>): Promise<(Omit<ClothingItem, 'finalPrice' | 'searchableText'>) | null> => {
+    const db = await getDb();
+    if (!db) return null;
+
     try {
-        const db = await getDb();
         const result = await db.collection('items').findOneAndUpdate(
             { _id: new ObjectId(itemId) },
             { $set: itemData },
@@ -101,18 +105,20 @@ export const updateItemInDb = async (itemId: string, itemData: Omit<ClothingItem
         );
         return result ? mapFromDb(result as ClothingItemDb) : null;
     } catch (e) {
-        logDbError(e, 'updateItemInDb');
+        console.error("Error in updateItemInDb:", e);
         return null;
     }
 };
 
 export const deleteItemFromDb = async (itemId: string): Promise<boolean> => {
+    const db = await getDb();
+    if (!db) return false;
+
     try {
-        const db = await getDb();
         const result = await db.collection('items').deleteOne({ _id: new ObjectId(itemId) });
         return result.deletedCount === 1;
     } catch (e) {
-        logDbError(e, 'deleteItemFromDb');
+        console.error("Error in deleteItemFromDb:", e);
         return false;
     }
 };
@@ -123,24 +129,25 @@ export const deleteItemFromDb = async (itemId: string): Promise<boolean> => {
 // ================================================================= //
 
 export const verifyAdminCredentials = async (id: string, pass: string): Promise<{ adminId: string; role: 'admin' | 'superadmin' } | null> => {
+    const superAdminId = process.env.SUPERADMIN_ID;
+    const superAdminPassword = process.env.SUPERADMIN_PASSWORD;
+
     // 1. Check for Super Admin credentials from environment variables
-    if (id === process.env.SUPERADMIN_ID && pass === process.env.SUPERADMIN_PASSWORD) {
+    if (superAdminId && superAdminPassword && id === superAdminId && pass === superAdminPassword) {
         return { adminId: id, role: 'superadmin' };
     }
 
     // 2. If not Super Admin, check the database for a standard admin
-    try {
-        const db = await getDb();
-        const admin = await db.collection('admins').findOne<AdminUserDb>({ id: id });
+    const db = await getDb();
+    if (!db) return null; // Can't check DB if it's not configured
 
-        if (admin && admin.password === pass) {
-            // Ensure only 'admin' role can be fetched from DB this way
-            if (admin.role === 'admin') {
-                return { adminId: admin.id, role: 'admin' };
-            }
+    try {
+        const admin = await db.collection('admins').findOne<AdminUserDb>({ id: id });
+        if (admin && admin.password === pass && admin.role === 'admin') {
+            return { adminId: admin.id, role: 'admin' };
         }
     } catch (e) {
-        logDbError(e, 'verifyAdminCredentials');
+        console.error("Error in verifyAdminCredentials:", e);
         return null;
     }
 
@@ -149,22 +156,25 @@ export const verifyAdminCredentials = async (id: string, pass: string): Promise<
 };
 
 export const getAdminsFromDb = async (): Promise<AdminUser[]> => {
+    const db = await getDb();
+    if (!db) return [];
+
     try {
-        const db = await getDb();
         const admins = await db.collection('admins').find({}).project({ password: 0 }).toArray();
         return admins
             .map(admin => mapFromDb(admin as AdminUserDb))
             .filter((admin): admin is AdminUser => !!admin);
     } catch (e) {
-        logDbError(e, 'getAdminsFromDb');
+        console.error("Error in getAdminsFromDb:", e);
         return [];
     }
 };
 
 export const addAdminToDb = async (id: string, password: string): Promise<AdminCreationStatus> => {
+    const db = await getDb();
+    if (!db) return 'ERROR';
+
     try {
-        const db = await getDb();
-        
         if (id === process.env.SUPERADMIN_ID) {
             console.error("Attempted to create a standard admin with the Super Admin ID.");
             return 'CONFLICTS_WITH_SUPERADMIN';
@@ -178,18 +188,20 @@ export const addAdminToDb = async (id: string, password: string): Promise<AdminC
         await db.collection('admins').insertOne({ id, password, role: 'admin' });
         return 'SUCCESS';
     } catch (e) {
-        logDbError(e, 'addAdminToDb');
+        console.error("Error in addAdminToDb:", e);
         return 'ERROR';
     }
 };
 
 export const removeAdminFromDb = async (id: string): Promise<boolean> => {
+    const db = await getDb();
+    if (!db) return false;
+
     try {
-        const db = await getDb();
         const result = await db.collection('admins').deleteOne({ id: id });
         return result.deletedCount === 1;
     } catch (e) {
-        logDbError(e, 'removeAdminFromDb');
+        console.error("Error in removeAdminFromDb:", e);
         return false;
     }
 };
@@ -199,21 +211,25 @@ export const removeAdminFromDb = async (id: string): Promise<boolean> => {
 // ================================================================= //
 
 export const getOrdersFromDb = async (): Promise<Order[]> => {
+    const db = await getDb();
+    if (!db) return [];
+
     try {
-        const db = await getDb();
         const orders = await db.collection('orders').find({}).sort({ date: -1 }).toArray();
         return orders
             .map(order => mapFromDb(order as OrderDb))
             .filter((order): order is Order => !!order);
     } catch (e) {
-        logDbError(e, 'getOrdersFromDb');
+        console.error("Error in getOrdersFromDb:", e);
         return [];
     }
 };
 
 export const addOrderToDb = async (orderData: Omit<Order, 'id'>): Promise<Order | null> => {
+    const db = await getDb();
+    if (!db) return null;
+
     try {
-        const db = await getDb();
         const result = await db.collection('orders').insertOne(orderData);
         if (result.insertedId) {
             const newOrder = await db.collection('orders').findOne({ _id: result.insertedId });
@@ -221,21 +237,23 @@ export const addOrderToDb = async (orderData: Omit<Order, 'id'>): Promise<Order 
         }
         return null;
     } catch (e) {
-        logDbError(e, 'addOrderToDb');
+        console.error("Error in addOrderToDb:", e);
         return null;
     }
 };
 
 export const updateOrderItemStatusInDb = async (orderId: string, itemId: string, newStatus: OrderStatus): Promise<boolean> => {
+    const db = await getDb();
+    if (!db) return false;
+
     try {
-        const db = await getDb();
         const result = await db.collection('orders').updateOne(
             { _id: new ObjectId(orderId), "items.id": itemId },
             { $set: { "items.$.status": newStatus } }
         );
         return result.modifiedCount === 1;
     } catch (e) {
-        logDbError(e, 'updateOrderItemStatusInDb');
+        console.error("Error in updateOrderItemStatusInDb:", e);
         return false;
     }
 };
@@ -245,8 +263,10 @@ export const updateOrderItemStatusInDb = async (orderId: string, itemId: string,
 // ================================================================= //
 
 export const updatePurchaseCountsInDb = async (purchasedItems: CartItem[]): Promise<void> => {
+    const db = await getDb();
+    if (!db) return;
+
     try {
-        const db = await getDb();
         const bulkOps = purchasedItems.map(item => ({
             updateOne: {
                 filter: { _id: "purchaseCounts" },
@@ -258,37 +278,43 @@ export const updatePurchaseCountsInDb = async (purchasedItems: CartItem[]): Prom
             await db.collection('analytics').bulkWrite(bulkOps);
         }
     } catch (e) {
-        logDbError(e, 'updatePurchaseCountsInDb');
+        console.error("Error in updatePurchaseCountsInDb:", e);
     }
 };
 
 export const getPurchaseCountsFromDb = async (): Promise<Record<string, number>> => {
+    const db = await getDb();
+    if (!db) return {};
+
     try {
-        const db = await getDb();
         const doc = await db.collection('analytics').findOne({ _id: "purchaseCounts" });
         if (!doc) return {};
         const { _id, ...counts } = doc;
         return counts as Record<string, number>;
     } catch (e) {
-        logDbError(e, 'getPurchaseCountsFromDb');
+        console.error("Error in getPurchaseCountsFromDb:", e);
         return {};
     }
 };
 
 export const getVisitorDataFromDb = async (): Promise<{ count: number }> => {
+    const db = await getDb();
+    if (!db) return { count: 0 };
+
     try {
-        const db = await getDb();
         const doc = await db.collection('analytics').findOne({ _id: "visitorData" });
         return doc ? { count: doc.count as number } : { count: 0 };
     } catch (e) {
-        logDbError(e, 'getVisitorDataFromDb');
+        console.error("Error in getVisitorDataFromDb:", e);
         return { count: 0 };
     }
 };
 
 export const incrementVisitorCountInDb = async (): Promise<number> => {
+    const db = await getDb();
+    if (!db) return 0;
+    
     try {
-        const db = await getDb();
         const result = await db.collection('analytics').findOneAndUpdate(
             { _id: "visitorData" },
             { $inc: { count: 1 } },
@@ -296,9 +322,7 @@ export const incrementVisitorCountInDb = async (): Promise<number> => {
         );
         return result?.count as number || 1;
     } catch (e) {
-        logDbError(e, 'incrementVisitorCountInDb');
-        return 0; // Or handle error appropriately
+        console.error("Error in incrementVisitorCountInDb:", e);
+        return 0;
     }
 };
-
-    
