@@ -42,35 +42,32 @@ const ItemContext = createContext<ItemContextType | undefined>(undefined);
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { currentAdminId, isLoading: isAdminLoading } = useAdminAuth();
+  const { currentAdminId } = useAdminAuth();
 
   useEffect(() => {
     setIsLoading(true);
     try {
       const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
-      let storedItemsParsed: any[] | null = null;
+      let itemsToProcess: any[];
 
       if (storedItemsRaw) {
+        let storedItemsParsed: any[] | null = null;
         try { storedItemsParsed = JSON.parse(storedItemsRaw); } catch { storedItemsParsed = null; }
-      }
-
-      // Check if data is invalid or in an old format (pre-adminId)
-      // An empty array is now a valid state.
-      const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed) || (storedItemsParsed.length > 0 && !storedItemsParsed[0].hasOwnProperty('adminId'));
-
-      let itemsToProcess: any[];
-      if (storedItemsRaw && !isDataInvalid) {
-        // Data is valid and in the new format
-        itemsToProcess = storedItemsParsed;
+        
+        const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed);
+        itemsToProcess = isDataInvalid ? rawInitialItems : storedItemsParsed;
       } else {
-        // Data is invalid, old, or missing. Re-initialize from mock data (which is now empty).
         itemsToProcess = rawInitialItems;
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(itemsToProcess));
       }
       
       const sanitized = sanitizeItems(itemsToProcess);
       const processed = processRawItems(sanitized);
       setItems(processed);
+      
+      // If the data was invalid/missing, write the clean initial data back to storage.
+      if (!storedItemsRaw) {
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(itemsToProcess));
+      }
 
     } catch (error) {
       console.warn("Could not read from localStorage, falling back to initial data:", error);
@@ -78,12 +75,9 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const processed = processRawItems(sanitized);
       setItems(processed);
     } finally {
-        // Only set loading to false once admin loading is also complete
-        if (!isAdminLoading) {
-            setIsLoading(false);
-        }
+      setIsLoading(false);
     }
-  }, [isAdminLoading]); // Depend on isAdminLoading to re-evaluate when auth state is ready
+  }, []); // Run only once on initial mount
 
   // Helper to strip processed fields before saving back to storage
   const getRawItemsFromState = (processedItems: ClothingItem[]) => {
