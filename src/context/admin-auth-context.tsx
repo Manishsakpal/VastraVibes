@@ -7,7 +7,7 @@ import {
   getAdminsFromDb,
   addAdminToDb,
   removeAdminFromDb,
-  findAdminById,
+  verifyAdminCredentials,
 } from '@/lib/data-service';
 import {
   getAuthSessionFromStorage,
@@ -63,20 +63,20 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, []);
   
   const login = useCallback(async (id: string, pass: string): Promise<boolean> => {
-    const adminUser = await findAdminById(id);
+    const authenticatedUser = await verifyAdminCredentials(id, pass);
     
-    if (adminUser && adminUser.password === pass) {
-        const session = { adminId: adminUser.id, role: adminUser.role };
+    if (authenticatedUser) {
+        const session = { adminId: authenticatedUser.adminId, role: authenticatedUser.role };
         saveAuthSessionToStorage(session);
 
-        if (adminUser.role === 'superadmin') {
+        if (authenticatedUser.role === 'superadmin') {
             setIsSuperAdmin(true);
             setIsAdmin(false);
         } else {
             setIsAdmin(true);
             setIsSuperAdmin(false);
         }
-        setCurrentAdminId(adminUser.id);
+        setCurrentAdminId(authenticatedUser.adminId);
         return true;
     }
 

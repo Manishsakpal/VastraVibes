@@ -86,6 +86,32 @@ export const deleteItemFromDb = async (itemId: string): Promise<boolean> => {
 //                        ADMIN DATA SERVICE (DB)                      //
 // ================================================================= //
 
+export const verifyAdminCredentials = async (id: string, pass: string): Promise<{ adminId: string; role: 'admin' | 'superadmin' } | null> => {
+    // 1. Check for Super Admin credentials from environment variables
+    if (id === process.env.SUPERADMIN_ID && pass === process.env.SUPERADMIN_PASSWORD) {
+        return { adminId: id, role: 'superadmin' };
+    }
+
+    // 2. If not Super Admin, check the database for a standard admin
+    try {
+        const db = await getDb();
+        const admin = await db.collection('admins').findOne<AdminUserDb>({ id: id });
+
+        if (admin && admin.password === pass) {
+            // Ensure only 'admin' role can be fetched from DB this way
+            if (admin.role === 'admin') {
+                return { adminId: admin.id, role: 'admin' };
+            }
+        }
+    } catch (e) {
+        console.error('Database error during admin verification:', e);
+        return null;
+    }
+
+    // 3. If no match found
+    return null;
+};
+
 export const getAdminsFromDb = async (): Promise<AdminUser[]> => {
     try {
         const db = await getDb();
@@ -97,20 +123,15 @@ export const getAdminsFromDb = async (): Promise<AdminUser[]> => {
     }
 };
 
-export const findAdminById = async (id: string): Promise<AdminUserDb | null> => {
-    try {
-        const db = await getDb();
-        return await db.collection('admins').findOne<AdminUserDb>({ id: id });
-    } catch (e) {
-        console.error('Database error finding admin:', e);
-        return null;
-    }
-};
-
 export const addAdminToDb = async (id: string, password: string): Promise<boolean> => {
     try {
         const db = await getDb();
-        const existingAdmin = await findAdminById(id);
+         // Prevent creating a standard admin with the same ID as the super admin
+        if (id === process.env.SUPERADMIN_ID) {
+            console.error("Attempted to create a standard admin with the Super Admin ID.");
+            return false;
+        }
+        const existingAdmin = await db.collection('admins').findOne({ id: id });
         if (existingAdmin) return false;
 
         // All admins created via the app are standard admins
