@@ -63,7 +63,7 @@ const BagSkeleton = () => (
 
 export default function BagPage() {
   const { cartItems, removeFromBag, updateQuantity, totalPrice, cartCount, isLoading } = useBagContext();
-  const TAX_RATE = 0.08; // 8% tax
+  const TAX_RATE = 0.0; // Tax removed as per user request.
 
   // New shipping logic
   const shippingThreshold = 450;
@@ -167,10 +167,6 @@ export default function BagPage() {
               <div className="flex justify-between">
                 <p>Shipping</p>
                 <p>{shipping > 0 ? `₹${shipping.toFixed(2)}` : 'FREE'}</p>
-              </div>
-              <div className="flex justify-between">
-                <p>Taxes ({(TAX_RATE * 100).toFixed(0)}%)</p>
-                <p>₹{taxes.toFixed(2)}</p>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-lg">
