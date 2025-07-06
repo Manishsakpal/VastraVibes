@@ -5,9 +5,11 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import {
   getVisitorDataFromDb,
   incrementVisitorCountInDb,
+} from '@/lib/data-service';
+import {
   getLastVisitFromStorage,
   saveLastVisitToStorage
-} from '@/lib/data-service';
+} from '@/lib/client-data-service';
 
 interface VisitorContextType {
   visitorCount: number;

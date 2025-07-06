@@ -9,10 +9,12 @@ import {
   addAdminToDb,
   removeAdminFromDb,
   findAdminById,
+} from '@/lib/data-service';
+import {
   getAuthStatusFromStorage,
   saveAuthStatusToStorage,
   clearAuthStatusInStorage,
-} from '@/lib/data-service';
+} from '@/lib/client-data-service';
 import type { AdminUser } from '@/types';
 
 interface AdminAuthContextType {
@@ -42,7 +44,7 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         setIsLoading(true);
         const [storedAdmins, authStatus] = await Promise.all([
             getAdminsFromDb(),
-            getAuthStatusFromStorage(),
+            Promise.resolve(getAuthStatusFromStorage()), // Wrap client function for Promise.all
         ]);
         
         setAdmins(storedAdmins);

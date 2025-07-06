@@ -8,9 +8,11 @@ import {
     getOrdersFromDb, 
     addOrderToDb,
     updateOrderItemStatusInDb,
+} from '@/lib/data-service';
+import { 
     getRecentOrderIdFromStorage,
     saveRecentOrderIdToStorage
-} from '@/lib/data-service';
+} from '@/lib/client-data-service';
 
 interface OrderContextType {
   orders: Order[];

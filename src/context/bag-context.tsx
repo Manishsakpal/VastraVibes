@@ -4,7 +4,7 @@
 import type { ClothingItem, CartItem } from '@/types';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode, useMemo } from 'react';
 import { sanitizeItems } from '@/lib/utils';
-import { getBagFromStorage, saveBagToStorage, clearBagInStorage } from '@/lib/data-service';
+import { getBagFromStorage, saveBagToStorage, clearBagInStorage } from '@/lib/client-data-service';
 
 interface BagContextType {
   cartItems: CartItem[];
@@ -26,7 +26,7 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     const loadBag = async () => {
         setIsLoading(true);
-        const storedBag = await getBagFromStorage();
+        const storedBag = getBagFromStorage();
         if (storedBag) {
             const sanitized = sanitizeItems(storedBag);
             setCartItems(sanitized);
