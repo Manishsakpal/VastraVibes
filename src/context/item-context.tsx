@@ -3,7 +3,7 @@
 
 import type { ClothingItem, CartItem } from '@/types';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { sanitizeItems } from '@/lib/utils';
+import { processRawItems, sanitizeItems } from '@/lib/utils';
 import { useAdminAuth } from './admin-auth-context';
 import {
   getItemsFromDb,
@@ -13,38 +13,6 @@ import {
   getPurchaseCountsFromDb,
   updatePurchaseCountsInDb
 } from '@/lib/data-service';
-
-// Helper function to add performance-optimized fields with added safety checks
-const processRawItems = (items: (Omit<ClothingItem, 'finalPrice' | 'searchableText'>)[]): ClothingItem[] => {
-  if (!Array.isArray(items)) return [];
-  
-  return items.map(item => {
-    // Defensively handle potential non-numeric or missing values
-    const price = Number(item.price) || 0;
-    const discount = Number(item.discount) || 0;
-
-    const finalPrice = (discount > 0 && discount <= 100)
-      ? price * (1 - discount / 100)
-      : price;
-    
-    // Safely construct searchable text, ignoring any null or undefined fields
-    const searchableText = [
-      item.title,
-      item.description,
-      item.colors,
-      item.size,
-      item.category,
-    ].filter(Boolean).join(' ').toLowerCase();
-
-    return { 
-        ...item,
-        price,
-        discount, 
-        finalPrice: Math.max(0, finalPrice), // Ensure final price is not negative
-        searchableText 
-    } as ClothingItem;
-  });
-};
 
 interface ItemContextType {
   items: ClothingItem[];

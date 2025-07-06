@@ -34,7 +34,7 @@ const logDbError = (error: any, functionName: string) => {
     console.error('This is a server-side error. Check your server console.');
     console.error('Potential causes:');
     console.error('1. The MONGODB_URI in your .env.local file is incorrect.');
-    console.error('2. The database USER (e.g., sakpalmanish01) was deleted or has the wrong password.');
+    console.error('2. The database USER was deleted or has the wrong password.');
     console.error('3. The IP address is not whitelisted in MongoDB Atlas (Network Access).');
     console.error('4. The MongoDB cluster is paused.');
     console.error('--- Original Error Message ---');
@@ -46,7 +46,7 @@ const logDbError = (error: any, functionName: string) => {
 //                        ITEM DATA SERVICE (DB)                       //
 // ================================================================= //
 
-export const getItemsFromDb = async (): Promise<ClothingItem[]> => {
+export const getItemsFromDb = async (): Promise<(Omit<ClothingItem, 'finalPrice' | 'searchableText'>)[]> => {
   try {
     const db = await getDb();
     const items = await db.collection('items').find({}).toArray();
@@ -54,7 +54,7 @@ export const getItemsFromDb = async (): Promise<ClothingItem[]> => {
     // Use a robust mapping that filters out any null values from bad data
     return items
         .map(item => mapFromDb(item as ClothingItemDb))
-        .filter((item): item is ClothingItem => !!item);
+        .filter((item): item is (Omit<ClothingItem, 'finalPrice' | 'searchableText'>) => !!item);
 
   } catch (e) {
     logDbError(e, 'getItemsFromDb');
@@ -62,13 +62,28 @@ export const getItemsFromDb = async (): Promise<ClothingItem[]> => {
   }
 }
 
-export const addItemToDb = async (itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>): Promise<ClothingItem | null> => {
+export const getSingleItemFromDb = async (itemId: string): Promise<Omit<ClothingItem, 'finalPrice' | 'searchableText'> | null> => {
+    try {
+        if (!ObjectId.isValid(itemId)) {
+            console.warn(`Invalid item ID format: ${itemId}`);
+            return null;
+        }
+        const db = await getDb();
+        const item = await db.collection('items').findOne({ _id: new ObjectId(itemId) });
+        return mapFromDb(item as ClothingItemDb);
+    } catch (e) {
+        logDbError(e, 'getSingleItemFromDb');
+        return null;
+    }
+}
+
+export const addItemToDb = async (itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>): Promise<(Omit<ClothingItem, 'finalPrice' | 'searchableText'>) | null> => {
     try {
         const db = await getDb();
         const result = await db.collection('items').insertOne(itemData);
         if (result.insertedId) {
             const insertedDoc = await db.collection('items').findOne({ _id: result.insertedId });
-            return mapFromDb(insertedDoc as ClothingItemDb) as ClothingItem | null;
+            return mapFromDb(insertedDoc as ClothingItemDb);
         }
         return null;
     } catch (e) {
@@ -77,7 +92,7 @@ export const addItemToDb = async (itemData: Omit<ClothingItem, 'id' | 'finalPric
     }
 };
 
-export const updateItemInDb = async (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>): Promise<ClothingItem | null> => {
+export const updateItemInDb = async (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText'>): Promise<(Omit<ClothingItem, 'finalPrice' | 'searchableText'>) | null> => {
     try {
         const db = await getDb();
         const result = await db.collection('items').findOneAndUpdate(
@@ -85,7 +100,7 @@ export const updateItemInDb = async (itemId: string, itemData: Omit<ClothingItem
             { $set: itemData },
             { returnDocument: 'after' }
         );
-        return result ? mapFromDb(result as ClothingItemDb) as ClothingItem | null : null;
+        return result ? mapFromDb(result as ClothingItemDb) : null;
     } catch (e) {
         logDbError(e, 'updateItemInDb');
         return null;
