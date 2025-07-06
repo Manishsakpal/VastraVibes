@@ -28,6 +28,20 @@ const mapFromDb = <T extends { _id?: ObjectId }>(doc: T | null | undefined): (Om
   return { ...rest, id: _id.toHexString() };
 };
 
+const logDbError = (error: any, functionName: string) => {
+    console.error('============================================================');
+    console.error(`DATABASE ERROR in ${functionName}:`);
+    console.error('This is a server-side error. Check your server console.');
+    console.error('Potential causes:');
+    console.error('1. The MONGODB_URI in your .env.local file is incorrect.');
+    console.error('2. The database USER (e.g., sakpalmanish01) was deleted or has the wrong password.');
+    console.error('3. The IP address is not whitelisted in MongoDB Atlas (Network Access).');
+    console.error('4. The MongoDB cluster is paused.');
+    console.error('--- Original Error Message ---');
+    console.error(error);
+    console.error('============================================================');
+}
+
 // ================================================================= //
 //                        ITEM DATA SERVICE (DB)                       //
 // ================================================================= //
@@ -43,7 +57,7 @@ export const getItemsFromDb = async (): Promise<ClothingItem[]> => {
         .filter((item): item is ClothingItem => !!item);
 
   } catch (e) {
-    console.error('Database error fetching items:', e);
+    logDbError(e, 'getItemsFromDb');
     return [];
   }
 }
@@ -58,7 +72,7 @@ export const addItemToDb = async (itemData: Omit<ClothingItem, 'id' | 'finalPric
         }
         return null;
     } catch (e) {
-        console.error('Database error adding item:', e);
+        logDbError(e, 'addItemToDb');
         return null;
     }
 };
@@ -73,7 +87,7 @@ export const updateItemInDb = async (itemId: string, itemData: Omit<ClothingItem
         );
         return result ? mapFromDb(result as ClothingItemDb) as ClothingItem | null : null;
     } catch (e) {
-        console.error('Database error updating item:', e);
+        logDbError(e, 'updateItemInDb');
         return null;
     }
 };
@@ -84,7 +98,7 @@ export const deleteItemFromDb = async (itemId: string): Promise<boolean> => {
         const result = await db.collection('items').deleteOne({ _id: new ObjectId(itemId) });
         return result.deletedCount === 1;
     } catch (e) {
-        console.error('Database error deleting item:', e);
+        logDbError(e, 'deleteItemFromDb');
         return false;
     }
 };
@@ -112,7 +126,7 @@ export const verifyAdminCredentials = async (id: string, pass: string): Promise<
             }
         }
     } catch (e) {
-        console.error('Database error during admin verification:', e);
+        logDbError(e, 'verifyAdminCredentials');
         return null;
     }
 
@@ -128,7 +142,7 @@ export const getAdminsFromDb = async (): Promise<AdminUser[]> => {
             .map(admin => mapFromDb(admin as AdminUserDb))
             .filter((admin): admin is AdminUser => !!admin);
     } catch (e) {
-        console.error('Database error fetching admins:', e);
+        logDbError(e, 'getAdminsFromDb');
         return [];
     }
 };
@@ -150,7 +164,7 @@ export const addAdminToDb = async (id: string, password: string): Promise<AdminC
         await db.collection('admins').insertOne({ id, password, role: 'admin' });
         return 'SUCCESS';
     } catch (e) {
-        console.error('Database error adding admin:', e);
+        logDbError(e, 'addAdminToDb');
         return 'ERROR';
     }
 };
@@ -161,7 +175,7 @@ export const removeAdminFromDb = async (id: string): Promise<boolean> => {
         const result = await db.collection('admins').deleteOne({ id: id });
         return result.deletedCount === 1;
     } catch (e) {
-        console.error('Database error removing admin:', e);
+        logDbError(e, 'removeAdminFromDb');
         return false;
     }
 };
@@ -178,7 +192,7 @@ export const getOrdersFromDb = async (): Promise<Order[]> => {
             .map(order => mapFromDb(order as OrderDb))
             .filter((order): order is Order => !!order);
     } catch (e) {
-        console.error('Database error fetching orders:', e);
+        logDbError(e, 'getOrdersFromDb');
         return [];
     }
 };
@@ -193,7 +207,7 @@ export const addOrderToDb = async (orderData: Omit<Order, 'id'>): Promise<Order 
         }
         return null;
     } catch (e) {
-        console.error('Database error adding order:', e);
+        logDbError(e, 'addOrderToDb');
         return null;
     }
 };
@@ -207,7 +221,7 @@ export const updateOrderItemStatusInDb = async (orderId: string, itemId: string,
         );
         return result.modifiedCount === 1;
     } catch (e) {
-        console.error('Database error updating order status:', e);
+        logDbError(e, 'updateOrderItemStatusInDb');
         return false;
     }
 };
@@ -230,7 +244,7 @@ export const updatePurchaseCountsInDb = async (purchasedItems: CartItem[]): Prom
             await db.collection('analytics').bulkWrite(bulkOps);
         }
     } catch (e) {
-        console.error('Database error updating purchase counts:', e);
+        logDbError(e, 'updatePurchaseCountsInDb');
     }
 };
 
@@ -242,7 +256,7 @@ export const getPurchaseCountsFromDb = async (): Promise<Record<string, number>>
         const { _id, ...counts } = doc;
         return counts as Record<string, number>;
     } catch (e) {
-        console.error('Database error fetching purchase counts:', e);
+        logDbError(e, 'getPurchaseCountsFromDb');
         return {};
     }
 };
@@ -253,7 +267,7 @@ export const getVisitorDataFromDb = async (): Promise<{ count: number }> => {
         const doc = await db.collection('analytics').findOne({ _id: "visitorData" });
         return doc ? { count: doc.count as number } : { count: 0 };
     } catch (e) {
-        console.error('Database error fetching visitor data:', e);
+        logDbError(e, 'getVisitorDataFromDb');
         return { count: 0 };
     }
 };
@@ -268,7 +282,7 @@ export const incrementVisitorCountInDb = async (): Promise<number> => {
         );
         return result?.count as number || 1;
     } catch (e) {
-        console.error('Database error incrementing visitor count:', e);
+        logDbError(e, 'incrementVisitorCountInDb');
         return 0; // Or handle error appropriately
     }
 };
