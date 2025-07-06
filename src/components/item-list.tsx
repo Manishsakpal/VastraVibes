@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
@@ -47,7 +48,7 @@ const ItemListControlsSkeleton = () => (
 );
 
 const ItemListSkeleton = () => (
-  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {[...Array(ITEMS_PER_PAGE)].map((_, i) => <ItemCardSkeleton key={i} />)}
   </div>
 );
@@ -214,7 +215,7 @@ function ItemList() {
         <>
           <section aria-labelledby="clothing-items-section">
             <h2 id="clothing-items-section" className="sr-only">Clothing Items</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-8 sm:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {itemsToDisplay.map((item, index) => {
                 const isLast = itemsToDisplay.length === index + 1;
                 return (
