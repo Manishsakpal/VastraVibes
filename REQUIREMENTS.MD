@@ -3,7 +3,7 @@
 
 ## 1. Project Overview
 
-Vastra Vibes is a web application designed as an e-commerce platform for Indian and modern apparel. It allows users to browse a collection of clothing items, and provides an admin interface for managing store content. The application features a dynamic frontend built with Next.js and React, styled with Tailwind CSS and ShadCN UI components.
+Vastra Vibes is an e-commerce platform for Indian and modern apparel. It allows users to browse a clothing collection and provides an admin interface for managing store content. The application features a dynamic frontend built with Next.js and React, styled with Tailwind CSS and ShadCN UI components, and is powered by a MongoDB backend.
 
 ## 2. Core Technologies
 
@@ -11,111 +11,78 @@ Vastra Vibes is a web application designed as an e-commerce platform for Indian 
 *   **UI Library:** React
 *   **Styling:** Tailwind CSS
 *   **UI Components:** ShadCN UI
-*   **State Management:** React Context API (for item catalog and admin auth)
+*   **Database:** MongoDB (via MongoDB Atlas)
+*   **State Management:** React Context API
 *   **Language:** TypeScript
 *   **Package Manager:** npm
-*   **Version Control:** Git (assumed, though not explicitly managed by Firebase Studio)
 
 ## 3. System Requirements for Local Development
 
 ### 3.1. Software
-*   **Node.js:**
-    *   Recommended: LTS version (e.g., 18.x, 20.x, or newer LTS).
-    *   Check with `node -v`.
-*   **npm (Node Package Manager):**
-    *   Comes bundled with Node.js.
-    *   Check with `npm -v`.
-*   **Operating System:**
-    *   Windows 10 or later
-    *   macOS (latest 2-3 versions)
-    *   Linux (most common distributions like Ubuntu, Fedora, etc.)
-*   **Web Browser:**
-    *   Latest version of Chrome, Firefox, Edge, or Safari.
-
-### 3.2. Hardware
-*   Minimum 4GB RAM (8GB+ recommended for smoother development experience, especially with multiple dev servers and browser tabs).
-*   Sufficient disk space for Node.js, project dependencies (`node_modules`), and source code (typically a few hundred MBs to a GB).
+*   **Node.js:** Recommended LTS version (e.g., 18.x, 20.x).
+*   **npm (Node Package Manager):** Bundled with Node.js.
+*   **MongoDB:** A connection string to a MongoDB database (e.g., a free tier on MongoDB Atlas).
 
 ## 4. Setup and Running Instructions (Local Development)
 
-1.  **Clone/Download Code:** Obtain the project codebase.
-2.  **Navigate to Project Root:** Open a terminal and `cd` into the project's root directory (where `package.json` is located).
+1.  **Obtain Project Code:** Clone or download the codebase.
+2.  **Navigate to Project Root:** Open a terminal and `cd` into the project's root directory.
 3.  **Install Dependencies:**
     ```bash
     npm install
     ```
-4.  **Set up Environment Variables (Optional):**
-    *   The project uses environment variables for certain configurations (e.g., `NEXT_PUBLIC_APP_URL`). While a default is provided for local development in `next.config.ts`, you can override it by creating a `.env.local` file in the project root.
-5.  **Run the Frontend Development Server:**
-    *   In your terminal:
-        ```bash
-        npm run dev
+4.  **Set up Environment Variables:**
+    *   Create a file named `.env.local` in the project root.
+    *   Add your MongoDB connection string to this file, like so:
         ```
-    *   This usually starts the Next.js app on `http://localhost:9002`.
+        MONGODB_URI=mongodb+srv://<user>:<password>@<cluster-url>/<db-name>?retryWrites=true&w=majority
+        DB_NAME=<db-name>
+        ```
+    *   Replace the placeholders with your actual MongoDB credentials and desired database name.
+5.  **Run the Development Server:**
+    ```bash
+    npm run dev
+    ```
+    *   This starts the Next.js app, typically on `http://localhost:9002`.
 
 ## 5. Key Features (Functional Requirements)
 
 ### 5.1. Public User Features
-*   **Homepage:**
-    *   Display a welcome message and tagline.
-    *   List available clothing items in a grid.
-    *   Allow filtering items by predefined categories (All, Men, Women, Kids, Ethnic, Western).
-    *   Allow searching items by title or description.
-    *   Display a message if no items match the filter or search.
-*   **Item Card:**
-    *   Display item image, title, description, price, category, and available sizes.
-    *   "Add to Bag" button (currently simulates adding to bag with a toast notification).
-*   **Navigation:**
-    *   Header with links to Home and Admin Login.
-    *   Footer with copyright information.
+*   **Homepage:** Browse, filter, and search for clothing items.
+*   **Item Detail Page:** View detailed information about a specific product.
+*   **Shopping Bag:** Add/remove items and view the current cart.
+*   **Checkout:** Enter shipping details and place an order.
+*   **Order Tracking:** Check the status of a placed order using an Order ID.
 
 ### 5.2. Admin Features
-*   **Admin Login:**
-    *   Secure login page for administrators (`/admin/login`).
-    *   Uses predefined credentials (`admin`/`password123` stored in constants).
-    *   Authentication state managed via localStorage.
-*   **Admin Dashboard (`/admin/dashboard` - requires login):**
-    *   Welcome message for admins.
-    *   Navigation options:
-        *   Add New Item
-        *   Manage Products (placeholder for future feature)
-        *   User Management (placeholder for future feature)
-*   **Add New Item (`/admin/add-item` - requires login):**
-    *   Form to add new clothing items with fields for:
-        *   Title
-        *   Description
-        *   Price
-        *   Size(s)
-        *   Category (dropdown)
-        *   Image URL
-        *   Image Hint (optional, for placeholder services)
-    *   Form validation using Zod.
-    *   On successful submission, item is added to the local item list (managed by `ItemContext` and persisted in localStorage) and a success toast is shown.
-    *   Redirects or provides a link back to the dashboard.
-*   **Admin Logout:**
-    *   Allows admins to log out, clearing their authentication state.
+*   **Secure Login:**
+    *   Separate login page for administrators (`/admin/login`).
+    *   **Super Admin:** Uses hardcoded credentials (`superAdmin`/`superPassword`) to access the Super Admin Dashboard.
+    *   **Standard Admins:** Use credentials created by the Super Admin.
+*   **Super Admin Dashboard (`/superAdmin`):**
+    *   View store analytics (total revenue, orders, unique visitors).
+    *   **Manage Admin Users:** Add or remove standard admin accounts.
+    *   Access a view of all orders across the store.
+*   **Standard Admin Dashboard (`/admin/dashboard`):**
+    *   **Add New Item:** Form to add new clothing items to the store.
+    *   **Manage Products:** View, edit, and delete products created by that specific admin.
+    *   **View Orders:** View customer orders that contain items sold by that specific admin.
 
-## 6. Non-Functional Requirements (Implicit & Implemented)
+## 6. Data & Persistence
 
-*   **Responsiveness:** The UI should adapt to different screen sizes (desktop, tablet, mobile). Achieved using Tailwind CSS.
-*   **Usability:** The application should be intuitive and easy to navigate.
-*   **Data Persistence (Local):**
-    *   Item catalog is persisted in the browser's localStorage to simulate a database for demo purposes.
-    *   Admin authentication status is persisted in localStorage.
-*   **Code Quality:**
-    *   Written in TypeScript for type safety.
-    *   Organized into a modular structure (components, hooks, lib, context, app routes).
-*   **Error Handling:**
-    *   Basic form validation errors are displayed.
-    *   Toasts are used for notifications (e.g., item added, login failed - though toasts for login errors are generally discouraged in production in favor of inline messages).
-*   **Accessibility:** Basic ARIA attributes are used in some components (e.g., labels for buttons), but comprehensive accessibility auditing is not explicitly covered yet.
+*   **Shared Data (MongoDB):** All persistent, shared data is stored in the MongoDB database. This includes:
+    *   Products
+    *   Orders
+    *   Admin User Accounts
+    *   Site Analytics (visitor counts, purchase counts)
+*   **Session Data (Browser `localStorage`):** Data specific to a single user's browsing session is stored locally in their browser. This includes:
+    *   The contents of their shopping bag.
+    *   Authentication status (to keep an admin logged in).
+    *   A visitor session flag for analytics.
 
-## 7. Future Considerations / Potential Enhancements (Not Yet Implemented)
+## 7. Future Considerations / Potential Enhancements
 
-*   Actual backend database integration (e.g., Firestore) instead of localStorage for items and users.
-*   Full shopping cart and checkout functionality.
-*   Real user authentication system (e.g., Firebase Authentication).
-*   Advanced product management for admins (edit, delete items).
-*   User account management for admins.
-*   Order management.
-*   Deployment to a hosting platform.
+*   Full user authentication system for customers (e.g., Firebase Authentication).
+*   Password hashing for admin accounts in the database.
+*   Integration with a real payment gateway.
+*   Deployment to a hosting platform like Vercel or Firebase Hosting.

@@ -14,8 +14,6 @@ const Header = () => {
   const { cartCount, isLoading } = useBagContext();
   const pathname = usePathname();
 
-  const isAnyAdmin = isAdmin || isSuperAdmin;
-
   return (
     <header className="bg-card shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -47,25 +45,24 @@ const Header = () => {
                 </li>
             )}
             
-            {isAnyAdmin ? (
-              <>
-               {isAdmin && !isSuperAdmin && (
-                 <li>
-                    <Button variant={pathname.startsWith("/admin") && !pathname.startsWith('/admin/login') ? "default" : "ghost"} asChild>
-                      <Link href="/admin/dashboard">
-                        <ShieldCheck className="h-4 w-4 md:mr-2" />
-                        <span className="hidden md:inline">Admin</span>
-                      </Link>
-                    </Button>
-                  </li>
-               )}
-                <li>
-                  <Button variant="ghost" onClick={logout} aria-label="Logout from admin account">
-                    <LogOut className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Logout</span>
+            {isAdmin && (
+              <li>
+                  <Button variant={pathname.startsWith("/admin") && !pathname.startsWith('/admin/login') ? "default" : "ghost"} asChild>
+                    <Link href="/admin/dashboard">
+                      <ShieldCheck className="h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Admin</span>
+                    </Link>
                   </Button>
                 </li>
-              </>
+            )}
+            
+            {(isAdmin || isSuperAdmin) ? (
+              <li>
+                <Button variant="ghost" onClick={logout} aria-label="Logout from admin account">
+                  <LogOut className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Logout</span>
+                </Button>
+              </li>
             ) : (
               // No "Admin" button is shown to the public. They must navigate to /admin/login directly.
               null
