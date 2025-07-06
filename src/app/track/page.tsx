@@ -13,6 +13,7 @@ import type { Order, OrderStatus } from '@/types';
 import { AlertCircle, PackageSearch, Search, Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -131,83 +132,91 @@ export default function TrackOrderPage() {
           )}
 
           {foundOrder && (
-            <div className="animate-fade-in-up mt-6 space-y-6">
-              <Card>
-                <CardHeader>
-                    <CardTitle className="text-xl">Order Details</CardTitle>
-                    <div className="flex flex-col sm:flex-row sm:justify-between text-sm text-muted-foreground">
-                      <p><strong>Order ID:</strong> <span className="font-mono">{foundOrder.id}</span></p>
-                      <p><strong>Placed on:</strong> {new Date(foundOrder.date).toLocaleString()}</p>
+            <div className="animate-fade-in-up mt-6">
+              <Accordion type="single" collapsible className="w-full border rounded-lg shadow-sm" defaultValue={foundOrder.id}>
+                <AccordionItem value={foundOrder.id} className="border-b-0">
+                  <AccordionTrigger className="p-4 hover:no-underline text-sm sm:text-base">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full text-left gap-4 sm:gap-8">
+                      <div className="flex-1">
+                        <p className="font-semibold text-muted-foreground">Order ID</p>
+                        <p className="font-mono text-foreground">{foundOrder.id}</p>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-muted-foreground">Date Placed</p>
+                        <p className="text-foreground">{new Date(foundOrder.date).toLocaleString()}</p>
+                      </div>
+                      <div className="flex-1 text-left sm:text-right">
+                        <p className="font-semibold text-muted-foreground">Total</p>
+                        <p className="font-bold text-primary text-lg">₹{foundOrder.totalAmount.toFixed(2)}</p>
+                      </div>
                     </div>
-                </CardHeader>
-                <CardContent>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="font-semibold mb-2">Shipping To:</h4>
-                        <div className="text-sm text-muted-foreground space-y-1">
-                          <p>{foundOrder.customerDetails.name}</p>
-                          <p>{foundOrder.customerDetails.address}</p>
-                          <p>{foundOrder.customerDetails.city}, {foundOrder.customerDetails.state} {foundOrder.customerDetails.zip}</p>
-                           <p>Email: {foundOrder.customerDetails.email}</p>
-                           <p>Phone: {foundOrder.customerDetails.phone}</p>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="p-4 border-t bg-muted/30">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                          <h4 className="font-semibold mb-2 text-lg">Shipping Details</h4>
+                          <div className="text-sm text-foreground/90 space-y-1">
+                            <p><strong>{foundOrder.customerDetails.name}</strong></p>
+                            <p>{foundOrder.customerDetails.address}</p>
+                            <p>{foundOrder.customerDetails.city}, {foundOrder.customerDetails.state} {foundOrder.customerDetails.zip}</p>
+                            <p><strong>Email:</strong> {foundOrder.customerDetails.email}</p>
+                            <p><strong>Phone:</strong> {foundOrder.customerDetails.phone}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                          <h4 className="font-semibold mb-2">Total Amount:</h4>
-                          <p className="text-2xl font-bold text-primary">₹{foundOrder.totalAmount.toFixed(2)}</p>
-                      </div>
-                   </div>
-                </CardContent>
-              </Card>
-
-              <div>
-                  <h3 className="text-lg font-semibold mb-4">Item Status</h3>
-                  <ul className="space-y-4">
-                    {foundOrder.items.map(item => (
-                      <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md bg-muted/50">
-                        <Image src={item.imageUrls[0]} alt={item.title} width={80} height={80} className="rounded-md object-contain bg-white"/>
-                        <div className="flex-grow">
-                            <p className="font-medium">{item.title}</p>
-                            <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                            <p className="text-sm text-muted-foreground">Price: ₹{(item.finalPrice ?? 0).toFixed(2)}</p>
-                        </div>
-                        <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
-                           <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>
-                           {item.status === 'Placed' && (
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive">
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        Cancel Item
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure you want to cancel this item?</AlertDialogTitle>
-                                        <AlertDialogDescription>
+                        <div>
+                          <h4 className="font-semibold mb-2 text-lg">Items in your Order</h4>
+                          <ul className="space-y-4">
+                            {foundOrder.items.map(item => (
+                              <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md bg-background shadow-sm">
+                                <Image src={item.imageUrls[0]} alt={item.title} width={80} height={80} className="rounded-md object-contain bg-white"/>
+                                <div className="flex-grow">
+                                  <p className="font-medium">{item.title}</p>
+                                  <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                                  <p className="text-sm text-muted-foreground">Price: ₹{(item.finalPrice ?? 0).toFixed(2)}</p>
+                                </div>
+                                <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
+                                  <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>
+                                  {item.status === 'Placed' && (
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive">
+                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          Cancel Item
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>Are you sure you want to cancel this item?</AlertDialogTitle>
+                                          <AlertDialogDescription>
                                             This will cancel "{item.title}" from your order. This action cannot be undone.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Go Back</AlertDialogCancel>
-                                        <AlertDialogAction 
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>Go Back</AlertDialogCancel>
+                                          <AlertDialogAction 
                                             onClick={() => handleCancelItem(foundOrder.id, item.id, item.title)} 
                                             className="bg-destructive hover:bg-destructive/90"
-                                        >
+                                          >
                                             Yes, Cancel Item
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                           )}
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  )}
+                                </div>
+                              </li>  
+                            ))}
+                          </ul>
                         </div>
-                      </li>  
-                    ))}
-                  </ul>
-              </div>
-
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           )}
+
         </CardContent>
       </Card>
     </div>
