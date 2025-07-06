@@ -15,6 +15,7 @@ export interface ClothingItemDb {
   size: string;
   colors: string;
   category: Category;
+  brand?: string;
   imageUrls: string[];
   imageHints?: string[];
   specifications?: string[];
@@ -67,3 +68,6 @@ export interface AdminUser {
     id: string;
     role: 'admin' | 'superadmin';
 }
+
+// Status for admin creation process
+export type AdminCreationStatus = 'SUCCESS' | 'ALREADY_EXISTS' | 'CONFLICTS_WITH_SUPERADMIN' | 'ERROR';

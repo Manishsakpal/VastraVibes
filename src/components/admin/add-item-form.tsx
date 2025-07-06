@@ -33,6 +33,7 @@ const AddItemForm = () => {
       size: [],
       colors: [],
       category: undefined,
+      brand: '',
       imageUrls: '',
       imageHints: '',
       specifications: '',
@@ -46,6 +47,7 @@ const AddItemForm = () => {
         discount: data.discount || 0,
         size: data.size.join(', '),
         colors: data.colors.join(', '),
+        brand: data.brand || undefined,
         imageUrls: data.imageUrls.split('\n').map(url => url.trim()).filter(url => url),
         imageHints: data.imageHints?.split('\n').map(hint => hint.trim()).filter(hint => hint) || [],
         specifications: data.specifications?.split('\n').map(spec => spec.trim()).filter(spec => spec) || [],
@@ -57,7 +59,7 @@ const AddItemForm = () => {
       description: `${data.title} has been successfully added to the store.`,
     });
     form.reset();
-    router.push('/admin/dashboard');
+    router.push('/admin/manage-products');
   };
 
   return (
@@ -203,31 +205,47 @@ const AddItemForm = () => {
             </FormItem>
           )}
         />
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {CATEGORIES.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <FormField
+            control={form.control}
+            name="brand"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand (Optional)</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
+                  <Input placeholder="e.g., VastraVibes" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {CATEGORIES.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}

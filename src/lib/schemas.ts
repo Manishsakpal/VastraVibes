@@ -15,6 +15,7 @@ export const addItemSchema = z.object({
   category: z.enum(CATEGORIES, {
     errorMap: () => ({ message: "Please select a valid category." }),
   }),
+  brand: z.string().min(2, "Brand must be at least 2 characters.").optional().or(z.literal('')),
   imageUrls: z.string().min(1, { message: "At least one image URL is required." }),
   imageHints: z.string().max(500, { message: "Image hints should be max 500 characters."}).optional(),
   specifications: z.string().optional(),

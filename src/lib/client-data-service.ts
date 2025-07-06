@@ -4,7 +4,7 @@
 import {
   BAG_STORAGE_KEY,
   AUTH_SESSION_KEY,
-  RECENT_ORDER_ID_KEY,
+  ORDER_HISTORY_KEY,
   VISITOR_SESSION_KEY,
 } from './constants';
 import type { CartItem } from '@/types';
@@ -58,9 +58,18 @@ export const clearAuthSessionInStorage = (): void => {
     safeLocalStorage.removeItem(AUTH_SESSION_KEY);
 }
 
-// --- Recent Order Service (Client-Side) ---
-export const getRecentOrderIdFromStorage = (): string | null => safeLocalStorage.getItem(RECENT_ORDER_ID_KEY);
-export const saveRecentOrderIdToStorage = (id: string): void => safeLocalStorage.setItem(RECENT_ORDER_ID_KEY, id);
+// --- Order History Service (Client-Side) ---
+export const getOrderIdHistoryFromStorage = (): string[] => {
+    return getStoredData<string[]>(ORDER_HISTORY_KEY, []);
+}
+
+export const saveOrderIdToHistoryInStorage = (id: string): void => {
+    const history = getOrderIdHistoryFromStorage();
+    if (!history.includes(id)) {
+        const newHistory = [id, ...history];
+        safeLocalStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(newHistory));
+    }
+};
 
 // --- Visitor Session Service (Client-Side) ---
 export const getLastVisitFromStorage = (): number | null => {

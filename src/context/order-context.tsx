@@ -10,15 +10,16 @@ import {
     updateOrderItemStatusInDb,
 } from '@/lib/data-service';
 import { 
-    getRecentOrderIdFromStorage,
-    saveRecentOrderIdToStorage
+    getOrderIdHistoryFromStorage,
+    saveOrderIdToHistoryInStorage
 } from '@/lib/client-data-service';
 
 interface OrderContextType {
   orders: Order[];
   addOrder: (items: CartItem[], customerDetails: CheckoutDetails, totalAmount: number) => Promise<string>;
   updateOrderItemStatus: (orderId: string, itemId: string, status: OrderStatus) => Promise<void>;
-  getRecentOrderId: () => string | null;
+  getOrderHistory: () => string[];
+  addOrderToHistory: (orderId: string) => void;
   isLoading: boolean;
 }
 
@@ -61,7 +62,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     if (newOrder) {
       setOrders(prevOrders => [newOrder, ...prevOrders]);
-      saveRecentOrderIdToStorage(newOrder.id);
+      saveOrderIdToHistoryInStorage(newOrder.id);
       return newOrder.id;
     }
     return ''; // Should handle error case
@@ -82,12 +83,16 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   }, []);
 
-  const getRecentOrderId = (): string | null => {
-    return getRecentOrderIdFromStorage();
+  const getOrderHistory = (): string[] => {
+    return getOrderIdHistoryFromStorage();
   };
 
+  const addOrderToHistory = (orderId: string): void => {
+    saveOrderIdToHistoryInStorage(orderId);
+  }
+
   return (
-    <OrderContext.Provider value={{ orders, addOrder, updateOrderItemStatus, getRecentOrderId, isLoading }}>
+    <OrderContext.Provider value={{ orders, addOrder, updateOrderItemStatus, getOrderHistory, addOrderToHistory, isLoading }}>
       {children}
     </OrderContext.Provider>
   );

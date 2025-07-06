@@ -10,7 +10,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import type { Order, OrderStatus } from '@/types';
-import { AlertCircle, PackageSearch, Search } from 'lucide-react';
+import { AlertCircle, PackageSearch, Search, Trash2, History } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -26,51 +29,123 @@ const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'out
   }
 };
 
+const OrderDetails = ({ order }: { order: Order }) => {
+  const { updateOrderItemStatus } = useOrderContext();
+  const { toast } = useToast();
+
+  const handleCancelItem = async (itemId: string, itemTitle: string) => {
+    await updateOrderItemStatus(order.id, itemId, 'Cancelled');
+    toast({
+        title: 'Item Cancelled',
+        description: `Your request to cancel "${itemTitle}" has been processed.`,
+    });
+  };
+
+  return (
+    <AccordionContent>
+      <div className="p-4 border-t bg-muted/30">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h4 className="font-semibold mb-2 text-lg">Shipping Details</h4>
+            <div className="text-sm text-foreground/90 space-y-1">
+              <p><strong>{order.customerDetails.name}</strong></p>
+              <p>{order.customerDetails.address}</p>
+              <p>{order.customerDetails.city}, {order.customerDetails.state} {order.customerDetails.zip}</p>
+              <p><strong>Email:</strong> {order.customerDetails.email}</p>
+              <p><strong>Phone:</strong> {order.customerDetails.phone}</p>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2 text-lg">Items in your Order</h4>
+            <ul className="space-y-4">
+              {order.items.map(item => (
+                <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md bg-background shadow-sm">
+                  <Image src={item.imageUrls[0]} alt={item.title} width={80} height={80} className="rounded-md object-contain bg-white"/>
+                  <div className="flex-grow">
+                    <p className="font-medium">{item.title}</p>
+                    <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                    <p className="text-sm text-muted-foreground">Price: ₹{(item.finalPrice ?? 0).toFixed(2)}</p>
+                  </div>
+                  <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
+                    <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>
+                    {item.status === 'Placed' && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Cancel Item
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure you want to cancel this item?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will cancel "{item.title}" from your order. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Go Back</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleCancelItem(item.id, item.title)} 
+                              className="bg-destructive hover:bg-destructive/90"
+                            >
+                              Yes, Cancel Item
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </div>
+                </li>  
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </AccordionContent>
+  )
+}
+
 export default function TrackOrderPage() {
-  const { orders, isLoading, getRecentOrderId } = useOrderContext();
-  const [orderId, setOrderId] = useState('');
-  const [foundOrder, setFoundOrder] = useState<Order | null>(null);
+  const { orders, isLoading, getOrderHistory, addOrderToHistory } = useOrderContext();
+  const [searchInput, setSearchInput] = useState('');
   const [error, setError] = useState('');
+  const [trackedOrders, setTrackedOrders] = useState<Order[]>([]);
 
-  const searchOrderById = useCallback((idToSearch: string) => {
-    if (!idToSearch) return;
-
-    const order = orders.find(o => o.id.toLowerCase() === idToSearch.trim().toLowerCase());
-
-    if (order) {
-      setFoundOrder(order);
-      setError('');
-    } else {
-      setFoundOrder(null);
-      setError('No order found with that ID. Please check the ID and try again.');
-    }
+  const findOrdersInContext = useCallback((orderIds: string[]) => {
+    return orderIds
+      .map(id => orders.find(o => o.id.toLowerCase() === id.toLowerCase()))
+      .filter((o): o is Order => !!o);
   }, [orders]);
-
+  
   useEffect(() => {
-    if (isLoading) return; // Wait until orders are loaded
-    
-    const checkRecentOrder = async () => {
-        const recentOrderId = await getRecentOrderId();
-        if (recentOrderId) {
-            setOrderId(recentOrderId);
-            searchOrderById(recentOrderId);
-        }
-    }
-    checkRecentOrder();
-
-  }, [isLoading, orders, searchOrderById, getRecentOrderId]);
-
-
+    if (isLoading) return;
+    const historyIds = getOrderHistory();
+    const foundInContext = findOrdersInContext(historyIds);
+    setTrackedOrders(foundInContext);
+  }, [isLoading, orders, getOrderHistory, findOrdersInContext]);
+  
   const handleTrackOrder = (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    setFoundOrder(null);
 
-    if (!orderId.trim()) {
+    if (!searchInput.trim()) {
       setError('Please enter an Order ID.');
       return;
     }
-    searchOrderById(orderId);
+    
+    const idToSearch = searchInput.trim().toLowerCase();
+    const order = orders.find(o => o.id.toLowerCase() === idToSearch);
+
+    if (order) {
+      if (!trackedOrders.some(o => o.id === order.id)) {
+        setTrackedOrders(prev => [order, ...prev]);
+      }
+      addOrderToHistory(order.id);
+      setSearchInput('');
+    } else {
+      setError('No order found with that ID. Please check the ID and try again.');
+    }
   };
 
   return (
@@ -81,14 +156,14 @@ export default function TrackOrderPage() {
             <PackageSearch className="h-6 w-6" />
             Track Your Order
           </CardTitle>
-          <CardDescription>Enter your Order ID below to check the status of your purchase.</CardDescription>
+          <CardDescription>Enter an Order ID to find a specific order, or see your recent order history below.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleTrackOrder} className="flex flex-col sm:flex-row items-start gap-4 mb-8">
             <Input
               type="text"
-              value={orderId}
-              onChange={(e) => setOrderId(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Enter your Order ID"
               className="flex-grow"
               aria-label="Order ID"
@@ -99,67 +174,48 @@ export default function TrackOrderPage() {
             </Button>
           </form>
 
-          {error && !foundOrder && (
-            <Alert variant="destructive">
+          {error && (
+            <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Tracking Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-
-          {foundOrder && (
-            <div className="animate-fade-in-up mt-6 space-y-6">
-              <Card>
-                <CardHeader>
-                    <CardTitle className="text-xl">Order Details</CardTitle>
-                    <div className="flex flex-col sm:flex-row sm:justify-between text-sm text-muted-foreground">
-                      <p><strong>Order ID:</strong> <span className="font-mono">{foundOrder.id}</span></p>
-                      <p><strong>Placed on:</strong> {new Date(foundOrder.date).toLocaleString()}</p>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="font-semibold mb-2">Shipping To:</h4>
-                        <div className="text-sm text-muted-foreground space-y-1">
-                          <p>{foundOrder.customerDetails.name}</p>
-                          <p>{foundOrder.customerDetails.address}</p>
-                          <p>{foundOrder.customerDetails.city}, {foundOrder.customerDetails.state} {foundOrder.customerDetails.zip}</p>
-                           <p>Email: {foundOrder.customerDetails.email}</p>
-                           <p>Phone: {foundOrder.customerDetails.phone}</p>
-                        </div>
-                      </div>
-                      <div>
-                          <h4 className="font-semibold mb-2">Total Amount:</h4>
-                          <p className="text-2xl font-bold text-primary">₹{foundOrder.totalAmount.toFixed(2)}</p>
-                      </div>
-                   </div>
-                </CardContent>
-              </Card>
-
-              <div>
-                  <h3 className="text-lg font-semibold mb-4">Item Status</h3>
-                  <ul className="space-y-4">
-                    {foundOrder.items.map(item => (
-                      <li key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-md bg-muted/50">
-                        <Image src={item.imageUrls[0]} alt={item.title} width={80} height={80} className="rounded-md object-contain bg-white"/>
-                        <div className="flex-grow">
-                            <p className="font-medium">{item.title}</p>
-                            <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                            <p className="text-sm text-muted-foreground">Price: ₹{(item.finalPrice ?? 0).toFixed(2)}</p>
-                        </div>
-                        <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
-                           <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>
-                        </div>
-                      </li>  
-                    ))}
-                  </ul>
-              </div>
-
-            </div>
-          )}
         </CardContent>
       </Card>
+      
+      {trackedOrders.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><History className="h-5 w-5" /> Your Recent Order History</h2>
+          <Accordion type="multiple" className="w-full border rounded-lg shadow-sm space-y-2">
+            {trackedOrders.map(order => (
+               <AccordionItem value={order.id} key={order.id} className="border-b-0 bg-card rounded-lg overflow-hidden">
+                  <AccordionTrigger className="p-4 hover:no-underline text-sm sm:text-base">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full text-left items-center">
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs">Order ID</p>
+                            <p className="font-mono text-foreground truncate text-sm">{order.id}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs">Date Placed</p>
+                            <p className="text-foreground text-sm">{new Date(order.date).toLocaleDateString()}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs">Items</p>
+                            <p className="text-foreground font-medium text-sm">{order.items.length}</p>
+                        </div>
+                        <div className="sm:text-right">
+                            <p className="font-semibold text-muted-foreground text-xs">Total</p>
+                            <p className="font-bold text-primary text-lg">₹{order.totalAmount.toFixed(2)}</p>
+                        </div>
+                    </div>
+                  </AccordionTrigger>
+                  <OrderDetails order={order} />
+                </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      )}
     </div>
   );
 }

@@ -45,7 +45,7 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
               alt={item.title}
               fill={true}
               className="object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               data-ai-hint={item.imageHints?.[0] || "clothing item"}
               priority={priority}
             />

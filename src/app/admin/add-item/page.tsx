@@ -5,12 +5,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useAdminAuth } from '@/context/admin-auth-context';
 
 const AddItemPage = () => {
+  const { isSuperAdmin } = useAdminAuth();
+  const dashboardPath = isSuperAdmin ? "/superAdmin" : "/admin/dashboard";
+
   return (
     <div className="container mx-auto py-8 px-4 animate-fade-in-up">
        <Button variant="outline" asChild className="mb-6">
-        <Link href="/admin/dashboard">
+        <Link href={dashboardPath}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
         </Link>

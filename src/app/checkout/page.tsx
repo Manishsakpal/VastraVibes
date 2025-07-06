@@ -78,8 +78,11 @@ export default function CheckoutPage() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const TAX_RATE = 0.08;
-  const shipping = 100.00;
+  const TAX_RATE = 0.0; // Tax removed as per user request.
+  const shippingThreshold = 450;
+  const shippingCost = 50.00;
+  const shipping = totalPrice > 0 && totalPrice < shippingThreshold ? shippingCost : 0;
+  
   const taxes = totalPrice * TAX_RATE;
   const grandTotal = totalPrice + taxes + shipping;
 
@@ -209,8 +212,7 @@ export default function CheckoutPage() {
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><p>Subtotal</p><p>₹{totalPrice.toFixed(2)}</p></div>
-                <div className="flex justify-between"><p>Shipping</p><p>₹{shipping.toFixed(2)}</p></div>
-                <div className="flex justify-between"><p>Taxes</p><p>₹{taxes.toFixed(2)}</p></div>
+                <div className="flex justify-between"><p>Shipping</p><p>{shipping > 0 ? `₹${shipping.toFixed(2)}` : 'FREE'}</p></div>
               </div>
 
               <Separator className="my-4" />

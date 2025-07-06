@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { Minus, Plus, ShoppingBag, Trash2, Truck } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const BagSkeleton = () => (
   <div className="container mx-auto py-8">
@@ -62,8 +63,14 @@ const BagSkeleton = () => (
 
 export default function BagPage() {
   const { cartItems, removeFromBag, updateQuantity, totalPrice, cartCount, isLoading } = useBagContext();
-  const TAX_RATE = 0.08; // 8% tax
-  const shipping = cartCount > 0 ? 100.00 : 0;
+  const TAX_RATE = 0.0; // Tax removed as per user request.
+
+  // New shipping logic
+  const shippingThreshold = 450;
+  const shippingCost = 50.00;
+  const shipping = totalPrice > 0 && totalPrice < shippingThreshold ? shippingCost : 0;
+  const amountNeededForFreeShipping = shippingThreshold - totalPrice;
+
   const taxes = totalPrice * TAX_RATE;
   const grandTotal = totalPrice + taxes + shipping;
 
@@ -144,17 +151,22 @@ export default function BagPage() {
               <CardTitle>Order Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {shipping > 0 && (
+                <Alert className="bg-primary/10 border-primary/20">
+                  <Truck className="h-4 w-4 text-primary" />
+                  <AlertTitle className="text-primary font-semibold">Almost there!</AlertTitle>
+                  <AlertDescription>
+                    Add just <span className="font-bold">₹{amountNeededForFreeShipping.toFixed(2)}</span> more to your order to qualify for FREE delivery.
+                  </AlertDescription>
+                </Alert>
+              )}
               <div className="flex justify-between">
                 <p>Subtotal</p>
                 <p>₹{totalPrice.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <p>Shipping</p>
-                <p>₹{shipping.toFixed(2)}</p>
-              </div>
-              <div className="flex justify-between">
-                <p>Taxes ({(TAX_RATE * 100).toFixed(0)}%)</p>
-                <p>₹{taxes.toFixed(2)}</p>
+                <p>{shipping > 0 ? `₹${shipping.toFixed(2)}` : 'FREE'}</p>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-lg">
