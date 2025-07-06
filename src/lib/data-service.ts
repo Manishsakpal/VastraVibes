@@ -19,10 +19,13 @@ const getDb = async () => {
   return client.db(dbName);
 }
 
-// Map MongoDB's _id to a string id for frontend use
-const mapFromDb = <T extends { _id?: ObjectId }>(doc: T): Omit<T, '_id'> & { id: string } => {
+// Map MongoDB's _id to a string id for frontend use, now with added safety checks
+const mapFromDb = <T extends { _id?: ObjectId }>(doc: T | null | undefined): (Omit<T, '_id'> & { id: string }) | null => {
+  if (!doc || !doc._id) {
+    return null;
+  }
   const { _id, ...rest } = doc;
-  return { ...rest, id: _id!.toHexString() };
+  return { ...rest, id: _id.toHexString() };
 };
 
 // ================================================================= //
@@ -33,7 +36,12 @@ export const getItemsFromDb = async (): Promise<ClothingItem[]> => {
   try {
     const db = await getDb();
     const items = await db.collection('items').find({}).toArray();
-    return items.map(item => mapFromDb(item as ClothingItemDb) as ClothingItem);
+    
+    // Use a robust mapping that filters out any null values from bad data
+    return items
+        .map(item => mapFromDb(item as ClothingItemDb))
+        .filter((item): item is ClothingItem => !!item);
+
   } catch (e) {
     console.error('Database error fetching items:', e);
     return [];
@@ -46,7 +54,7 @@ export const addItemToDb = async (itemData: Omit<ClothingItem, 'id' | 'finalPric
         const result = await db.collection('items').insertOne(itemData);
         if (result.insertedId) {
             const insertedDoc = await db.collection('items').findOne({ _id: result.insertedId });
-            return mapFromDb(insertedDoc as ClothingItemDb) as ClothingItem;
+            return mapFromDb(insertedDoc as ClothingItemDb) as ClothingItem | null;
         }
         return null;
     } catch (e) {
@@ -63,7 +71,7 @@ export const updateItemInDb = async (itemId: string, itemData: Omit<ClothingItem
             { $set: itemData },
             { returnDocument: 'after' }
         );
-        return result ? mapFromDb(result as ClothingItemDb) as ClothingItem : null;
+        return result ? mapFromDb(result as ClothingItemDb) as ClothingItem | null : null;
     } catch (e) {
         console.error('Database error updating item:', e);
         return null;
@@ -116,7 +124,9 @@ export const getAdminsFromDb = async (): Promise<AdminUser[]> => {
     try {
         const db = await getDb();
         const admins = await db.collection('admins').find({}).project({ password: 0 }).toArray();
-        return admins.map(admin => mapFromDb(admin as AdminUserDb) as AdminUser);
+        return admins
+            .map(admin => mapFromDb(admin as AdminUserDb))
+            .filter((admin): admin is AdminUser => !!admin);
     } catch (e) {
         console.error('Database error fetching admins:', e);
         return [];
@@ -162,7 +172,9 @@ export const getOrdersFromDb = async (): Promise<Order[]> => {
     try {
         const db = await getDb();
         const orders = await db.collection('orders').find({}).sort({ date: -1 }).toArray();
-        return orders.map(order => mapFromDb(order as OrderDb));
+        return orders
+            .map(order => mapFromDb(order as OrderDb))
+            .filter((order): order is Order => !!order);
     } catch (e) {
         console.error('Database error fetching orders:', e);
         return [];

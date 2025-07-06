@@ -14,22 +14,33 @@ import {
   updatePurchaseCountsInDb
 } from '@/lib/data-service';
 
-// Helper function to add performance-optimized fields
+// Helper function to add performance-optimized fields with added safety checks
 const processRawItems = (items: (Omit<ClothingItem, 'finalPrice' | 'searchableText'>)[]): ClothingItem[] => {
   return items.map(item => {
-    const finalPrice = (item.discount && item.discount > 0)
-      ? item.price * (1 - item.discount / 100)
-      : item.price;
+    // Defensively handle potential non-numeric or missing values
+    const price = Number(item.price) || 0;
+    const discount = Number(item.discount) || 0;
+
+    const finalPrice = (discount > 0 && discount <= 100)
+      ? price * (1 - discount / 100)
+      : price;
     
+    // Safely construct searchable text, ignoring any null or undefined fields
     const searchableText = [
       item.title,
       item.description,
       item.colors,
       item.size,
-      item.category, // Added category to the searchable text
-    ].join(' ').toLowerCase();
+      item.category,
+    ].filter(Boolean).join(' ').toLowerCase();
 
-    return { ...item, finalPrice, searchableText } as ClothingItem;
+    return { 
+        ...item,
+        price,
+        discount, 
+        finalPrice: Math.max(0, finalPrice), // Ensure final price is not negative
+        searchableText 
+    } as ClothingItem;
   });
 };
 
