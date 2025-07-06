@@ -6,27 +6,20 @@ export const CATEGORIES: Category[] = ["Men", "Women", "Kids", "Ethnic", "Wester
 export const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
 export const COLORS = ["Red", "Blue", "Green", "Black", "White", "Yellow", "Pink", "Purple", "Orange", "Brown", "Gray", "Beige", "Navy"];
 
-// Super Admin Credentials
+// Super Admin Credentials (not stored in DB)
 export const SUPERADMIN_ID = "superAdmin";
 export const SUPERADMIN_PASSWORD = "superPassword";
 
-// Initial Admin Users are now managed by the Super Admin.
-// The array is intentionally left empty.
-export const INITIAL_ADMIN_USERS: AdminUser[] = [];
+// --- Keys for localStorage (Client-Side State) ---
 
-
-// Local Storage Keys - v2 suffix invalidates old cached item data
+// Auth state is kept on the client for the current session
 export const AUTH_TOKEN_KEY = "vastraVibesAdminAuth";
 export const SUPERADMIN_AUTH_TOKEN_KEY = "vastraVibesSuperAdminAuth";
-export const ADMIN_USERS_STORAGE_KEY = "vastraVibesAdminUsers";
 export const CURRENT_ADMIN_ID_KEY = "vastraVibesCurrentAdminId";
 
-export const ITEMS_STORAGE_KEY = "vastraVibesItems_v2";
+// User-specific data is kept on the client
 export const BAG_STORAGE_KEY = "vastraVibesBag";
-export const PURCHASE_COUNTS_STORAGE_KEY = "vastraVibesPurchaseCounts_v2";
-export const ORDERS_STORAGE_KEY = "vastraVibesOrders";
 export const RECENT_ORDER_ID_KEY = "vastraVibesRecentOrderId";
 
-// Visitor tracking keys
-export const VISITOR_COUNT_KEY = "vastraVibesVisitorCount";
-export const LAST_VISIT_KEY = "vastraVibesLastVisit";
+// Deprecated keys for old localStorage approach are no longer used.
+// ITEMS_STORAGE_KEY, ADMIN_USERS_STORAGE_KEY, etc. are removed.

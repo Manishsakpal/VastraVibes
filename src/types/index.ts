@@ -1,24 +1,29 @@
 
 import { checkoutSchema } from "@/lib/schemas";
 import { z } from "zod";
+import type { ObjectId } from 'mongodb';
 
 export type Category = "Men" | "Women" | "Kids" | "Ethnic" | "Western";
 
-export interface ClothingItem {
-  id: string;
+// This is the shape of the data as it is stored in the database
+export interface ClothingItemDb {
+  _id?: ObjectId;
   title: string;
   description: string;
   price: number;
-  discount?: number; // e.g., 20 for 20% off
-  size: string; // e.g., "S, M, L" or "Free Size"
-  colors: string; // e.g., "Red, Blue, Black"
+  discount?: number;
+  size: string;
+  colors: string;
   category: Category;
   imageUrls: string[];
-  imageHints?: string[]; // For placeholder image generation hint
+  imageHints?: string[];
   specifications?: string[];
-  adminId?: string; // ID of the admin who owns this product
-  
-  // Added for performance optimization
+  adminId?: string;
+}
+
+// This is the shape of the data used in the application frontend
+export interface ClothingItem extends Omit<ClothingItemDb, '_id'> {
+  id: string; // The _id from Mongo, converted to a string
   finalPrice: number;
   searchableText: string;
 }
@@ -35,15 +40,28 @@ export type OrderItem = CartItem & {
   status: OrderStatus;
 };
 
-export interface Order {
-  id: string;
-  date: string; // ISO date string
+// Shape of order data in the DB
+export interface OrderDb {
+  _id?: ObjectId;
+  date: string;
   items: OrderItem[];
   customerDetails: CheckoutDetails;
   totalAmount: number;
 }
-
-export interface AdminUser {
+// Shape of order data in the frontend
+export interface Order extends Omit<OrderDb, '_id'> {
   id: string;
-  password?: string;
+}
+
+
+// Shape of admin user data in the DB
+export interface AdminUserDb {
+    _id?: ObjectId;
+    id: string; // The admin's username/ID
+    password?: string;
+}
+
+// Shape of admin user data in the frontend (password omitted)
+export interface AdminUser {
+    id: string;
 }

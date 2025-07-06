@@ -2,8 +2,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { LAST_VISIT_KEY } from '@/lib/constants';
-import { getVisitorDataFromStorage, saveVisitorDataToStorage } from '@/lib/data-service';
+import {
+  getVisitorDataFromDb,
+  incrementVisitorCountInDb,
+  getLastVisitFromStorage,
+  saveLastVisitToStorage
+} from '@/lib/data-service';
 
 interface VisitorContextType {
   visitorCount: number;
@@ -21,15 +25,19 @@ export const VisitorProvider: React.FC<{ children: ReactNode }> = ({ children })
   useEffect(() => {
     const trackVisitor = async () => {
         setIsLoading(true);
-        const { count, lastVisit } = await getVisitorDataFromStorage();
+        const lastVisit = getLastVisitFromStorage();
         const now = Date.now();
         
-        let currentCount = count;
+        let currentCount = 0;
 
         if (!lastVisit || (now - lastVisit) > VISIT_SESSION_DURATION) {
-            // It's a new session/visit
-            currentCount += 1;
-            await saveVisitorDataToStorage({ count: currentCount, lastVisit: now });
+            // It's a new session/visit, update DB
+            currentCount = await incrementVisitorCountInDb();
+            saveLastVisitToStorage(now);
+        } else {
+            // It's a returning visit within the session, just get the count
+            const data = await getVisitorDataFromDb();
+            currentCount = data.count;
         }
         
         setVisitorCount(currentCount);

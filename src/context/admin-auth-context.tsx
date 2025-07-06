@@ -3,14 +3,12 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  SUPERADMIN_ID, 
-  SUPERADMIN_PASSWORD, 
-  INITIAL_ADMIN_USERS,
-} from '@/lib/constants';
+import { SUPERADMIN_ID, SUPERADMIN_PASSWORD } from '@/lib/constants';
 import {
-  getAdminsFromStorage,
-  saveAdminsToStorage,
+  getAdminsFromDb,
+  addAdminToDb,
+  removeAdminFromDb,
+  findAdminById,
   getAuthStatusFromStorage,
   saveAuthStatusToStorage,
   clearAuthStatusInStorage,
@@ -43,25 +41,19 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
     const loadInitialData = async () => {
         setIsLoading(true);
         const [storedAdmins, authStatus] = await Promise.all([
-            getAdminsFromStorage(),
+            getAdminsFromDb(),
             getAuthStatusFromStorage(),
         ]);
         
-        // Initialize with default admins if storage is empty
-        if (storedAdmins.length === 0) {
-            setAdmins(INITIAL_ADMIN_USERS);
-            await saveAdminsToStorage(INITIAL_ADMIN_USERS);
-        } else {
-            setAdmins(storedAdmins);
-        }
+        setAdmins(storedAdmins);
         
         if (authStatus.isSuperAdmin) {
             setIsSuperAdmin(true);
-            setIsAdmin(false); // Ensure states are mutually exclusive
+            setIsAdmin(false);
             setCurrentAdminId(authStatus.adminId);
         } else if (authStatus.isAdmin) {
             setIsAdmin(true);
-            setIsSuperAdmin(false); // Ensure states are mutually exclusive
+            setIsSuperAdmin(false);
             setCurrentAdminId(authStatus.adminId);
         }
         setIsLoading(false);
@@ -70,19 +62,18 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, []);
   
   const login = useCallback(async (id: string, pass: string): Promise<boolean> => {
-    // Check for Super Admin
+    // Super Admin login is hardcoded and doesn't hit the DB for credentials
     if (id === SUPERADMIN_ID && pass === SUPERADMIN_PASSWORD) {
-        await saveAuthStatusToStorage({ isSuperAdmin: true, adminId: SUPERADMIN_ID });
+        saveAuthStatusToStorage({ isSuperAdmin: true, adminId: SUPERADMIN_ID });
         setIsSuperAdmin(true);
         setIsAdmin(false);
         setCurrentAdminId(SUPERADMIN_ID);
         return true;
     }
 
-    // Check for Regular Admin
-    const adminUser = admins.find(admin => admin.id === id && admin.password === pass);
-    if (adminUser) {
-        await saveAuthStatusToStorage({ isAdmin: true, adminId: adminUser.id });
+    const adminUser = await findAdminById(id);
+    if (adminUser && adminUser.password === pass) {
+        saveAuthStatusToStorage({ isAdmin: true, adminId: adminUser.id });
         setIsAdmin(true);
         setIsSuperAdmin(false);
         setCurrentAdminId(adminUser.id);
@@ -90,10 +81,10 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
 
     return false;
-  }, [admins]);
+  }, []);
 
   const logout = useCallback(async () => {
-    await clearAuthStatusInStorage();
+    clearAuthStatusInStorage();
     setIsAdmin(false);
     setIsSuperAdmin(false);
     setCurrentAdminId(null);
@@ -101,20 +92,20 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, [router]);
 
   const addAdmin = useCallback(async (id: string, password: string): Promise<boolean> => {
-    const adminExists = admins.some(admin => admin.id === id);
-    if(adminExists) return false;
-
-    const newAdmins = [...admins, { id, password }];
-    setAdmins(newAdmins);
-    await saveAdminsToStorage(newAdmins);
-    return true;
-  }, [admins]);
+    const success = await addAdminToDb(id, password);
+    if (success) {
+      setAdmins(prevAdmins => [...prevAdmins, { id }]);
+      return true;
+    }
+    return false;
+  }, []);
 
   const removeAdmin = useCallback(async (id: string) => {
-    const newAdmins = admins.filter(admin => admin.id !== id);
-    setAdmins(newAdmins);
-    await saveAdminsToStorage(newAdmins);
-  }, [admins]);
+    const success = await removeAdminFromDb(id);
+    if (success) {
+      setAdmins(prevAdmins => prevAdmins.filter(admin => admin.id !== id));
+    }
+  }, []);
 
   const value = { isAdmin, isSuperAdmin, currentAdminId, admins, login, logout, addAdmin, removeAdmin, isLoading };
 
