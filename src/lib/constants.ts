@@ -15,15 +15,15 @@ export const SUPERADMIN_PASSWORD = "superPassword";
 export const INITIAL_ADMIN_USERS: AdminUser[] = [];
 
 
-// Local Storage Keys
+// Local Storage Keys - v2 suffix invalidates old cached item data
 export const AUTH_TOKEN_KEY = "vastraVibesAdminAuth";
 export const SUPERADMIN_AUTH_TOKEN_KEY = "vastraVibesSuperAdminAuth";
 export const ADMIN_USERS_STORAGE_KEY = "vastraVibesAdminUsers";
 export const CURRENT_ADMIN_ID_KEY = "vastraVibesCurrentAdminId";
 
-export const ITEMS_STORAGE_KEY = "vastraVibesItems";
+export const ITEMS_STORAGE_KEY = "vastraVibesItems_v2";
 export const BAG_STORAGE_KEY = "vastraVibesBag";
-export const PURCHASE_COUNTS_STORAGE_KEY = "vastraVibesPurchaseCounts";
+export const PURCHASE_COUNTS_STORAGE_KEY = "vastraVibesPurchaseCounts_v2";
 export const ORDERS_STORAGE_KEY = "vastraVibesOrders";
 export const RECENT_ORDER_ID_KEY = "vastraVibesRecentOrderId";
 
