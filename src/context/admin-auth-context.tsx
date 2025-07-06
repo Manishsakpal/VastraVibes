@@ -7,11 +7,14 @@ import {
   SUPERADMIN_ID, 
   SUPERADMIN_PASSWORD, 
   INITIAL_ADMIN_USERS,
-  AUTH_TOKEN_KEY, 
-  SUPERADMIN_AUTH_TOKEN_KEY,
-  ADMIN_USERS_STORAGE_KEY,
-  CURRENT_ADMIN_ID_KEY,
 } from '@/lib/constants';
+import {
+  getAdminsFromStorage,
+  saveAdminsToStorage,
+  getAuthStatusFromStorage,
+  saveAuthStatusToStorage,
+  clearAuthStatusInStorage,
+} from '@/lib/data-service';
 import type { AdminUser } from '@/types';
 
 interface AdminAuthContextType {
@@ -19,10 +22,10 @@ interface AdminAuthContextType {
   isSuperAdmin: boolean;
   currentAdminId: string | null;
   admins: AdminUser[];
-  login: (id: string, pass: string) => boolean;
-  logout: () => void;
-  addAdmin: (id: string, pass: string) => boolean;
-  removeAdmin: (id: string) => void;
+  login: (id: string, pass: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  addAdmin: (id: string, pass: string) => Promise<boolean>;
+  removeAdmin: (id: string) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -36,105 +39,81 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Load admins and check auth status on initial load
   useEffect(() => {
-    setIsLoading(true);
-    try {
-      // Load admin users list
-      const storedAdmins = localStorage.getItem(ADMIN_USERS_STORAGE_KEY);
-      setAdmins(storedAdmins ? JSON.parse(storedAdmins) : INITIAL_ADMIN_USERS);
-
-      // Check auth status
-      const regularAuth = localStorage.getItem(AUTH_TOKEN_KEY);
-      const superAuth = localStorage.getItem(SUPERADMIN_AUTH_TOKEN_KEY);
-      const storedAdminId = localStorage.getItem(CURRENT_ADMIN_ID_KEY);
-
-      if (superAuth === 'true') {
-        setIsSuperAdmin(true);
-        setCurrentAdminId(SUPERADMIN_ID);
-      } else if (regularAuth === 'true' && storedAdminId) {
-        setIsAdmin(true);
-        setCurrentAdminId(storedAdminId);
-      }
-    } catch (error) {
-      console.warn("Could not access localStorage for admin setup:", error);
-      setAdmins(INITIAL_ADMIN_USERS); // Fallback
-    } finally {
-      setIsLoading(false);
-    }
+    const loadInitialData = async () => {
+        setIsLoading(true);
+        const [storedAdmins, authStatus] = await Promise.all([
+            getAdminsFromStorage(),
+            getAuthStatusFromStorage(),
+        ]);
+        
+        // Initialize with default admins if storage is empty
+        if (storedAdmins.length === 0) {
+            setAdmins(INITIAL_ADMIN_USERS);
+            await saveAdminsToStorage(INITIAL_ADMIN_USERS);
+        } else {
+            setAdmins(storedAdmins);
+        }
+        
+        if (authStatus.isSuperAdmin) {
+            setIsSuperAdmin(true);
+            setIsAdmin(false); // Ensure states are mutually exclusive
+            setCurrentAdminId(authStatus.adminId);
+        } else if (authStatus.isAdmin) {
+            setIsAdmin(true);
+            setIsSuperAdmin(false); // Ensure states are mutually exclusive
+            setCurrentAdminId(authStatus.adminId);
+        }
+        setIsLoading(false);
+    };
+    loadInitialData();
   }, []);
-
-  const updateAdminStorage = (updatedAdmins: AdminUser[]) => {
-    try {
-      localStorage.setItem(ADMIN_USERS_STORAGE_KEY, JSON.stringify(updatedAdmins));
-    } catch (error) {
-      console.error("Failed to save admins to localStorage", error);
-    }
-  };
   
-  const login = useCallback((id: string, pass: string): boolean => {
+  const login = useCallback(async (id: string, pass: string): Promise<boolean> => {
     // Check for Super Admin
     if (id === SUPERADMIN_ID && pass === SUPERADMIN_PASSWORD) {
-      try {
-        localStorage.setItem(SUPERADMIN_AUTH_TOKEN_KEY, 'true');
-        localStorage.setItem(CURRENT_ADMIN_ID_KEY, SUPERADMIN_ID);
+        await saveAuthStatusToStorage({ isSuperAdmin: true, adminId: SUPERADMIN_ID });
         setIsSuperAdmin(true);
         setIsAdmin(false);
         setCurrentAdminId(SUPERADMIN_ID);
         return true;
-      } catch (error) {
-         console.warn("Could not set super admin auth in localStorage:", error);
-         return false;
-      }
     }
 
     // Check for Regular Admin
     const adminUser = admins.find(admin => admin.id === id && admin.password === pass);
     if (adminUser) {
-      try {
-        localStorage.setItem(AUTH_TOKEN_KEY, 'true');
-        localStorage.setItem(CURRENT_ADMIN_ID_KEY, adminUser.id);
+        await saveAuthStatusToStorage({ isAdmin: true, adminId: adminUser.id });
         setIsAdmin(true);
         setIsSuperAdmin(false);
         setCurrentAdminId(adminUser.id);
         return true;
-      } catch (error) {
-         console.warn("Could not set admin auth in localStorage:", error);
-         return false;
-      }
     }
 
     return false;
   }, [admins]);
 
-  const logout = useCallback(() => {
-    try {
-      localStorage.removeItem(AUTH_TOKEN_KEY);
-      localStorage.removeItem(SUPERADMIN_AUTH_TOKEN_KEY);
-      localStorage.removeItem(CURRENT_ADMIN_ID_KEY);
-      setIsAdmin(false);
-      setIsSuperAdmin(false);
-      setCurrentAdminId(null);
-      router.push('/admin/login');
-    } catch (error) {
-      console.warn("Could not remove admin auth from localStorage:", error);
-    }
+  const logout = useCallback(async () => {
+    await clearAuthStatusInStorage();
+    setIsAdmin(false);
+    setIsSuperAdmin(false);
+    setCurrentAdminId(null);
+    router.push('/admin/login');
   }, [router]);
 
-  const addAdmin = useCallback((id: string, password: string): boolean => {
+  const addAdmin = useCallback(async (id: string, password: string): Promise<boolean> => {
     const adminExists = admins.some(admin => admin.id === id);
     if(adminExists) return false;
 
     const newAdmins = [...admins, { id, password }];
     setAdmins(newAdmins);
-    updateAdminStorage(newAdmins);
+    await saveAdminsToStorage(newAdmins);
     return true;
   }, [admins]);
 
-  const removeAdmin = useCallback((id: string) => {
+  const removeAdmin = useCallback(async (id: string) => {
     const newAdmins = admins.filter(admin => admin.id !== id);
     setAdmins(newAdmins);
-    updateAdminStorage(newAdmins);
+    await saveAdminsToStorage(newAdmins);
   }, [admins]);
 
   const value = { isAdmin, isSuperAdmin, currentAdminId, admins, login, logout, addAdmin, removeAdmin, isLoading };

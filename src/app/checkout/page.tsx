@@ -20,7 +20,6 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RECENT_ORDER_ID_KEY } from '@/lib/constants';
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
@@ -103,16 +102,9 @@ export default function CheckoutPage() {
     }
   }, [isLoading, cartCount, router]);
 
-  const onSubmit = (data: CheckoutFormValues) => {
-    recordPurchase(cartItems);
-
-    const newOrderId = addOrder(cartItems, data, grandTotal);
-
-    try {
-        localStorage.setItem(RECENT_ORDER_ID_KEY, newOrderId);
-    } catch (error) {
-        console.warn("Could not save recent order ID to localStorage:", error);
-    }
+  const onSubmit = async (data: CheckoutFormValues) => {
+    await recordPurchase(cartItems);
+    await addOrder(cartItems, data, grandTotal);
 
     toast({
       title: 'Order Placed!',

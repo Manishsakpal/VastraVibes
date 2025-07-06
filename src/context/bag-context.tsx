@@ -1,9 +1,10 @@
+
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
-import { BAG_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode, useMemo } from 'react';
 import { sanitizeItems } from '@/lib/utils';
+import { getBagFromStorage, saveBagToStorage, clearBagInStorage } from '@/lib/data-service';
 
 interface BagContextType {
   cartItems: CartItem[];
@@ -23,30 +24,17 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    try {
-      const storedBag = localStorage.getItem(BAG_STORAGE_KEY);
-      if (storedBag) {
-        const parsedItems = JSON.parse(storedBag);
-        // Basic validation to ensure we're setting an array
-        if(Array.isArray(parsedItems)) {
-            setCartItems(sanitizeItems(parsedItems));
+    const loadBag = async () => {
+        setIsLoading(true);
+        const storedBag = await getBagFromStorage();
+        if (storedBag) {
+            const sanitized = sanitizeItems(storedBag);
+            setCartItems(sanitized);
         }
-      }
-    } catch (error) {
-      console.warn("Could not access localStorage for bag:", error);
-    } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
+    loadBag();
   }, []);
-
-  const updateLocalStorage = (items: CartItem[]) => {
-    try {
-      localStorage.setItem(BAG_STORAGE_KEY, JSON.stringify(items));
-    } catch (error) {
-      console.warn("Could not save bag to localStorage:", error);
-    }
-  };
 
   const addToBag = useCallback((item: ClothingItem) => {
     setCartItems(prevItems => {
@@ -59,7 +47,7 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       } else {
         updatedItems = [...prevItems, { ...item, quantity: 1 }];
       }
-      updateLocalStorage(updatedItems);
+      saveBagToStorage(updatedItems);
       return updatedItems;
     });
   }, []);
@@ -67,7 +55,7 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const removeFromBag = useCallback((itemId: string) => {
     setCartItems(prevItems => {
       const updatedItems = prevItems.filter(item => item.id !== itemId);
-      updateLocalStorage(updatedItems);
+      saveBagToStorage(updatedItems);
       return updatedItems;
     });
   }, []);
@@ -81,18 +69,14 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const updatedItems = prevItems.map(item =>
         item.id === itemId ? { ...item, quantity } : item
       );
-      updateLocalStorage(updatedItems);
+      saveBagToStorage(updatedItems);
       return updatedItems;
     });
   }, [removeFromBag]);
 
-  const clearBag = useCallback(() => {
+  const clearBag = useCallback(async () => {
     setCartItems([]);
-    try {
-      localStorage.removeItem(BAG_STORAGE_KEY);
-    } catch (error) {
-      console.warn("Could not clear bag from localStorage:", error);
-    }
+    await clearBagInStorage();
   }, []);
 
   const cartCount = useMemo(() => {

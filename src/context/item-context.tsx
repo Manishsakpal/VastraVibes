@@ -2,11 +2,15 @@
 "use client";
 
 import type { ClothingItem, CartItem } from '@/types';
-import { initialItems as rawInitialItems } from '@/lib/mock-data';
-import { ITEMS_STORAGE_KEY, PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { sanitizeItems } from '@/lib/utils';
 import { useAdminAuth } from './admin-auth-context';
+import {
+  getItemsFromStorage,
+  saveItemsToStorage,
+  getPurchaseCountsFromStorage,
+  savePurchaseCountsToStorage,
+} from '@/lib/data-service';
 
 // Helper function to add performance-optimized fields
 const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableText'>[]): ClothingItem[] => {
@@ -27,13 +31,18 @@ const processRawItems = (items: Omit<ClothingItem, 'finalPrice' | 'searchableTex
   });
 };
 
+// Helper to strip processed fields before saving back to storage
+const getRawItemsFromState = (processedItems: ClothingItem[]): Omit<ClothingItem, 'finalPrice' | 'searchableText'>[] => {
+  return processedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
+}
 
 interface ItemContextType {
   items: ClothingItem[];
-  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
-  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => void;
-  deleteItem: (itemId: string) => void;
-  recordPurchase: (purchasedItems: CartItem[]) => void;
+  addItem: (item: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => Promise<void>;
+  updateItem: (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => Promise<void>;
+  deleteItem: (itemId: string) => Promise<void>;
+  recordPurchase: (purchasedItems: CartItem[]) => Promise<void>;
+  purchaseCounts: Record<string, number>;
   isLoading: boolean;
 }
 
@@ -41,72 +50,47 @@ const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
 export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<ClothingItem[]>([]);
+  const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const { currentAdminId } = useAdminAuth();
 
   useEffect(() => {
-    setIsLoading(true);
-    try {
-      const storedItemsRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
-      let itemsToProcess: any[];
-
-      if (storedItemsRaw) {
-        let storedItemsParsed: any[] | null = null;
-        try { storedItemsParsed = JSON.parse(storedItemsRaw); } catch { storedItemsParsed = null; }
+    const loadData = async () => {
+        setIsLoading(true);
+        const [rawItems, counts] = await Promise.all([
+            getItemsFromStorage(),
+            getPurchaseCountsFromStorage(),
+        ]);
         
-        const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed);
-        itemsToProcess = isDataInvalid ? rawInitialItems : storedItemsParsed;
-      } else {
-        itemsToProcess = rawInitialItems;
-      }
-      
-      const sanitized = sanitizeItems(itemsToProcess);
-      const processed = processRawItems(sanitized);
-      setItems(processed);
-      
-      // If the data was invalid/missing, write the clean initial data back to storage.
-      if (!storedItemsRaw) {
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(itemsToProcess));
-      }
+        const sanitized = sanitizeItems(rawItems);
+        const processed = processRawItems(sanitized);
+        setItems(processed);
+        setPurchaseCounts(counts);
+        
+        setIsLoading(false);
+    };
+    loadData();
+  }, []);
 
-    } catch (error) {
-      console.warn("Could not read from localStorage, falling back to initial data:", error);
-      const sanitized = sanitizeItems(rawInitialItems);
-      const processed = processRawItems(sanitized);
-      setItems(processed);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []); // Run only once on initial mount
-
-  // Helper to strip processed fields before saving back to storage
-  const getRawItemsFromState = (processedItems: ClothingItem[]) => {
-    return processedItems.map(({ finalPrice, searchableText, ...rawItem }) => rawItem);
-  }
-
-  const addItem = useCallback((itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
+  const addItem = useCallback(async (itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
+    const newItemRaw: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = {
+      ...itemData,
+      id: String(Date.now() + Math.random()),
+      adminId: currentAdminId || undefined,
+    };
+    
+    const sanitizedNewItem = sanitizeItems([newItemRaw])[0];
+    const [processedNewItem] = processRawItems([sanitizedNewItem]);
+    
     setItems(prevItems => {
-      const newItemRaw: Omit<ClothingItem, 'finalPrice' | 'searchableText'> = {
-        ...itemData,
-        id: String(Date.now() + Math.random()),
-        adminId: currentAdminId || undefined,
-      };
-      
-      const sanitizedNewItem = sanitizeItems([newItemRaw])[0];
-      const [processedNewItem] = processRawItems([sanitizedNewItem]);
-      const updatedProcessedItems = [...prevItems, processedNewItem];
-      const updatedRawItems = getRawItemsFromState(updatedProcessedItems);
-      
-      try {
-        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(updatedRawItems));
-      } catch (error) {
-        console.warn("Could not save new item to localStorage:", error);
-      }
-      return updatedProcessedItems;
+        const updatedProcessedItems = [...prevItems, processedNewItem];
+        const updatedRawItems = getRawItemsFromState(updatedProcessedItems);
+        saveItemsToStorage(updatedRawItems); // Fire and forget saving
+        return updatedProcessedItems;
     });
   }, [currentAdminId]);
 
-  const updateItem = useCallback((itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
+  const updateItem = useCallback(async (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
     setItems(prevItems => {
         const updatedItems = prevItems.map(item => {
             if (item.id === itemId) {
@@ -117,47 +101,34 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return item;
         });
-
         const rawItemsToSave = getRawItemsFromState(updatedItems);
-        try {
-            localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawItemsToSave));
-        } catch (error) {
-            console.warn("Could not update items in localStorage:", error);
-        }
+        saveItemsToStorage(rawItemsToSave); // Fire and forget
         return updatedItems;
     });
   }, []);
 
-  const deleteItem = useCallback((itemId: string) => {
+  const deleteItem = useCallback(async (itemId: string) => {
     setItems(prevItems => {
         const updatedItems = prevItems.filter(item => item.id !== itemId);
         const rawItemsToSave = getRawItemsFromState(updatedItems);
-        try {
-            localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(rawItemsToSave));
-        } catch (error) {
-            console.warn("Could not update items in localStorage after deletion:", error);
-        }
+        saveItemsToStorage(rawItemsToSave); // Fire and forget
         return updatedItems;
     });
   }, []);
 
-  const recordPurchase = useCallback((purchasedItems: CartItem[]) => {
-    try {
-      const storedCounts = localStorage.getItem(PURCHASE_COUNTS_STORAGE_KEY);
-      const counts: Record<string, number> = storedCounts ? JSON.parse(storedCounts) : {};
-      
-      purchasedItems.forEach(item => {
-        counts[item.id] = (counts[item.id] || 0) + item.quantity;
-      });
+  const recordPurchase = useCallback(async (purchasedItems: CartItem[]) => {
+    const counts = await getPurchaseCountsFromStorage();
+    
+    purchasedItems.forEach(item => {
+      counts[item.id] = (counts[item.id] || 0) + item.quantity;
+    });
 
-      localStorage.setItem(PURCHASE_COUNTS_STORAGE_KEY, JSON.stringify(counts));
-    } catch (error) {
-      console.warn("Could not record purchases to localStorage:", error);
-    }
+    setPurchaseCounts(counts);
+    await savePurchaseCountsToStorage(counts);
   }, []);
 
   return (
-    <ItemContext.Provider value={{ items, addItem, updateItem, deleteItem, recordPurchase, isLoading }}>
+    <ItemContext.Provider value={{ items, addItem, updateItem, deleteItem, recordPurchase, purchaseCounts, isLoading }}>
       {children}
     </ItemContext.Provider>
   );

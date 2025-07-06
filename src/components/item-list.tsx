@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import type { ClothingItem } from '@/types';
 import ItemCard from '@/components/item-card';
 import CategorySelector from '@/components/category-selector';
 import { Input } from '@/components/ui/input';
@@ -11,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useTheme } from '@/context/theme-context';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
 import { useItemContext } from '@/context/item-context';
 
 const ITEMS_PER_PAGE = 8;
@@ -54,30 +52,13 @@ const ItemListSkeleton = () => (
 );
 
 function ItemList() {
-  const { items, isLoading: isItemsLoading } = useItemContext();
+  const { items, purchaseCounts, isLoading } = useItemContext();
   const { selectedCategory } = useTheme();
   
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [sortOption, setSortOption] = useState('popular');
-  const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
-  const [isLoadingPurchaseCounts, setIsLoadingPurchaseCounts] = useState(true);
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
-
-  useEffect(() => {
-    try {
-      const storedCounts = localStorage.getItem(PURCHASE_COUNTS_STORAGE_KEY);
-      if (storedCounts) {
-        setPurchaseCounts(JSON.parse(storedCounts));
-      }
-    } catch (error) {
-      console.warn("Could not read purchase counts for sorting:", error);
-    } finally {
-        setIsLoadingPurchaseCounts(false);
-    }
-  }, []);
-
-  const isLoading = isItemsLoading || isLoadingPurchaseCounts;
 
   const filteredAndSortedItems = useMemo(() => {
     let tempItems = [...items];
