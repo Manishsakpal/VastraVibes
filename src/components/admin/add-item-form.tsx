@@ -57,7 +57,7 @@ const AddItemForm = () => {
       description: `${data.title} has been successfully added to the store.`,
     });
     form.reset();
-    router.push('/admin/dashboard');
+    router.push('/admin/manage-products');
   };
 
   return (
