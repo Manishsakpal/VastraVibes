@@ -3,7 +3,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { SUPERADMIN_ID, SUPERADMIN_PASSWORD } from '@/lib/constants';
 import {
   getAdminsFromDb,
   addAdminToDb,
@@ -11,9 +10,9 @@ import {
   findAdminById,
 } from '@/lib/data-service';
 import {
-  getAuthStatusFromStorage,
-  saveAuthStatusToStorage,
-  clearAuthStatusInStorage,
+  getAuthSessionFromStorage,
+  saveAuthSessionToStorage,
+  clearAuthSessionInStorage,
 } from '@/lib/client-data-service';
 import type { AdminUser } from '@/types';
 
@@ -44,19 +43,18 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
       setIsLoading(true);
       
       const storedAdminsPromise = getAdminsFromDb();
-      const authStatus = getAuthStatusFromStorage();
+      const authSession = getAuthSessionFromStorage();
       
       const storedAdmins = await storedAdminsPromise;
-      setAdmins(storedAdmins);
+      setAdmins(storedAdmins.filter(a => a.role === 'admin')); // Superadmin dashboard only shows standard admins
       
-      if (authStatus.isSuperAdmin) {
-          setIsSuperAdmin(true);
-          setIsAdmin(false);
-          setCurrentAdminId(authStatus.adminId);
-      } else if (authStatus.isAdmin) {
-          setIsAdmin(true);
-          setIsSuperAdmin(false);
-          setCurrentAdminId(authStatus.adminId);
+      if (authSession) {
+          if (authSession.role === 'superadmin') {
+              setIsSuperAdmin(true);
+          } else if (authSession.role === 'admin') {
+              setIsAdmin(true);
+          }
+          setCurrentAdminId(authSession.adminId);
       }
 
       setIsLoading(false);
@@ -65,20 +63,19 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, []);
   
   const login = useCallback(async (id: string, pass: string): Promise<boolean> => {
-    // Super Admin login is hardcoded and doesn't hit the DB for credentials
-    if (id === SUPERADMIN_ID && pass === SUPERADMIN_PASSWORD) {
-        saveAuthStatusToStorage({ isSuperAdmin: true, adminId: SUPERADMIN_ID });
-        setIsSuperAdmin(true);
-        setIsAdmin(false);
-        setCurrentAdminId(SUPERADMIN_ID);
-        return true;
-    }
-
     const adminUser = await findAdminById(id);
+    
     if (adminUser && adminUser.password === pass) {
-        saveAuthStatusToStorage({ isAdmin: true, adminId: adminUser.id });
-        setIsAdmin(true);
-        setIsSuperAdmin(false);
+        const session = { adminId: adminUser.id, role: adminUser.role };
+        saveAuthSessionToStorage(session);
+
+        if (adminUser.role === 'superadmin') {
+            setIsSuperAdmin(true);
+            setIsAdmin(false);
+        } else {
+            setIsAdmin(true);
+            setIsSuperAdmin(false);
+        }
         setCurrentAdminId(adminUser.id);
         return true;
     }
@@ -87,7 +84,7 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, []);
 
   const logout = useCallback(async () => {
-    clearAuthStatusInStorage();
+    clearAuthSessionInStorage();
     setIsAdmin(false);
     setIsSuperAdmin(false);
     setCurrentAdminId(null);
@@ -97,7 +94,9 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
   const addAdmin = useCallback(async (id: string, password: string): Promise<boolean> => {
     const success = await addAdminToDb(id, password);
     if (success) {
-      setAdmins(prevAdmins => [...prevAdmins, { id }]);
+      // Refetch admins to get the new one
+      const updatedAdmins = await getAdminsFromDb();
+      setAdmins(updatedAdmins.filter(a => a.role === 'admin'));
       return true;
     }
     return false;

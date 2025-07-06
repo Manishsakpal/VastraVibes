@@ -3,9 +3,7 @@
 
 import {
   BAG_STORAGE_KEY,
-  AUTH_TOKEN_KEY,
-  SUPERADMIN_AUTH_TOKEN_KEY,
-  CURRENT_ADMIN_ID_KEY,
+  AUTH_SESSION_KEY,
   RECENT_ORDER_ID_KEY,
   VISITOR_SESSION_KEY,
 } from './constants';
@@ -46,30 +44,18 @@ export const saveBagToStorage = (items: CartItem[]): void => safeLocalStorage.se
 export const clearBagInStorage = (): void => safeLocalStorage.removeItem(BAG_STORAGE_KEY);
 
 // --- Auth Status Service (Client-Side) ---
-export const getAuthStatusFromStorage = (): { isAdmin: boolean; isSuperAdmin: boolean; adminId: string | null } => {
-    const regularAuth = safeLocalStorage.getItem(AUTH_TOKEN_KEY);
-    const superAuth = safeLocalStorage.getItem(SUPERADMIN_AUTH_TOKEN_KEY);
-    const storedAdminId = safeLocalStorage.getItem(CURRENT_ADMIN_ID_KEY);
-    if (superAuth === 'true') return { isAdmin: false, isSuperAdmin: true, adminId: storedAdminId };
-    if (regularAuth === 'true' && storedAdminId) return { isAdmin: true, isSuperAdmin: false, adminId: storedAdminId };
-    return { isAdmin: false, isSuperAdmin: false, adminId: null };
+type AuthSession = { adminId: string; role: 'admin' | 'superadmin' };
+
+export const getAuthSessionFromStorage = (): AuthSession | null => {
+    return getStoredData<AuthSession | null>(AUTH_SESSION_KEY, null);
 }
 
-export const saveAuthStatusToStorage = (status: { isAdmin?: boolean; isSuperAdmin?: boolean; adminId: string | null }): void => {
-    if (status.isSuperAdmin) {
-        safeLocalStorage.setItem(SUPERADMIN_AUTH_TOKEN_KEY, 'true');
-        safeLocalStorage.removeItem(AUTH_TOKEN_KEY);
-    } else if (status.isAdmin) {
-        safeLocalStorage.setItem(AUTH_TOKEN_KEY, 'true');
-        safeLocalStorage.removeItem(SUPERADMIN_AUTH_TOKEN_KEY);
-    }
-    if (status.adminId) safeLocalStorage.setItem(CURRENT_ADMIN_ID_KEY, status.adminId);
+export const saveAuthSessionToStorage = (session: AuthSession): void => {
+    safeLocalStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
 };
 
-export const clearAuthStatusInStorage = (): void => {
-    safeLocalStorage.removeItem(AUTH_TOKEN_KEY);
-    safeLocalStorage.removeItem(SUPERADMIN_AUTH_TOKEN_KEY);
-    safeLocalStorage.removeItem(CURRENT_ADMIN_ID_KEY);
+export const clearAuthSessionInStorage = (): void => {
+    safeLocalStorage.removeItem(AUTH_SESSION_KEY);
 }
 
 // --- Recent Order Service (Client-Side) ---

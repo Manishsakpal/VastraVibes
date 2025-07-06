@@ -90,7 +90,7 @@ export const getAdminsFromDb = async (): Promise<AdminUser[]> => {
     try {
         const db = await getDb();
         const admins = await db.collection('admins').find({}).project({ password: 0 }).toArray();
-        return admins.map(admin => ({ id: admin.id }));
+        return admins.map(admin => mapFromDb(admin as AdminUserDb) as AdminUser);
     } catch (e) {
         console.error('Database error fetching admins:', e);
         return [];
@@ -113,7 +113,8 @@ export const addAdminToDb = async (id: string, password: string): Promise<boolea
         const existingAdmin = await findAdminById(id);
         if (existingAdmin) return false;
 
-        await db.collection('admins').insertOne({ id, password });
+        // All admins created via the app are standard admins
+        await db.collection('admins').insertOne({ id, password, role: 'admin' });
         return true;
     } catch (e) {
         console.error('Database error adding admin:', e);

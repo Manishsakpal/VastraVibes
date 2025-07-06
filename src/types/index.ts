@@ -59,9 +59,11 @@ export interface AdminUserDb {
     _id?: ObjectId;
     id: string; // The admin's username/ID
     password?: string;
+    role: 'admin' | 'superadmin';
 }
 
 // Shape of admin user data in the frontend (password omitted)
 export interface AdminUser {
     id: string;
+    role: 'admin' | 'superadmin';
 }
