@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -163,10 +163,11 @@ export default function CheckoutPage() {
                     <FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input type="tel" placeholder="(123) 456-7890" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <Button type="submit" className="w-full mt-6" size="lg" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? 'Processing...' : 'Place Order'}
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    {form.formState.isSubmitting ? 'Redirecting to Payment...' : 'Proceed to Payment'}
                   </Button>
                    <p className="text-xs text-center text-muted-foreground mt-2">
-                    Your order will be confirmed upon placement.
+                    You will be redirected to our secure payment partner to complete your purchase.
                   </p>
                 </form>
               </Form>
