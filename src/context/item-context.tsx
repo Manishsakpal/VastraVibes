@@ -55,17 +55,15 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       // Check if data is invalid or in an old format (pre-adminId)
-      const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed) || storedItemsParsed.length === 0 || !storedItemsParsed[0].hasOwnProperty('adminId');
+      // An empty array is now a valid state.
+      const isDataInvalid = !storedItemsParsed || !Array.isArray(storedItemsParsed) || (storedItemsParsed.length > 0 && !storedItemsParsed[0].hasOwnProperty('adminId'));
 
       let itemsToProcess: any[];
       if (storedItemsRaw && !isDataInvalid) {
         // Data is valid and in the new format
         itemsToProcess = storedItemsParsed;
       } else {
-        // Data is invalid, old, or missing. Re-initialize from mock data.
-        if (storedItemsRaw) { // Log if we're overwriting old data
-          console.log("Re-initializing item data from mock-data.ts due to invalid or old storage format.");
-        }
+        // Data is invalid, old, or missing. Re-initialize from mock data (which is now empty).
         itemsToProcess = rawInitialItems;
         localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(itemsToProcess));
       }

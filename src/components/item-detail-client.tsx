@@ -49,7 +49,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
     <div className="grid md:grid-cols-2 gap-8 lg:gap-12 animate-fade-in-up">
       {/* Image Gallery */}
       <div className="space-y-4">
-        <div className="relative aspect-[3/4] w-full bg-muted rounded-lg overflow-hidden shadow-lg">
+        <div className="relative aspect-[3/4] w-full bg-white rounded-lg overflow-hidden shadow-lg">
           {selectedImage && (
             <Image
               src={selectedImage}
@@ -68,7 +68,7 @@ export default function ItemDetailClient({ item }: { item: ClothingItem }) {
                 key={index}
                 onClick={() => setSelectedImage(imgUrl)}
                 className={cn(
-                  'relative aspect-square w-full rounded-md overflow-hidden transition-all ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring',
+                  'relative aspect-square w-full rounded-md overflow-hidden transition-all ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring bg-white',
                   selectedImage === imgUrl ? 'ring-2 ring-primary' : 'hover:opacity-80'
                 )}
                 aria-label={`View image ${index + 1}`}

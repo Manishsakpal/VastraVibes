@@ -36,16 +36,16 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
   const safeImageUrl = item.imageUrls?.[0] || 'https://placehold.co/600x800.png';
 
   return (
-    <Link ref={ref} href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg group" aria-label={`View details for ${item.title}`}>
+    <Link ref={ref} href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg group block h-full" aria-label={`View details for ${item.title}`}>
       <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg hover:-translate-y-1">
         <CardHeader className="p-0">
-          <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative">
+          <div className="aspect-[3/4] w-full overflow-hidden bg-white relative">
             <Image
               src={safeImageUrl}
               alt={item.title}
               fill={true}
               className="object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               data-ai-hint={item.imageHints?.[0] || "clothing item"}
               priority={priority}
             />
