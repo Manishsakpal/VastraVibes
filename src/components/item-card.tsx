@@ -39,7 +39,7 @@ const ItemCard = React.forwardRef<HTMLAnchorElement, ItemCardProps>(({ item, pri
     <Link ref={ref} href={`/item/${item.id}`} className="outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg group" aria-label={`View details for ${item.title}`}>
       <Card className="flex flex-col overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg hover:-translate-y-1">
         <CardHeader className="p-0">
-          <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative">
+          <div className="aspect-[3/4] w-full overflow-hidden bg-white relative">
             <Image
               src={safeImageUrl}
               alt={item.title}

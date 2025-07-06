@@ -101,7 +101,7 @@ export default function BagPage() {
                   return (
                     <li key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4">
                       <div className="flex items-center w-full">
-                        <div className="relative h-24 w-24 flex-shrink-0 rounded-md overflow-hidden mr-4">
+                        <div className="relative h-24 w-24 flex-shrink-0 rounded-md overflow-hidden mr-4 bg-white">
                           <Image src={safeImageUrl} alt={item.title} fill={true} className="object-contain" />
                         </div>
                         <div className="flex-grow">
