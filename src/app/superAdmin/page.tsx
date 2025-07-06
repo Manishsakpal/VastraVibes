@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ClipboardList, Users } from "lucide-react";
+import { ClipboardList, Users, ShoppingBag } from "lucide-react";
 import StatsCards from "@/components/superadmin/stats-cards";
 
 export default function SuperAdminPage() {
@@ -17,7 +17,7 @@ export default function SuperAdminPage() {
                 </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                  <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-xl">
@@ -35,6 +35,23 @@ export default function SuperAdminPage() {
                     </CardContent>
                 </Card>
                 
+                 <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl">
+                            <ShoppingBag className="text-primary h-6 w-6" />
+                            Manage All Products
+                        </CardTitle>
+                        <CardDescription>View, edit, or delete any product across the entire store.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button asChild className="w-full">
+                            <Link href="/admin/manage-products">
+                                View All Products
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+
                 <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-xl">

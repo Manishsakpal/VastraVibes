@@ -4,16 +4,17 @@
 import { useItemContext } from '@/context/item-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Edit, Loader2, PlusCircle, Trash2 } from 'lucide-react';
+import { Edit, Loader2, PlusCircle, Trash2, User } from 'lucide-react';
 import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useAdminAuth } from '@/context/admin-auth-context';
+import { useMemo } from 'react';
 
 export default function ProductManagementTable() {
     const { items, deleteItem, isLoading: isItemsLoading } = useItemContext();
-    const { currentAdminId, isLoading: isAdminLoading } = useAdminAuth();
+    const { currentAdminId, isSuperAdmin, isLoading: isAdminLoading } = useAdminAuth();
     const { toast } = useToast();
 
     const isLoading = isItemsLoading || isAdminLoading;
@@ -27,6 +28,18 @@ export default function ProductManagementTable() {
         });
     };
     
+    const productsToShow = useMemo(() => {
+        if (isSuperAdmin) {
+            return items; // Super Admin sees all items
+        }
+        if (!currentAdminId) {
+            return []; // Should not happen if logged in, but a safe guard
+        }
+        // Standard admin sees only their own items
+        return items.filter(item => item.adminId === currentAdminId);
+    }, [items, currentAdminId, isSuperAdmin]);
+
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center p-12">
@@ -36,8 +49,6 @@ export default function ProductManagementTable() {
         );
     }
 
-    const adminItems = items.filter(item => item.adminId === currentAdminId);
-
     return (
         <div className="border rounded-lg overflow-x-auto">
             <Table>
@@ -45,13 +56,14 @@ export default function ProductManagementTable() {
                     <TableRow>
                         <TableHead className="w-[80px]">Image</TableHead>
                         <TableHead>Title</TableHead>
+                        {isSuperAdmin && <TableHead>Sold By</TableHead>}
                         <TableHead>Category</TableHead>
                         <TableHead className="text-right">Price</TableHead>
                         <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {adminItems.length > 0 ? adminItems.map((item) => (
+                    {productsToShow.length > 0 ? productsToShow.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>
                                 <Image
@@ -59,10 +71,18 @@ export default function ProductManagementTable() {
                                     alt={item.title}
                                     width={50}
                                     height={66}
-                                    className="rounded-md object-contain"
+                                    className="rounded-md object-contain bg-white"
                                 />
                             </TableCell>
                             <TableCell className="font-medium min-w-[200px]">{item.title}</TableCell>
+                            {isSuperAdmin && (
+                              <TableCell>
+                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <User className="h-3 w-3" />
+                                    {item.adminId || 'Unknown'}
+                                </div>
+                              </TableCell>
+                            )}
                             <TableCell>{item.category}</TableCell>
                             <TableCell className="text-right">₹{item.finalPrice.toFixed(2)}</TableCell>
                             <TableCell className="text-center">
@@ -102,16 +122,22 @@ export default function ProductManagementTable() {
                         </TableRow>
                     )) : (
                         <TableRow>
-                            <TableCell colSpan={5} className="h-48">
+                            <TableCell colSpan={isSuperAdmin ? 6 : 5} className="h-48">
                                 <div className="flex flex-col items-center justify-center text-center gap-3">
-                                    <h3 className="text-xl font-semibold text-foreground">Your store is ready!</h3>
-                                    <p className="text-muted-foreground">It looks like you haven't added any products yet. Let's fix that.</p>
-                                    <Button asChild>
-                                        <Link href="/admin/add-item">
-                                            <PlusCircle className="mr-2 h-4 w-4" />
-                                            Add Your First Product
-                                        </Link>
-                                    </Button>
+                                    <h3 className="text-xl font-semibold text-foreground">
+                                        {isSuperAdmin ? "No products in the store yet." : "Your store is ready!"}
+                                    </h3>
+                                    <p className="text-muted-foreground">
+                                        {isSuperAdmin ? "Once an admin adds a product, it will appear here." : "It looks like you haven't added any products yet. Let's fix that."}
+                                    </p>
+                                    {!isSuperAdmin && (
+                                      <Button asChild>
+                                          <Link href="/admin/add-item">
+                                              <PlusCircle className="mr-2 h-4 w-4" />
+                                              Add Your First Product
+                                          </Link>
+                                      </Button>
+                                    )}
                                 </div>
                             </TableCell>
                         </TableRow>
