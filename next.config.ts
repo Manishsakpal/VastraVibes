@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production' 
       ? 'https://vastra-vibes.example.com' 
       : 'http://localhost:9002',
+    // --- Customer Support Contact Information ---
+    // You can replace these placeholder values with your actual contact details.
+    // They will be displayed in the footer of the application.
+    NEXT_PUBLIC_CONTACT_EMAIL: 'support@vastravibes.com',
+    NEXT_PUBLIC_CONTACT_PHONE: '+91 12345 67890',
   },
   webpack: (config, { isServer }) => {
     // This prevents server-only modules from being bundled for the client.
