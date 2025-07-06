@@ -9,12 +9,11 @@ import { ObjectId } from 'mongodb';
 //                      DATABASE HELPER FUNCTIONS                      //
 // ================================================================= //
 
-const dbName = process.env.DB_NAME;
-if (!dbName) {
-  throw new Error('Please define the DB_NAME environment variable inside .env.local');
-}
-
 const getDb = async () => {
+  const dbName = process.env.DB_NAME;
+  if (!dbName) {
+    throw new Error('DB_NAME environment variable is not configured.');
+  }
   const client = await clientPromise;
   return client.db(dbName);
 }
@@ -301,3 +300,5 @@ export const incrementVisitorCountInDb = async (): Promise<number> => {
         return 0; // Or handle error appropriately
     }
 };
+
+    
