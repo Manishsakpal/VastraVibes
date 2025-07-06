@@ -32,13 +32,15 @@ Vastra Vibes is an e-commerce platform for Indian and modern apparel. It allows 
     npm install
     ```
 4.  **Set up Environment Variables:**
-    *   Create a file named `.env.local` in the project root.
-    *   Add your MongoDB connection string to this file, like so:
+    *   Open the file named `.env.local` in the project root.
+    *   Replace the placeholder `MONGODB_URI` with your actual MongoDB connection string.
+    *   The `SUPERADMIN_ID` and `SUPERADMIN_PASSWORD` are also set in this file.
         ```
         MONGODB_URI=mongodb+srv://<user>:<password>@<cluster-url>/<db-name>?retryWrites=true&w=majority
-        DB_NAME=<db-name>
+        DB_NAME=vastra-vibes
+        SUPERADMIN_ID=admin
+        SUPERADMIN_PASSWORD=password123
         ```
-    *   Replace the placeholders with your actual MongoDB credentials and desired database name.
 5.  **Run the Development Server:**
     ```bash
     npm run dev
@@ -57,8 +59,8 @@ Vastra Vibes is an e-commerce platform for Indian and modern apparel. It allows 
 ### 5.2. Admin Features
 *   **Secure Login:**
     *   Separate login page for administrators (`/admin/login`).
-    *   **Super Admin:** Uses hardcoded credentials (`superAdmin`/`superPassword`) to access the Super Admin Dashboard.
-    *   **Standard Admins:** Use credentials created by the Super Admin.
+    *   **Super Admin:** Uses credentials from the `.env.local` file to access the Super Admin Dashboard.
+    *   **Standard Admins:** Use credentials created by the Super Admin (these are stored in the database).
 *   **Super Admin Dashboard (`/superAdmin`):**
     *   View store analytics (total revenue, orders, unique visitors).
     *   **Manage Admin Users:** Add or remove standard admin accounts.
@@ -73,7 +75,7 @@ Vastra Vibes is an e-commerce platform for Indian and modern apparel. It allows 
 *   **Shared Data (MongoDB):** All persistent, shared data is stored in the MongoDB database. This includes:
     *   Products
     *   Orders
-    *   Admin User Accounts
+    *   Standard Admin User Accounts
     *   Site Analytics (visitor counts, purchase counts)
 *   **Session Data (Browser `localStorage`):** Data specific to a single user's browsing session is stored locally in their browser. This includes:
     *   The contents of their shopping bag.
@@ -83,6 +85,6 @@ Vastra Vibes is an e-commerce platform for Indian and modern apparel. It allows 
 ## 7. Future Considerations / Potential Enhancements
 
 *   Full user authentication system for customers (e.g., Firebase Authentication).
-*   Password hashing for admin accounts in the database.
 *   Integration with a real payment gateway.
 *   Deployment to a hosting platform like Vercel or Firebase Hosting.
+
