@@ -10,7 +10,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import type { Order, OrderStatus } from '@/types';
-import { AlertCircle, PackageSearch, Search } from 'lucide-react';
+import { AlertCircle, PackageSearch, Search, Trash2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' => {
   switch (status) {
@@ -27,10 +29,11 @@ const statusBadgeVariant = (status: OrderStatus): 'default' | 'secondary' | 'out
 };
 
 export default function TrackOrderPage() {
-  const { orders, isLoading, getRecentOrderId } = useOrderContext();
+  const { orders, isLoading, getRecentOrderId, updateOrderItemStatus } = useOrderContext();
   const [orderId, setOrderId] = useState('');
   const [foundOrder, setFoundOrder] = useState<Order | null>(null);
   const [error, setError] = useState('');
+  const { toast } = useToast();
 
   const searchOrderById = useCallback((idToSearch: string) => {
     if (!idToSearch) return;
@@ -71,6 +74,26 @@ export default function TrackOrderPage() {
       return;
     }
     searchOrderById(orderId);
+  };
+  
+  const handleCancelItem = async (orderId: string, itemId: string, itemTitle: string) => {
+    await updateOrderItemStatus(orderId, itemId, 'Cancelled');
+    
+    // Update local state for immediate UI feedback
+    setFoundOrder(prevOrder => {
+        if (!prevOrder) return null;
+        return {
+            ...prevOrder,
+            items: prevOrder.items.map(item => 
+                item.id === itemId ? { ...item, status: 'Cancelled' as OrderStatus } : item
+            ),
+        };
+    });
+
+    toast({
+        title: 'Item Cancelled',
+        description: `Your request to cancel "${itemTitle}" has been processed.`,
+    });
   };
 
   return (
@@ -150,6 +173,33 @@ export default function TrackOrderPage() {
                         </div>
                         <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
                            <Badge variant={statusBadgeVariant(item.status)} className="capitalize text-sm py-1 px-3">{item.status}</Badge>
+                           {item.status === 'Placed' && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive">
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Cancel Item
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you sure you want to cancel this item?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will cancel "{item.title}" from your order. This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Go Back</AlertDialogCancel>
+                                        <AlertDialogAction 
+                                            onClick={() => handleCancelItem(foundOrder.id, item.id, item.title)} 
+                                            className="bg-destructive hover:bg-destructive/90"
+                                        >
+                                            Yes, Cancel Item
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                           )}
                         </div>
                       </li>  
                     ))}
