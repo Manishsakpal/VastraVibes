@@ -85,10 +85,14 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const totalPrice = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const finalPrice = (item.discount && item.discount > 0)
-        ? item.price * (1 - item.discount / 100)
-        : item.price;
-      return total + finalPrice * item.quantity;
+      // Robustly parse values to prevent type errors
+      const price = parseFloat(String(item.price) || '0');
+      const discount = parseFloat(String(item.discount) || '0');
+
+      const finalPrice = (discount > 0)
+        ? price * (1 - discount / 100)
+        : price;
+      return total + (finalPrice * item.quantity);
     }, 0);
   }, [cartItems]);
 
