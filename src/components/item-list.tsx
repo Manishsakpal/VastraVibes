@@ -11,6 +11,7 @@ import { useTheme } from '@/context/theme-context';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PURCHASE_COUNTS_STORAGE_KEY } from '@/lib/constants';
+import { useItemContext } from '@/context/item-context';
 
 const ITEMS_PER_PAGE = 8;
 const ITEMS_TO_LOAD_ON_SCROLL = 8;
@@ -51,19 +52,16 @@ const ItemListSkeleton = () => (
   </div>
 );
 
-interface ItemListProps {
-  initialItems: ClothingItem[];
-}
-
-function ItemList({ initialItems }: ItemListProps) {
+function ItemList() {
+  const { items, isLoading: isItemsLoading } = useItemContext();
   const { selectedCategory } = useTheme();
   
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [sortOption, setSortOption] = useState('popular');
   const [purchaseCounts, setPurchaseCounts] = useState<Record<string, number>>({});
+  const [isLoadingPurchaseCounts, setIsLoadingPurchaseCounts] = useState(true);
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
@@ -74,12 +72,14 @@ function ItemList({ initialItems }: ItemListProps) {
     } catch (error) {
       console.warn("Could not read purchase counts for sorting:", error);
     } finally {
-        setIsLoading(false);
+        setIsLoadingPurchaseCounts(false);
     }
   }, []);
 
+  const isLoading = isItemsLoading || isLoadingPurchaseCounts;
+
   const filteredAndSortedItems = useMemo(() => {
-    let tempItems = [...initialItems];
+    let tempItems = [...items];
 
     if (selectedCategory !== 'All') {
       tempItems = tempItems.filter(item => item.category === selectedCategory);
@@ -141,7 +141,7 @@ function ItemList({ initialItems }: ItemListProps) {
     }
 
     return tempItems;
-  }, [initialItems, selectedCategory, debouncedSearchTerm, sortOption, purchaseCounts]);
+  }, [items, selectedCategory, debouncedSearchTerm, sortOption, purchaseCounts]);
   
   useEffect(() => {
     setDisplayCount(ITEMS_PER_PAGE);
