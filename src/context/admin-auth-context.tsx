@@ -14,7 +14,7 @@ import {
   saveAuthSessionToStorage,
   clearAuthSessionInStorage,
 } from '@/lib/client-data-service';
-import type { AdminUser } from '@/types';
+import type { AdminUser, AdminCreationStatus } from '@/types';
 
 interface AdminAuthContextType {
   isAdmin: boolean;
@@ -23,7 +23,7 @@ interface AdminAuthContextType {
   admins: AdminUser[];
   login: (id: string, pass: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  addAdmin: (id: string, pass: string) => Promise<boolean>;
+  addAdmin: (id: string, pass: string) => Promise<AdminCreationStatus>;
   removeAdmin: (id: string) => Promise<void>;
   isLoading: boolean;
 }
@@ -91,15 +91,14 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
     router.push('/admin/login');
   }, [router]);
 
-  const addAdmin = useCallback(async (id: string, password: string): Promise<boolean> => {
-    const success = await addAdminToDb(id, password);
-    if (success) {
+  const addAdmin = useCallback(async (id: string, password: string): Promise<AdminCreationStatus> => {
+    const status = await addAdminToDb(id, password);
+    if (status === 'SUCCESS') {
       // Refetch admins to get the new one
       const updatedAdmins = await getAdminsFromDb();
       setAdmins(updatedAdmins.filter(a => a.role === 'admin'));
-      return true;
     }
-    return false;
+    return status;
   }, []);
 
   const removeAdmin = useCallback(async (id: string) => {

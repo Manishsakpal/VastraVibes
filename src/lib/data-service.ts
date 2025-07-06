@@ -1,7 +1,7 @@
 
 'use server';
 
-import type { ClothingItem, ClothingItemDb, AdminUser, AdminUserDb, Order, OrderDb, CartItem, OrderStatus } from '@/types';
+import type { ClothingItem, ClothingItemDb, AdminUser, AdminUserDb, Order, OrderDb, CartItem, OrderStatus, AdminCreationStatus } from '@/types';
 import clientPromise from './mongodb';
 import { ObjectId } from 'mongodb';
 
@@ -133,23 +133,25 @@ export const getAdminsFromDb = async (): Promise<AdminUser[]> => {
     }
 };
 
-export const addAdminToDb = async (id: string, password: string): Promise<boolean> => {
+export const addAdminToDb = async (id: string, password: string): Promise<AdminCreationStatus> => {
     try {
         const db = await getDb();
-         // Prevent creating a standard admin with the same ID as the super admin
+        
         if (id === process.env.SUPERADMIN_ID) {
             console.error("Attempted to create a standard admin with the Super Admin ID.");
-            return false;
+            return 'CONFLICTS_WITH_SUPERADMIN';
         }
-        const existingAdmin = await db.collection('admins').findOne({ id: id });
-        if (existingAdmin) return false;
 
-        // All admins created via the app are standard admins
+        const existingAdmin = await db.collection('admins').findOne({ id: id });
+        if (existingAdmin) {
+            return 'ALREADY_EXISTS';
+        }
+        
         await db.collection('admins').insertOne({ id, password, role: 'admin' });
-        return true;
+        return 'SUCCESS';
     } catch (e) {
         console.error('Database error adding admin:', e);
-        return false;
+        return 'ERROR';
     }
 };
 

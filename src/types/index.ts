@@ -67,3 +67,6 @@ export interface AdminUser {
     id: string;
     role: 'admin' | 'superadmin';
 }
+
+// Status for admin creation process
+export type AdminCreationStatus = 'SUCCESS' | 'ALREADY_EXISTS' | 'CONFLICTS_WITH_SUPERADMIN' | 'ERROR';

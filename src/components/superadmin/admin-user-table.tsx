@@ -27,12 +27,22 @@ export default function AdminUserTable() {
   });
 
   const onSubmit = async (data: AdminFormValues) => {
-    const success = await addAdmin(data.id, data.password);
-    if (success) {
-      toast({ title: 'Admin Added', description: `Admin "${data.id}" has been created.` });
-      form.reset();
-    } else {
-      toast({ title: 'Error', description: `Admin with ID "${data.id}" already exists.`, variant: 'destructive' });
+    const status = await addAdmin(data.id, data.password);
+    
+    switch (status) {
+      case 'SUCCESS':
+        toast({ title: 'Admin Added', description: `Admin "${data.id}" has been created.` });
+        form.reset();
+        break;
+      case 'ALREADY_EXISTS':
+        toast({ title: 'Creation Failed', description: `Admin with ID "${data.id}" already exists.`, variant: 'destructive' });
+        break;
+      case 'CONFLICTS_WITH_SUPERADMIN':
+        toast({ title: 'Creation Failed', description: `That ID is reserved for the Super Admin. Please choose a different ID.`, variant: 'destructive' });
+        break;
+      case 'ERROR':
+        toast({ title: 'Error', description: 'A database error occurred. Please try again.', variant: 'destructive' });
+        break;
     }
   };
 
