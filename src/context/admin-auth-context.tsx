@@ -43,14 +43,12 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
     const loadInitialData = async () => {
       setIsLoading(true);
       
-      // Fetch server data and get client data in parallel
-      const dbAdminsPromise = getAdminsFromDb();
-      const authStatus = getAuthStatusFromStorage(); // This is synchronous client-side data
+      const storedAdminsPromise = getAdminsFromDb();
+      const authStatus = getAuthStatusFromStorage();
       
-      const storedAdmins = await dbAdminsPromise;
+      const storedAdmins = await storedAdminsPromise;
       setAdmins(storedAdmins);
       
-      // Update auth state based on client data
       if (authStatus.isSuperAdmin) {
           setIsSuperAdmin(true);
           setIsAdmin(false);

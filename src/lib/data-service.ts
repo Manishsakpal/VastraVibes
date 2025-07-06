@@ -1,7 +1,7 @@
 
 'use server';
 
-import type { ClothingItem, ClothingItemDb, AdminUser, AdminUserDb, Order, OrderDb, CartItem } from '@/types';
+import type { ClothingItem, ClothingItemDb, AdminUser, AdminUserDb, Order, OrderDb, CartItem, OrderStatus } from '@/types';
 import clientPromise from './mongodb';
 import { ObjectId } from 'mongodb';
 
@@ -162,7 +162,7 @@ export const addOrderToDb = async (orderData: Omit<Order, 'id'>): Promise<Order 
     }
 };
 
-export const updateOrderItemStatusInDb = async (orderId: string, itemId: string, newStatus: string): Promise<boolean> => {
+export const updateOrderItemStatusInDb = async (orderId: string, itemId: string, newStatus: OrderStatus): Promise<boolean> => {
     try {
         const db = await getDb();
         const result = await db.collection('orders').updateOne(

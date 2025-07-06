@@ -65,7 +65,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       return newOrder.id;
     }
     return ''; // Should handle error case
-  }, [masterItems, orders]);
+  }, [masterItems]);
 
   const updateOrderItemStatus = useCallback(async (orderId: string, itemId: string, newStatus: OrderStatus) => {
     const success = await updateOrderItemStatusInDb(orderId, itemId, newStatus);
@@ -80,7 +80,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         return order;
       }));
     }
-  }, [orders]);
+  }, []);
 
   const getRecentOrderId = (): string | null => {
     return getRecentOrderIdFromStorage();

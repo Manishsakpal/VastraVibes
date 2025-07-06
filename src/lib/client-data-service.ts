@@ -7,6 +7,7 @@ import {
   SUPERADMIN_AUTH_TOKEN_KEY,
   CURRENT_ADMIN_ID_KEY,
   RECENT_ORDER_ID_KEY,
+  VISITOR_SESSION_KEY,
 } from './constants';
 import type { CartItem } from '@/types';
 
@@ -77,9 +78,9 @@ export const saveRecentOrderIdToStorage = (id: string): void => safeLocalStorage
 
 // --- Visitor Session Service (Client-Side) ---
 export const getLastVisitFromStorage = (): number | null => {
-    const lastVisitStr = safeLocalStorage.getItem("vastraVibesLastVisit");
+    const lastVisitStr = safeLocalStorage.getItem(VISITOR_SESSION_KEY);
     return lastVisitStr ? parseInt(lastVisitStr, 10) : null;
 };
 export const saveLastVisitToStorage = (time: number): void => {
-    safeLocalStorage.setItem("vastraVibesLastVisit", String(time));
+    safeLocalStorage.setItem(VISITOR_SESSION_KEY, String(time));
 };

@@ -24,7 +24,7 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadBag = async () => {
+    const loadBag = () => {
         setIsLoading(true);
         const storedBag = getBagFromStorage();
         if (storedBag) {
@@ -74,9 +74,9 @@ export const BagProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   }, [removeFromBag]);
 
-  const clearBag = useCallback(async () => {
+  const clearBag = useCallback(() => {
     setCartItems([]);
-    await clearBagInStorage();
+    clearBagInStorage();
   }, []);
 
   const cartCount = useMemo(() => {

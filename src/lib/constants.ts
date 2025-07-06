@@ -20,6 +20,4 @@ export const CURRENT_ADMIN_ID_KEY = "vastraVibesCurrentAdminId";
 // User-specific data is kept on the client
 export const BAG_STORAGE_KEY = "vastraVibesBag";
 export const RECENT_ORDER_ID_KEY = "vastraVibesRecentOrderId";
-
-// Deprecated keys for old localStorage approach are no longer used.
-// ITEMS_STORAGE_KEY, ADMIN_USERS_STORAGE_KEY, etc. are removed.
+export const VISITOR_SESSION_KEY = "vastraVibesLastVisit";
