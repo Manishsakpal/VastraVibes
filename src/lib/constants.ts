@@ -13,5 +13,5 @@ export const AUTH_SESSION_KEY = "vastraVibesAuthSession";
 
 // User-specific data is kept on the client
 export const BAG_STORAGE_KEY = "vastraVibesBag";
-export const RECENT_ORDER_ID_KEY = "vastraVibesRecentOrderId";
+export const ORDER_HISTORY_KEY = "vastraVibesOrderHistory";
 export const VISITOR_SESSION_KEY = "vastraVibesLastVisit";

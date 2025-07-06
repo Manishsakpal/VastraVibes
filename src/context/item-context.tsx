@@ -16,6 +16,8 @@ import {
 
 // Helper function to add performance-optimized fields with added safety checks
 const processRawItems = (items: (Omit<ClothingItem, 'finalPrice' | 'searchableText'>)[]): ClothingItem[] => {
+  if (!Array.isArray(items)) return [];
+  
   return items.map(item => {
     // Defensively handle potential non-numeric or missing values
     const price = Number(item.price) || 0;
@@ -65,24 +67,30 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const loadData = async () => {
         setIsLoading(true);
-        const [rawItems, counts] = await Promise.all([
-            getItemsFromDb(),
-            getPurchaseCountsFromDb(),
-        ]);
-        
-        const sanitized = sanitizeItems(rawItems);
-        const processed = processRawItems(sanitized);
-        setItems(processed);
-        setPurchaseCounts(counts);
-        
-        setIsLoading(false);
+        try {
+          const [rawItems, counts] = await Promise.all([
+              getItemsFromDb(),
+              getPurchaseCountsFromDb(),
+          ]);
+          
+          const sanitized = sanitizeItems(rawItems);
+          const processed = processRawItems(sanitized);
+          setItems(processed);
+          setPurchaseCounts(counts);
+        } catch (error) {
+          console.error("Failed to load item data:", error);
+          setItems([]);
+          setPurchaseCounts({});
+        } finally {
+          setIsLoading(false);
+        }
     };
     loadData();
   }, []);
 
   const addItem = useCallback(async (itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
-    // Sanitize URLs before sending to the database. Cast is acceptable as sanitizeItems only needs imageUrls and spreads the rest.
-    const [sanitizedItemData] = sanitizeItems([itemData as ClothingItem]);
+    // Sanitize URLs before sending to the database.
+    const [sanitizedItemData] = sanitizeItems([itemData as any]);
     
     const itemWithAdmin = {
       ...sanitizedItemData,
@@ -99,8 +107,8 @@ export const ItemProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [currentAdminId]);
 
   const updateItem = useCallback(async (itemId: string, itemData: Omit<ClothingItem, 'id' | 'finalPrice' | 'searchableText' | 'adminId'>) => {
-    // Sanitize URLs before sending to the database. Cast is acceptable as sanitizeItems only needs imageUrls and spreads the rest.
-    const [sanitizedItemData] = sanitizeItems([itemData as ClothingItem]);
+    // Sanitize URLs before sending to the database.
+    const [sanitizedItemData] = sanitizeItems([itemData as any]);
 
     const updatedItemRaw = await updateItemInDb(itemId, sanitizedItemData);
 
