@@ -1,13 +1,19 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Construction } from "lucide-react";
 import Link from "next/link";
+import { useAdminAuth } from "@/context/admin-auth-context";
 
 export default function UserManagementPage() {
+  const { isSuperAdmin } = useAdminAuth();
+  const dashboardPath = isSuperAdmin ? "/superAdmin" : "/admin/dashboard";
+
   return (
     <div className="container mx-auto py-8 px-4 animate-fade-in-up">
       <Button variant="outline" asChild className="mb-6">
-        <Link href="/admin/dashboard">
+        <Link href={dashboardPath}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
         </Link>

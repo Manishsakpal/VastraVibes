@@ -26,6 +26,7 @@ const processRawItems = (items: (Omit<ClothingItem, 'finalPrice' | 'searchableTe
       item.description,
       item.colors,
       item.size,
+      item.category, // Added category to the searchable text
     ].join(' ').toLowerCase();
 
     return { ...item, finalPrice, searchableText } as ClothingItem;
