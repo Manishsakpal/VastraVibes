@@ -9,6 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x800.png';
 
 // This function now validates that image URLs are well-formed http/https links.
+// It will attempt to fix URLs that are missing a protocol.
 // If an invalid URL is found, it is removed. A placeholder is used if no valid URLs remain.
 export function sanitizeItems<T extends ClothingItem | CartItem>(items: T[]): T[] {
   if (!Array.isArray(items)) return [];
@@ -18,16 +19,22 @@ export function sanitizeItems<T extends ClothingItem | CartItem>(items: T[]): T[
     let imageUrls = (Array.isArray(item.imageUrls) ? item.imageUrls : [])
       .map(url => {
         if (typeof url !== 'string' || !url.trim()) return null;
+        
+        let sanitizedUrl = url.trim();
+        // Automatically add protocol if missing for convenience
+        if (!sanitizedUrl.startsWith('http://') && !sanitizedUrl.startsWith('https://')) {
+          sanitizedUrl = 'https://' + sanitizedUrl;
+        }
+
         try {
-          const urlObject = new URL(url.trim());
-          if (urlObject.protocol === 'http:' || urlObject.protocol === 'https:') {
-            return urlObject.href;
-          }
+          // Final validation to ensure it's a parseable URL
+          const urlObject = new URL(sanitizedUrl);
+          return urlObject.href;
         } catch (e) {
-          // Invalid URL format, ignore
+          // If it's still invalid after attempting to fix, discard it
+          console.warn(`Invalid URL provided and could not be sanitized: ${url}`);
           return null;
         }
-        return null; // Protocol not allowed
       })
       .filter((url): url is string => !!url); // Remove nulls and get an array of valid URLs
 
