@@ -22,9 +22,10 @@ const nextConfig: NextConfig = {
     ],
   },
   env: {
+    // IMPORTANT: Replace this with your actual production URL
     NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production' 
-      ? 'https://your-production-url.com' // Replace with your actual production URL
-      : 'http://localhost:9002', // Default dev URL
+      ? 'https://vastra-vibes.example.com' 
+      : 'http://localhost:9002',
   },
   webpack: (config, { isServer }) => {
     // This prevents server-only modules from being bundled for the client.

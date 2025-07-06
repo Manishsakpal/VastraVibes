@@ -15,6 +15,7 @@ export interface ClothingItemDb {
   size: string;
   colors: string;
   category: Category;
+  brand?: string;
   imageUrls: string[];
   imageHints?: string[];
   specifications?: string[];

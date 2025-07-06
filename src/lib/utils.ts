@@ -27,6 +27,7 @@ export const processRawItems = (items: (Omit<ClothingItem, 'finalPrice' | 'searc
       item.colors,
       item.size,
       item.category,
+      item.brand,
     ].filter(Boolean).join(' ').toLowerCase();
 
     return { 
