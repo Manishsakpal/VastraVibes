@@ -133,22 +133,26 @@ export default function TrackOrderPage() {
 
           {foundOrder && (
             <div className="animate-fade-in-up mt-6">
-              <Accordion type="single" collapsible className="w-full border rounded-lg shadow-sm" defaultValue={foundOrder.id}>
+              <Accordion type="single" collapsible className="w-full border rounded-lg shadow-sm">
                 <AccordionItem value={foundOrder.id} className="border-b-0">
                   <AccordionTrigger className="p-4 hover:no-underline text-sm sm:text-base">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full text-left gap-4 sm:gap-8">
-                      <div className="flex-1">
-                        <p className="font-semibold text-muted-foreground">Order ID</p>
-                        <p className="font-mono text-foreground">{foundOrder.id}</p>
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-muted-foreground">Date Placed</p>
-                        <p className="text-foreground">{new Date(foundOrder.date).toLocaleString()}</p>
-                      </div>
-                      <div className="flex-1 text-left sm:text-right">
-                        <p className="font-semibold text-muted-foreground">Total</p>
-                        <p className="font-bold text-primary text-lg">₹{foundOrder.totalAmount.toFixed(2)}</p>
-                      </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full text-left items-center">
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs">Order ID</p>
+                            <p className="font-mono text-foreground truncate text-sm">{foundOrder.id}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs">Date Placed</p>
+                            <p className="text-foreground text-sm">{new Date(foundOrder.date).toLocaleDateString()}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs">Items</p>
+                            <p className="text-foreground font-medium text-sm">{foundOrder.items.length}</p>
+                        </div>
+                        <div className="sm:text-right">
+                            <p className="font-semibold text-muted-foreground text-xs">Total</p>
+                            <p className="font-bold text-primary text-lg">₹{foundOrder.totalAmount.toFixed(2)}</p>
+                        </div>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
