@@ -1,3 +1,4 @@
+
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/header';
@@ -33,7 +34,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Vastra Vibes - Discover Your Unique Style',
     description: 'An e-commerce platform for the finest Indian and modern apparel.',
-  }
+  },
+  verification: {
+    google: '4Q9ff3S5e7BqqCpeVc47kh7_xh-B68STMTIigqcCkoc',
+  },
 };
 
 
